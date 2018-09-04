@@ -55,14 +55,7 @@ namespace FormulaEvaluator
                     }
                     else // '+' or '-' is not at the top of operators stack
                     {
-                        if (Regex.IsMatch(substring, @"(\s?\+\s?)"))
-                        {
-                            operators.Push("+");
-                        }
-                        else
-                        {
-                            operators.Push("-");
-                        }
+                        operators.Push(Regex.IsMatch(substring, @"(\s?\+\s?)") ? "+" : "-");
                     }
                 }
                 //Regex for finding '(' left parentheses
