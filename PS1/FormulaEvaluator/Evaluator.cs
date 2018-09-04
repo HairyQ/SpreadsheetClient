@@ -18,6 +18,7 @@ namespace FormulaEvaluator
 
         private static int currVal;
 
+        //TODO: Handle exceptions throughout the algorithm as defined in PS1 requirements
         public static int Evaluate(string exp, Lookup variableEvaluator)
         {
             string[] substrings = Regex.Split(exp, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
@@ -39,7 +40,30 @@ namespace FormulaEvaluator
                 //Regex for finding '+' and '-' operators
                 else if (Regex.IsMatch(substring, @"(\s?\+|\-\s?)"))
                 {
-
+                    if (operators.Peek().Equals("+"))
+                    {
+                        operators.Pop();
+                        values.Push(values.Pop() + values.Pop());
+                        operators.Push("+");
+                    }
+                    else if (operators.Peek().Equals("-"))
+                    {
+                        operators.Pop();
+                        int placeHolder = values.Pop();
+                        values.Push(values.Pop() - placeHolder);
+                        operators.Push("-");
+                    }
+                    else // '+' or '-' is not at the top of operators stack
+                    {
+                        if (Regex.IsMatch(substring, @"(\s?\+\s?)"))
+                        {
+                            operators.Push("+");
+                        }
+                        else
+                        {
+                            operators.Push("-");
+                        }
+                    }
                 }
                 //Regex for finding '(' left parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\(\s?)"))
@@ -73,7 +97,8 @@ namespace FormulaEvaluator
             else if (operators.Peek().Equals("/"))
             {
                 operators.Pop();
-                currVal /= values.Pop();
+                int placeHolder = values.Pop();
+                currVal = placeHolder / currVal;
                 values.Push(currVal);
             }
             else
