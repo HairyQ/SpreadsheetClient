@@ -68,12 +68,12 @@ namespace FormulaEvaluator
                 //Regex for finding '(' left parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\(\s?)"))
                 {
-
+                    operators.Push("(");
                 }
                 //Regex for finding ')' right parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\)\s?)"))
                 {
-
+                    if ()
                 }
                 
             }
@@ -90,9 +90,9 @@ namespace FormulaEvaluator
         {
             if (operators.Peek().Equals("*"))
             {
-                operators.Pop();
-                currVal *= values.Pop();
-                values.Push(currVal);
+                    operators.Pop();
+                    currVal *= values.Pop();
+                    values.Push(currVal);
             }
             else if (operators.Peek().Equals("/"))
             {
