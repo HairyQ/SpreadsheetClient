@@ -18,23 +18,23 @@ namespace FormulaEvaluator
 
         private static int currVal;
 
-        //TODO: Handle exceptions throughout the algorithm as defined in PS1 requirements
+        //TODO: Make commments and finish testing
         public static int Evaluate(string exp, Lookup variableEvaluator)
         {
             string[] substrings = Regex.Split(exp, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
 
             foreach (string substring in substrings)
             {
-                //Regex for finding just integers
-                if (Regex.IsMatch(substring, @"(\s?[0-9]{1,}\s?)"))
-                {
-                    currVal = int.Parse(substring.Trim());
-                    VariableIntegerInstructions(currVal);
-                }
                 //Regex for finding variables
-                else if (Regex.IsMatch(substring, @"(\s?[A-Za-z]{1,}[0-9]{1,}\s?)"))
+                if (Regex.IsMatch(substring, @"(\s?[A-Za-z]{1,}[0-9]{1,}\s?)"))
                 {
                     currVal = variableEvaluator(substring.Trim());
+                    VariableIntegerInstructions(currVal);
+                }
+                //Regex for finding just integers
+                else if (Regex.IsMatch(substring, @"(\s?[0-9]{1,}\s?)"))
+                {
+                    currVal = int.Parse(substring.Trim());
                     VariableIntegerInstructions(currVal);
                 }
                 //Regex for finding '+' and '-' operators
@@ -42,12 +42,20 @@ namespace FormulaEvaluator
                 {
                     if (operators.Count > 0 && operators.Peek().Equals("+"))
                     {
+                        if (values.Count < 2)
+                        {
+                            throw new ArgumentException("Operators must have two operands");
+                        }
                         operators.Pop();
                         values.Push(values.Pop() + values.Pop());
                         operators.Push("+");
                     }
                     else if (operators.Count > 0 && operators.Peek().Equals("-"))
                     {
+                        if (values.Count < 2)
+                        {
+                            throw new ArgumentException("Operators must have two operands");
+                        }
                         operators.Pop();
                         int placeHolder = values.Pop();
                         values.Push(values.Pop() - placeHolder);
@@ -72,19 +80,30 @@ namespace FormulaEvaluator
                 {
                     if (operators.Peek().Equals("+"))
                     {
+                        if (values.Count < 2)
+                        {
+                            throw new ArgumentException("Operators must have two operands");
+                        }
                         operators.Pop();
                         values.Push(values.Pop() + values.Pop());
                     }
                     else if (operators.Peek().Equals("-"))
                     {
+                        if (values.Count < 2)
+                        {
+                            throw new ArgumentException("Operators must have two operands");
+                        }
                         operators.Pop();
                         int placeHolder = values.Pop();
                         values.Push(values.Pop() - placeHolder);
                     }
 
                     //Next operator should be '(' - pop it.
-                    operators.Pop();
-
+                    if (!operators.Pop().Equals("("))
+                    {
+                        throw new ArgumentException("Each set of parentheses must have an opening and closing parenthesis");
+                    }
+                    
                     if (operators.Count > 0 && (operators.Peek().Equals("*") || operators.Peek().Equals("/")))
                     {
                         VariableIntegerInstructions(values.Pop());
@@ -95,18 +114,33 @@ namespace FormulaEvaluator
             //Final token has been processed - time to take final steps
             if (operators.Count.Equals(0))
             {
+                if (!values.Count.Equals(1))
+                {
+                    throw new ArgumentException("Expression contains too many or too few integers and variables");
+                }
                 return values.Pop();
             }
-            else if (operators.Peek().Equals("+"))
+            else if (operators.Count > 0 && operators.Peek().Equals("+"))
             {
+                if (!values.Count.Equals(2))
+                {
+                    throw new ArgumentException("Expression contains too many or too few integers and variables");
+                }
                 return values.Pop() + values.Pop();
             }
-            else if (operators.Peek().Equals("-"))
+            else if (operators.Count > 0 && operators.Peek().Equals("-"))
             {
+                if (!values.Count.Equals(2))
+                {
+                    throw new ArgumentException("Expression contains too many or too few integers and variables");
+                }
                 int placeHolder = values.Pop();
                 return values.Pop() - placeHolder;
             }
-            return 0;
+            else
+            {
+                throw new ArgumentException("Expression contains too few operators or has other syntax problems");
+            }
         }
 
         /// <summary>
@@ -139,7 +173,7 @@ namespace FormulaEvaluator
                     values.Push(currVal);
                 } catch (DivideByZeroException e)
                 {
-                    throw new ArgumentException("Cannot divide by 0");
+                    throw new ArgumentException("Cannot divide by 0", e);
                 }
             }
             else
