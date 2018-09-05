@@ -12,7 +12,7 @@ namespace EvaluatorTester
         static void Main(string[] args)
         {
             Evaluator.Lookup fourDel = DelegateMethod;
-            Console.WriteLine(Evaluator.Evaluate("4-2", fourDel));
+            System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("3*4", fourDel));
         }
 
         public static int DelegateMethod(string s)

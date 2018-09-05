@@ -12,9 +12,9 @@ namespace FormulaEvaluator
 
         public delegate int Lookup(string v);
 
-        private static Stack<string> operators;
+        private static Stack<string> operators = new Stack<string>();
 
-        private static Stack<int> values;
+        private static Stack<int> values = new Stack<int>();
 
         private static int currVal;
 
@@ -40,13 +40,13 @@ namespace FormulaEvaluator
                 //Regex for finding '+' and '-' operators
                 else if (Regex.IsMatch(substring, @"(\s?\+|\-\s?)"))
                 {
-                    if (operators.Peek().Equals("+"))
+                    if (operators.Count > 0 && operators.Peek().Equals("+"))
                     {
                         operators.Pop();
                         values.Push(values.Pop() + values.Pop());
                         operators.Push("+");
                     }
-                    else if (operators.Peek().Equals("-"))
+                    else if (operators.Count > 0 && operators.Peek().Equals("-"))
                     {
                         operators.Pop();
                         int placeHolder = values.Pop();
@@ -56,6 +56,11 @@ namespace FormulaEvaluator
                     else // '+' or '-' is not at the top of operators stack
                         operators.Push(Regex.IsMatch(substring, @"(\s?\+\s?)") ? "+" : "-");
 
+                }
+                //Regex for finding '*' and '/' operators
+                else if (Regex.IsMatch(substring, @"(\s?\*|\/\s?)"))
+                {
+                    operators.Push(Regex.IsMatch(substring, @"(\s?\*\s?)") ? "*" : "/");
                 }
                 //Regex for finding '(' left parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\(\s?)"))
@@ -80,8 +85,10 @@ namespace FormulaEvaluator
                     //Next operator should be '(' - pop it.
                     operators.Pop();
 
-                    if (operators.Peek().Equals("*") || operators.Peek().Equals("/"))
+                    if (operators.Count > 0 && (operators.Peek().Equals("*") || operators.Peek().Equals("/")))
+                    {
                         VariableIntegerInstructions(values.Pop());
+                    }
                 }
                 
             }
@@ -109,13 +116,14 @@ namespace FormulaEvaluator
         /// <param name="currVal">Integer or Variable Value</param>
         private static void VariableIntegerInstructions(int currVal)
         {
-            if (operators.Peek().Equals("*"))
+            //Exception case: The stack is empty, and can't be "peeked"
+            if (operators.Count > 0 && operators.Peek().Equals("*"))
             {
                 operators.Pop();
                 currVal *= values.Pop();
                 values.Push(currVal);
             }
-            else if (operators.Peek().Equals("/"))
+            else if (operators.Count > 0 && operators.Peek().Equals("/"))
             {
                 operators.Pop();
                 int placeHolder = values.Pop();
