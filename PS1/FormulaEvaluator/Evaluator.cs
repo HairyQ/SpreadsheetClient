@@ -119,16 +119,28 @@ namespace FormulaEvaluator
             //Exception case: The stack is empty, and can't be "peeked"
             if (operators.Count > 0 && operators.Peek().Equals("*"))
             {
-                operators.Pop();
-                currVal *= values.Pop();
-                values.Push(currVal);
+                try
+                {
+                    operators.Pop();
+                    currVal *= values.Pop();
+                    values.Push(currVal);
+                } catch (InvalidOperationException e)
+                {
+                    throw new ArgumentException("Expressions cannot start with operators", e);
+                }
             }
             else if (operators.Count > 0 && operators.Peek().Equals("/"))
             {
-                operators.Pop();
-                int placeHolder = values.Pop();
-                currVal = placeHolder / currVal;
-                values.Push(currVal);
+                try
+                {
+                    operators.Pop();
+                    int placeHolder = values.Pop();
+                    currVal = placeHolder / currVal;
+                    values.Push(currVal);
+                } catch (DivideByZeroException e)
+                {
+                    throw new ArgumentException("Cannot divide by 0");
+                }
             }
             else
             {

@@ -12,7 +12,8 @@ namespace EvaluatorTester
         static void Main(string[] args)
         {
             Evaluator.Lookup fourDel = DelegateMethod;
-            System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("3*4", fourDel));
+            System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("(94-22)/8", fourDel)); //Should be 9
+            System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("*8", fourDel)); //Should throw exception "Cannot start with an operator"
         }
 
         public static int DelegateMethod(string s)
