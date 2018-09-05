@@ -68,7 +68,7 @@ namespace FormulaEvaluator
                     if (operators.Peek().Equals("+"))
                     {
                         operators.Pop();
-                        values.Push(values.Pop() - values.Pop());
+                        values.Push(values.Pop() + values.Pop());
                     }
                     else if (operators.Peek().Equals("-"))
                     {
@@ -76,10 +76,29 @@ namespace FormulaEvaluator
                         int placeHolder = values.Pop();
                         values.Push(values.Pop() - placeHolder);
                     }
+
+                    //Next operator should be '(' - pop it.
+                    operators.Pop();
+
+                    if (operators.Peek().Equals("*") || operators.Peek().Equals("/"))
+                        VariableIntegerInstructions(values.Pop());
                 }
                 
             }
-
+            //Final token has been processed - time to take final steps
+            if (operators.Count.Equals(0))
+            {
+                return values.Pop();
+            }
+            else if (operators.Peek().Equals("+"))
+            {
+                return values.Pop() + values.Pop();
+            }
+            else if (operators.Peek().Equals("-"))
+            {
+                int placeHolder = values.Pop();
+                return values.Pop() - placeHolder;
+            }
             return 0;
         }
 
@@ -92,9 +111,9 @@ namespace FormulaEvaluator
         {
             if (operators.Peek().Equals("*"))
             {
-                    operators.Pop();
-                    currVal *= values.Pop();
-                    values.Push(currVal);
+                operators.Pop();
+                currVal *= values.Pop();
+                values.Push(currVal);
             }
             else if (operators.Peek().Equals("/"))
             {
@@ -107,11 +126,6 @@ namespace FormulaEvaluator
             {
                 values.Push(currVal);
             }
-        }
-
-        private static void AdditionInstructions()
-        {
-            
         }
 
     }
