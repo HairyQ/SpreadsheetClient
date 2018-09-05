@@ -28,13 +28,13 @@ namespace FormulaEvaluator
                 //Regex for finding just integers
                 if (Regex.IsMatch(substring, @"(\s?[0-9]{1,}\s?)"))
                 {
-                    currVal = int.Parse(substring);
+                    currVal = int.Parse(substring.Trim());
                     VariableIntegerInstructions(currVal);
                 }
                 //Regex for finding variables
                 else if (Regex.IsMatch(substring, @"(\s?[A-Za-z]{1,}[0-9]{1,}\s?)"))
                 {
-                    currVal = variableEvaluator(substring);
+                    currVal = variableEvaluator(substring.Trim());
                     VariableIntegerInstructions(currVal);
                 }
                 //Regex for finding '+' and '-' operators
@@ -54,9 +54,8 @@ namespace FormulaEvaluator
                         operators.Push("-");
                     }
                     else // '+' or '-' is not at the top of operators stack
-                    {
                         operators.Push(Regex.IsMatch(substring, @"(\s?\+\s?)") ? "+" : "-");
-                    }
+
                 }
                 //Regex for finding '(' left parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\(\s?)"))
@@ -66,7 +65,17 @@ namespace FormulaEvaluator
                 //Regex for finding ')' right parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\)\s?)"))
                 {
-                    if ()
+                    if (operators.Peek().Equals("+"))
+                    {
+                        operators.Pop();
+                        values.Push(values.Pop() - values.Pop());
+                    }
+                    else if (operators.Peek().Equals("-"))
+                    {
+                        operators.Pop();
+                        int placeHolder = values.Pop();
+                        values.Push(values.Pop() - placeHolder);
+                    }
                 }
                 
             }
@@ -98,6 +107,11 @@ namespace FormulaEvaluator
             {
                 values.Push(currVal);
             }
+        }
+
+        private static void AdditionInstructions()
+        {
+            
         }
 
     }
