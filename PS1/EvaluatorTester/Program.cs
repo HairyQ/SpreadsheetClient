@@ -15,6 +15,7 @@ namespace EvaluatorTester
             System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("(94-22)/8", fourDel)); //Should be 9
             System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("A2/2", fourDel)); //Should be 2
             System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("(((A2/2)*45)/9)*10", fourDel)); //Should be 100
+            System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("5+6(/(1+1))", fourDel)); //Should be 8
 
             //System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("*8", fourDel)); //Should throw exception "Cannot start with an operator"
         }

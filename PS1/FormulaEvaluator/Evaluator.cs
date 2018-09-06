@@ -18,7 +18,7 @@ namespace FormulaEvaluator
 
         private static int currVal;
 
-        //TODO: Make commments and finish testing
+        //TODO: Make commments and finish testing AND add catch blocks for each throw
         public static int Evaluate(string exp, Lookup variableEvaluator)
         {
             string[] substrings = Regex.Split(exp, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
@@ -118,7 +118,11 @@ namespace FormulaEvaluator
                 {
                     throw new ArgumentException("Expression contains too many or too few integers and variables");
                 }
-                return values.Pop();
+                int retVal = values.Pop();
+                //Clear the stacks
+                operators.Clear();
+                values.Clear();
+                return retVal;
             }
             else if (operators.Count > 0 && operators.Peek().Equals("+"))
             {
@@ -126,7 +130,11 @@ namespace FormulaEvaluator
                 {
                     throw new ArgumentException("Expression contains too many or too few integers and variables");
                 }
-                return values.Pop() + values.Pop();
+                int retVal = values.Pop() + values.Pop();
+                //Clear the stacks
+                operators.Clear();
+                values.Clear();
+                return retVal;
             }
             else if (operators.Count > 0 && operators.Peek().Equals("-"))
             {
@@ -135,10 +143,17 @@ namespace FormulaEvaluator
                     throw new ArgumentException("Expression contains too many or too few integers and variables");
                 }
                 int placeHolder = values.Pop();
-                return values.Pop() - placeHolder;
+                int retVal = values.Pop() - placeHolder;
+                //Clear the stacks
+                operators.Clear();
+                values.Clear();
+                return retVal;
             }
             else
             {
+                //Clear the stacks
+                operators.Clear();
+                values.Clear();
                 throw new ArgumentException("Expression contains too few operators or has other syntax problems");
             }
         }
