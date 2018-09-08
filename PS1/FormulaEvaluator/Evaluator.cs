@@ -7,18 +7,43 @@ using System.Threading.Tasks;
 
 namespace FormulaEvaluator
 {
+    /// <summary>
+    /// Class for evaluating simple arithmetic expressions. Valid operators include:[ +, -, *, /, (, ) ]. 
+    /// The class contains one method, Evaluate, which may call two helper methods to complete arithmetic 
+    /// operations on a inputted string. Evaluator also uses a delegate to allow the use of different 
+    /// variable lookup methods.
+    /// </summary>
     public static class Evaluator
     {
-
+        /// <summary>
+        /// Delegate that returns an int based on a string composed of any number of variables followed
+        /// by any number of integers
+        /// </summary>
+        /// <param name="v">variable string to be converted into a value</param>
+        /// <returns>an int if the variable passed in is correlated with one</returns>
         public delegate int Lookup(string v);
 
+        /// <summary>
+        /// Stack for holding operator tokens passed in the expression
+        /// </summary>
         private static Stack<string> operators = new Stack<string>();
 
+        /// <summary>
+        /// Stack for holding integers (and integers associated with variables) passed in the expression
+        /// </summary>
         private static Stack<int> values = new Stack<int>();
 
+        /// <summary>
+        /// int for keeping track of the value passed into the algorithm or changed by the algorithm
+        /// </summary>
         private static int currVal;
 
-        //TODO: Make commments and finish testing AND add catch blocks for each throw
+        /// <summary>
+        /// Algorithm that evaluates simple arithmetic expressions (ie (4 + 5) / 3). Valid operator tokens include:[ +, -, *, /, (, ) ]
+        /// </summary>
+        /// <param name="exp">Expression inputted by the user to be evaluated by the algorithm</param>
+        /// <param name="variableEvaluator">Delegate object for looking up the value of variables within the expression</param>
+        /// <returns>the value of the passed expression in the form of an int</returns>
         public static int Evaluate(string exp, Lookup variableEvaluator)
         {
             string[] substrings = Regex.Split(exp, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
@@ -34,8 +59,14 @@ namespace FormulaEvaluator
                 //Regex for finding just integers
                 else if (Regex.IsMatch(substring, @"(\s?[0-9]{1,}\s?)"))
                 {
-                    currVal = int.Parse(substring.Trim());
-                    VariableIntegerInstructions(currVal);
+                    if (int.TryParse(substring.Trim(), out currVal))
+                    {
+                        VariableIntegerInstructions(currVal);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid integer token");
+                    }
                 }
                 //Regex for finding '+' and '-' operators
                 else if (Regex.IsMatch(substring, @"(\s?\+|\-\s?)"))
@@ -130,6 +161,10 @@ namespace FormulaEvaluator
                 {
                     throw new ArgumentException("Expression contains too many or too few integers and variables");
                 }
+                if (operators.Count >= 2)
+                {
+                    throw new ArgumentException("Expression contains too many operators");
+                }
                 int retVal = values.Pop() + values.Pop();
                 //Clear the stacks
                 operators.Clear();
@@ -151,6 +186,10 @@ namespace FormulaEvaluator
             }
             else
             {
+                if (operators.Count > 0)
+                {
+                    throw new ArgumentException("Expression contains too many operators per operand");
+                }
                 //Clear the stacks
                 operators.Clear();
                 values.Clear();
