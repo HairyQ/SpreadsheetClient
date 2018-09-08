@@ -59,54 +59,44 @@ namespace EvaluatorTester
         /// <summary>
         /// Main basically just calls InvalidExpression() and ValidExpression() over and over, printing the result to the console so that I can determine which tests worked, and which ones didn't
         /// </summary>
-        /// <param name="args">Idk, the bit stream or something</param>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             Evaluator.Lookup fourDel = AlwaysFourDelegate;
             Console.WriteLine(ValidExpression("(2-3)", fourDel, -1));
             Console.WriteLine(ValidExpression("(3-2)", fourDel, 1));
             Console.WriteLine(ValidExpression("1 + 1", fourDel, 2));
+            Console.WriteLine(ValidExpression("9               /        3", fourDel, 3));
+            Console.WriteLine(ValidExpression("1000 /5", fourDel, 200));
             Console.WriteLine(ValidExpression("(94-22)/8", fourDel, 9));
             Console.WriteLine(ValidExpression("A2/2", fourDel, 2));
             Console.WriteLine(ValidExpression("(((A2/2)*45)/9)*10", fourDel, 100));
             Console.WriteLine(ValidExpression("5 + 6(/ (1 + 1))", fourDel, 8));
+            Console.WriteLine(ValidExpression("() 17 + 3", fourDel, 20));
+            Console.WriteLine(ValidExpression("17 + 3 ()", fourDel, 20));
+            Console.WriteLine(ValidExpression("AhuASHBbvCA938274329834732894327483297438927483922222222222222 + 3", fourDel, 7));
+            Console.WriteLine(ValidExpression("(((((14 / 2 )))))", fourDel, 7));
+            Console.WriteLine(ValidExpression("2 / 3", fourDel, 0));
+            Console.WriteLine(ValidExpression("18 / 14", fourDel, 1));
+            Console.WriteLine(ValidExpression("(14 * 3) * (12/3)", fourDel, 168));
+            Console.WriteLine(ValidExpression("2 + (12/4) - 67 + (14 * 3)", fourDel, -20));
+            Console.WriteLine(ValidExpression("2 + (12/4) - 67 + (14 * 3) * (( 14 + (567 * 2)) - 10000)", fourDel, -371846));
 
             Console.WriteLine(InvalidExpression("*8", fourDel));
             Console.WriteLine(InvalidExpression("432 / 0", fourDel));
             Console.WriteLine(InvalidExpression("56 4 *3", fourDel));
             Console.WriteLine(InvalidExpression("5 * + 9", fourDel));
             Console.WriteLine(InvalidExpression("(3 + 5", fourDel));
-
-
-            Console.Read();
-            //System.Diagnostics.Debug.WriteLine(Evaluator.Evaluate("*8", fourDel)); //Should throw exception "Cannot start with an operator"
-
-            //INvalid:
-            //two operands in a row
-            //two operators in a row
-            //unbalanced ()
-            //Invalid token "b45z" "&*"
-            //  /0
-            //<2 operands for an operator
-            //Missing variable
-
-            //Valid:
-            //1 + 1 (basic)
-            //order of operations (2-3) vs (3-2)
-            //test all basic operators individually and with order of operations
-            //Parentheses changing OOO
-            //giant literal integer - TryParse will throw
-            //can use valid variables
-            //invalid formula followed by a valid formula
+            Console.WriteLine(InvalidExpression("b45z / 76", fourDel));
+            Console.WriteLine(InvalidExpression("#", fourDel));
+            Console.WriteLine(InvalidExpression("(3 + 5", fourDel));
+            Console.WriteLine(InvalidExpression("3 + 56666666666", fourDel));
+            Console.WriteLine(InvalidExpression("(3982 + 483))", fourDel));
         }
 
         public static int AlwaysFourDelegate(string s)
         {
             return 4;
-        }
-        public static int DelegateMethod2(string s)
-        {
-            return 0;
         }
 
     }

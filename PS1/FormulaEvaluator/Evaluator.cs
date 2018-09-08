@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace FormulaEvaluator
 {
     /// <summary>
+    /// @author - Harrison Quick - u1098604
     /// Class for evaluating simple arithmetic expressions. Valid operators include:[ +, -, *, /, (, ) ]. 
     /// The class contains one method, Evaluate, which may call two helper methods to complete arithmetic 
     /// operations on a inputted string. Evaluator also uses a delegate to allow the use of different 
@@ -79,7 +80,7 @@ namespace FormulaEvaluator
                         }
                         operators.Pop();
                         values.Push(values.Pop() + values.Pop());
-                        operators.Push("+");
+                        operators.Push(substring);
                     }
                     else if (operators.Count > 0 && operators.Peek().Equals("-"))
                     {
@@ -90,7 +91,7 @@ namespace FormulaEvaluator
                         operators.Pop();
                         int placeHolder = values.Pop();
                         values.Push(values.Pop() - placeHolder);
-                        operators.Push("-");
+                        operators.Push(substring);
                     }
                     else // '+' or '-' is not at the top of operators stack
                         operators.Push(Regex.IsMatch(substring, @"(\s?\+\s?)") ? "+" : "-");
@@ -130,7 +131,7 @@ namespace FormulaEvaluator
                     }
 
                     //Next operator should be '(' - pop it.
-                    if (!operators.Pop().Equals("("))
+                    if (operators.Count > 0 && !operators.Pop().Equals("("))
                     {
                         throw new ArgumentException("Each set of parentheses must have an opening and closing parenthesis");
                     }
