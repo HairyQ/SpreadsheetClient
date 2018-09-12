@@ -17,7 +17,7 @@ namespace FormulaEvaluator
     public static class Evaluator
     {
         /// <summary>
-        /// Delegate that returns an int based on a string composed of any number of variables followed
+        /// Delegate that returns an int based on a string composed of any number of letters followed
         /// by any number of integers
         /// </summary>
         /// <param name="v">variable string to be converted into a value</param>
