@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyGraph", "DependencyGraph\DependencyGraph.csproj", "{7EA4079F-F9EA-4234-A2B3-744C737D965F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{2A84ADBD-8305-4464-9C8B-164F509202C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7EA4079F-F9EA-4234-A2B3-744C737D965F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EA4079F-F9EA-4234-A2B3-744C737D965F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EA4079F-F9EA-4234-A2B3-744C737D965F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A84ADBD-8305-4464-9C8B-164F509202C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A84ADBD-8305-4464-9C8B-164F509202C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A84ADBD-8305-4464-9C8B-164F509202C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A84ADBD-8305-4464-9C8B-164F509202C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
