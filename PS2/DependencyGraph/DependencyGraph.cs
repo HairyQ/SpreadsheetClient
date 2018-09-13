@@ -5,6 +5,7 @@
 //               (Clarified names in solution/project structure.)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,10 +43,28 @@ namespace SpreadsheetUtilities
     public class DependencyGraph
     {
         /// <summary>
+        /// Maps a given string to all of its dependents
+        /// </summary>
+        private Dictionary<string, List<string>> dependents;
+
+        /// <summary>
+        /// Maps a given string to all of its dependees
+        /// </summary>
+        private Dictionary<string, List<string>> dependees;
+
+        /// <summary>
+        /// int counter for size of this dependency graph - represents number of ordered pairs in the graph
+        /// </summary>
+        private int currSize;
+
+        /// <summary>
         /// Creates an empty DependencyGraph.
         /// </summary>
         public DependencyGraph()
         {
+            dependents = new Dictionary<string, List<string>>();
+            dependees = new Dictionary<string, List<string>>();
+            currSize = 0;
         }
 
 
@@ -54,7 +73,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int Size
         {
-            get { return 0; }
+            get { return currSize; }
         }
 
 
@@ -67,7 +86,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public int this[string s]
         {
-            get { return 0; }
+            get { return GetDependees(s).Count(); }
         }
 
 
@@ -76,7 +95,9 @@ namespace SpreadsheetUtilities
         /// </summary>
         public bool HasDependents(string s)
         {
-            return false;
+            if (GetDependents(s).Count() == 0)
+                return false;
+            return true;
         }
 
 
@@ -85,7 +106,9 @@ namespace SpreadsheetUtilities
         /// </summary>
         public bool HasDependees(string s)
         {
-            return false;
+            if(GetDependees(s).Count() == 0)
+                return false;
+            return true;
         }
 
 
@@ -94,7 +117,13 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            return null;
+            if (dependents.ContainsKey(s))
+            {
+                foreach (string currString in dependents[s])
+                {
+                    yield return currString;
+                }
+            }
         }
 
         /// <summary>
@@ -102,7 +131,13 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            return null;
+            if (dependees.ContainsKey(s))
+            {
+                foreach (string currString in dependees[s])
+                {
+                    yield return currString;
+                }
+            }
         }
 
 
@@ -118,6 +153,39 @@ namespace SpreadsheetUtilities
         /// <param name="t"> t cannot be evaluated until s is</param>        /// 
         public void AddDependency(string s, string t)
         {
+            if (dependents.ContainsKey(s))
+            {
+                if (!dependents[s].Contains(t))
+                {
+                    dependents[s].Add(t);
+                } else
+                {
+                    currSize--;
+                }
+
+            } else
+            {
+                List<string> newList = new List<string>();
+                newList.Add(t);
+                dependents.Add(s, newList);
+            }
+
+            if (dependees.ContainsKey(t))
+            {
+                if (!dependees[t].Contains(s))
+                {
+                    dependees[t].Add(s);
+                } else
+                {
+                    currSize--;
+                }
+            } else
+            {
+                List<string> newList = new List<string>();
+                newList.Add(s);
+                dependees.Add(t, newList);
+            }
+            currSize++;
         }
 
 
@@ -128,6 +196,9 @@ namespace SpreadsheetUtilities
         /// <param name="t"></param>
         public void RemoveDependency(string s, string t)
         {
+            dependents[s].Remove(t);
+            dependees[t].Remove(s);
+            currSize--;
         }
 
 
@@ -137,6 +208,10 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            int sizeAdjustment = dependents[s].Count() - newDependents.Count();
+            currSize -= sizeAdjustment;
+            List<string> convertToList = newDependents.ToList();
+            dependents[s] = convertToList;
         }
 
 
@@ -146,6 +221,10 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependees(string s, IEnumerable<string> newDependees)
         {
+            int sizeAdjustment = dependees[s].Count() - newDependees.Count();
+            currSize -= sizeAdjustment;
+            List<string> convertToList = newDependees.ToList();
+            dependees[s] = convertToList;
         }
 
     }
