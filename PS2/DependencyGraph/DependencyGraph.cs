@@ -153,38 +153,8 @@ namespace SpreadsheetUtilities
         /// <param name="t"> t cannot be evaluated until s is</param>        /// 
         public void AddDependency(string s, string t)
         {
-            if (dependents.ContainsKey(s))
-            {
-                if (!dependents[s].Contains(t))
-                {
-                    dependents[s].Add(t);
-                } else
-                {
-                    currSize--;
-                }
-
-            } else
-            {
-                List<string> newList = new List<string>();
-                newList.Add(t);
-                dependents.Add(s, newList);
-            }
-
-            if (dependees.ContainsKey(t))
-            {
-                if (!dependees[t].Contains(s))
-                {
-                    dependees[t].Add(s);
-                } else
-                {
-                    currSize--;
-                }
-            } else
-            {
-                List<string> newList = new List<string>();
-                newList.Add(s);
-                dependees.Add(t, newList);
-            }
+            DependentHelper(s, t);
+            DependeeHelper(s, t);
             currSize++;
         }
 
@@ -225,6 +195,51 @@ namespace SpreadsheetUtilities
             currSize -= sizeAdjustment;
             List<string> convertToList = newDependees.ToList();
             dependees[s] = convertToList;
+        }
+
+        /// <summary>
+        /// Helper method to make AddDependency() more readable - determines whether the Dictionaries need to be updated
+        /// </summary>
+        private void DependentHelper(string s, string t)
+        {
+            if (dependents.ContainsKey(s))
+            {
+                if (!dependents[s].Contains(t))
+                {
+                    dependents[s].Add(t);
+                }
+                else
+                {
+                    currSize--;
+                }
+
+            }
+            else
+            {
+                List<string> newList = new List<string>();
+                newList.Add(t);
+                dependents.Add(s, newList);
+            }
+        }
+
+        /// <summary>
+        /// Helper method to make AddDependency() more readable - determines whether the Dictionaries need to be updated
+        /// </summary>
+        private void DependeeHelper(string s, string t)
+        {
+            if (dependees.ContainsKey(t))
+            {
+                if (!dependees[t].Contains(s))
+                {
+                    dependees[t].Add(s);
+                }
+            }
+            else
+            {
+                List<string> newList = new List<string>();
+                newList.Add(s);
+                dependees.Add(t, newList);
+            }
         }
 
     }
