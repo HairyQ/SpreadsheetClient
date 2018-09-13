@@ -6,10 +6,10 @@ using SpreadsheetUtilities;
 namespace UnitTestProject1
 {
     [TestClass]
-    public class DependencyGraphTest
+    public class DevelopmentTests
     {
         [TestMethod]
-        public void testGetDependents()
+        public void TestGetDependents()
         {
             ArrayList words = new ArrayList();
             words.Add("This");
@@ -40,7 +40,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void testGetDependees()
+        public void TestGetDependees()
         {
             ArrayList words = new ArrayList();
             words.Add("This");
@@ -71,7 +71,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void testSize()
+        public void TestSize()
         {
             DependencyGraph dG = new DependencyGraph();
             Assert.IsTrue(dG.Size == 0);
@@ -97,7 +97,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void testIndexer()
+        public void TestIndexer()
         {
             DependencyGraph dG = new DependencyGraph();
             Assert.IsTrue(dG[""] == 0);
