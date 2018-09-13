@@ -31,13 +31,43 @@ namespace UnitTestProject1
             dG.AddDependency("Blorbo", "HeL1");
             dG.AddDependency("Blorbo", "OfaT3$t");
 
-            IEnumerable finalList 
+            IEnumerable finalList = dG.GetDependents("Blorbo");
+            
+            foreach(string s in finalList)
+            {
+                Assert.IsTrue(words.Contains(s));
+            }
         }
 
         [TestMethod]
         public void testGetDependees()
         {
+            ArrayList words = new ArrayList();
+            words.Add("This");
+            words.Add("Is");
+            words.Add("Going");
+            words.Add("TO");
+            words.Add("b");
+            words.Add("1");
+            words.Add("HeL1");
+            words.Add("OfaT3$t");
 
+            DependencyGraph dG = new DependencyGraph();
+            dG.AddDependency("This", "Blorbo");
+            dG.AddDependency("Is", "Blorbo");
+            dG.AddDependency("Going", "Blorbo");
+            dG.AddDependency("TO", "Blorbo");
+            dG.AddDependency("b", "Blorbo");
+            dG.AddDependency("1", "Blorbo");
+            dG.AddDependency("HeL1", "Blorbo");
+            dG.AddDependency("OfaT3$t", "Blorbo");
+
+            IEnumerable finalList = dG.GetDependees("Blorbo");
+
+            foreach (string s in finalList)
+            {
+                Assert.IsTrue(words.Contains(s));
+            }
         }
 
         [TestMethod]
