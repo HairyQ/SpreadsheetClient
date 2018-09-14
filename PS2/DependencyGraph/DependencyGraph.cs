@@ -232,7 +232,7 @@ namespace SpreadsheetUtilities
 
         /// <summary>
         /// Helper method to make AddDependency() more readable - determines whether the 
-        /// Dictionaries need to be updated and how
+        /// Dictionaries need to be updated and how they need to be updated
         /// </summary>
         private void DependentHelper(string s, string t)
         {
@@ -258,7 +258,7 @@ namespace SpreadsheetUtilities
 
         /// <summary>
         /// Helper method to make AddDependency() more readable - determines whether the 
-        /// Dictionaries need to be updated and how
+        /// Dictionaries need to be updated and how they need to be updated
         /// </summary>
         private void DependeeHelper(string s, string t)
         {
