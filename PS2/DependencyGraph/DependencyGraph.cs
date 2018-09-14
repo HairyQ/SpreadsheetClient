@@ -178,10 +178,27 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            int sizeAdjustment = dependents[s].Count() - newDependents.Count();
-            currSize -= sizeAdjustment;
-            List<string> convertToList = newDependents.ToList();
-            dependents[s] = convertToList;
+
+            if (!dependents.ContainsKey(s))
+            {
+                foreach (string currString in newDependents)
+                {
+                    AddDependency(s, currString);
+                }
+            }
+            else
+            {
+                List<string> theDependents = GetDependents(s).ToList();
+                foreach (string currString in theDependents)
+                {
+                    RemoveDependency(s, currString);
+                }
+                
+                foreach (string currString in newDependents)
+                {
+                    AddDependency(s, currString);
+                }
+            }
         }
 
 
@@ -191,14 +208,31 @@ namespace SpreadsheetUtilities
         /// </summary>
         public void ReplaceDependees(string s, IEnumerable<string> newDependees)
         {
-            int sizeAdjustment = dependees[s].Count() - newDependees.Count();
-            currSize -= sizeAdjustment;
-            List<string> convertToList = newDependees.ToList();
-            dependees[s] = convertToList;
+            if (!dependees.ContainsKey(s))
+            {
+                foreach (string currString in newDependees)
+                {
+                    AddDependency(currString, s);
+                }
+            }
+            else
+            {
+                List<string> theDependees = GetDependees(s).ToList();
+                foreach (string currString in theDependees)
+                {
+                    RemoveDependency(currString, s);
+                }
+
+                foreach (string currString in newDependees)
+                {
+                    AddDependency(currString, s);
+                }
+            }
         }
 
         /// <summary>
-        /// Helper method to make AddDependency() more readable - determines whether the Dictionaries need to be updated
+        /// Helper method to make AddDependency() more readable - determines whether the 
+        /// Dictionaries need to be updated and how
         /// </summary>
         private void DependentHelper(string s, string t)
         {
@@ -223,7 +257,8 @@ namespace SpreadsheetUtilities
         }
 
         /// <summary>
-        /// Helper method to make AddDependency() more readable - determines whether the Dictionaries need to be updated
+        /// Helper method to make AddDependency() more readable - determines whether the 
+        /// Dictionaries need to be updated and how
         /// </summary>
         private void DependeeHelper(string s, string t)
         {
