@@ -47,6 +47,9 @@ namespace FormulaEvaluator
         /// <returns>the value of the passed expression in the form of an int</returns>
         public static int Evaluate(string exp, Lookup variableEvaluator)
         {
+            operators.Clear();
+            values.Clear();
+
             string[] substrings = Regex.Split(exp, "(\\()|(\\))|(-)|(\\+)|(\\*)|(/)");
 
             foreach (string substring in substrings)
@@ -110,6 +113,11 @@ namespace FormulaEvaluator
                 //Regex for finding ')' right parentheses
                 else if (Regex.IsMatch(substring, @"(\s?\)\s?)"))
                 {
+                    if (!operators.Contains("("))
+                    {
+                        throw new ArgumentException("Mismatched Parentheses");
+                    }
+
                     if (operators.Peek().Equals("+"))
                     {
                         if (values.Count < 2)
@@ -151,9 +159,6 @@ namespace FormulaEvaluator
                     throw new ArgumentException("Expression contains too many or too few integers and variables");
                 }
                 int retVal = values.Pop();
-                //Clear the stacks
-                operators.Clear();
-                values.Clear();
                 return retVal;
             }
             else if (operators.Count > 0 && operators.Peek().Equals("+"))
@@ -167,9 +172,7 @@ namespace FormulaEvaluator
                     throw new ArgumentException("Expression contains too many operators");
                 }
                 int retVal = values.Pop() + values.Pop();
-                //Clear the stacks
-                operators.Clear();
-                values.Clear();
+
                 return retVal;
             }
             else if (operators.Count > 0 && operators.Peek().Equals("-"))
@@ -180,9 +183,7 @@ namespace FormulaEvaluator
                 }
                 int placeHolder = values.Pop();
                 int retVal = values.Pop() - placeHolder;
-                //Clear the stacks
-                operators.Clear();
-                values.Clear();
+
                 return retVal;
             }
             else
@@ -191,9 +192,6 @@ namespace FormulaEvaluator
                 {
                     throw new ArgumentException("Expression contains too many operators per operand");
                 }
-                //Clear the stacks
-                operators.Clear();
-                values.Clear();
                 throw new ArgumentException("Expression contains too few operators or has other syntax problems");
             }
         }
