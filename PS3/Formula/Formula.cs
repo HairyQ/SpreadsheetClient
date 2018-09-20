@@ -45,6 +45,10 @@ namespace SpreadsheetUtilities
     /// </summary>
     public class Formula
     {
+        private Func<string, string> normalizer;
+        private Func<string, bool> validator;
+
+
         /// <summary>
         /// Creates a Formula from a string that consists of an infix expression written as
         /// described in the class comment.  If the expression is syntactically invalid,
@@ -56,6 +60,8 @@ namespace SpreadsheetUtilities
         public Formula(String formula) :
             this(formula, s => s, s => true)
         {
+            normalizer = s => s;
+            validator = s => true;
         }
 
         /// <summary>
@@ -82,6 +88,21 @@ namespace SpreadsheetUtilities
         /// </summary>
         public Formula(String formula, Func<string, string> normalize, Func<string, bool> isValid)
         {
+            if (normalize == null)
+            {
+                normalizer = s => s;
+                validator = isValid;
+            } else if (isValid == null)
+            {
+                normalizer = normalize;
+                validator = s => true;
+            } else
+            {
+                normalizer = normalize;
+                validator = isValid;
+            }
+
+            
         }
 
         /// <summary>
