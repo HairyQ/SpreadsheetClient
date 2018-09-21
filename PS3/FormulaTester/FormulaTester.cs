@@ -57,10 +57,10 @@ namespace FormulaTester
             Func<string, double> lookup = s => 0;
 
             Formula formulaInstance = new Formula("1 + 1");
-            Assert.AreEqual("2", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual(2.0, formulaInstance.Evaluate(lookup));
 
             formulaInstance = new Formula("1+1");
-            Assert.AreEqual("2", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual(2.0, formulaInstance.Evaluate(lookup));
 
             //Working with variables
             lookup = LookupDel;
@@ -102,7 +102,7 @@ namespace FormulaTester
             Assert.AreEqual("8", formulaInstance.Evaluate(lookup).ToString());
 
             formulaInstance = new Formula("2*1");
-            Assert.AreEqual("8", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual("2", formulaInstance.Evaluate(lookup).ToString());
 
             //Working with variables:
             lookup = LookupDel;
@@ -204,7 +204,7 @@ namespace FormulaTester
             //AD488 = 4.99992
 
             Formula formulaInstance = new Formula("(A_3*7)*5.4 * AD488 * (8 * 4)");
-            Assert.AreEqual("19353.29034", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual("19353.2903424", formulaInstance.Evaluate(lookup).ToString());
         }
 
         [TestMethod]
@@ -215,8 +215,9 @@ namespace FormulaTester
             //A_3 = 3.2
             //AD488 = 4.99992
 
-            Formula formulaInstance = new Formula("((((A_3/7)/5.4 / AD488 / (8 / 4))))");
-            Assert.AreEqual("0.008465743918", formulaInstance.Evaluate(lookup).ToString());
+            Formula formulaInstance = new Formula("(A_3/7)/5.4 / AD488 / (8 / 4)");
+            double value = (double)formulaInstance.Evaluate(lookup);
+            Assert.AreEqual("0.00846574391751114", formulaInstance.Evaluate(lookup).ToString());
         }
 
         [TestMethod]
@@ -225,13 +226,13 @@ namespace FormulaTester
             Func<string, double> lookup = s => 0;
 
             Formula formulaInstance = new Formula("8.6 - (64 / (5 + 3.9) * 3)");
-            Assert.AreEqual("-12.97303371", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual("-12.9730337078652", formulaInstance.Evaluate(lookup).ToString());
         }
 
         [TestMethod]
         public void TestEvaluateComplexEquationsWithVariables()
         {
-            double LookupDel(string s)
+            double LookupDelegate(string s)
             {
                 if (s.Equals("GHE_43"))
                 {
@@ -245,10 +246,10 @@ namespace FormulaTester
                 }
             }
 
-            Func<string, double> lookup = LookupDel;
+            Func<string, double> lookup = LookupDelegate;
 
             Formula formulaInstance = new Formula("8.6 - (dfsa6f / (5 + GHE_43) * 3)");
-            Assert.AreEqual("-12.97303371", formulaInstance.Evaluate(lookup).ToString());
+            Assert.AreEqual("-12.9730337078652", formulaInstance.Evaluate(lookup).ToString());
         }
 
         [TestMethod]
