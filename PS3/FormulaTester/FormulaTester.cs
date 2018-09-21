@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SpreadsheetUtilities;
 
@@ -484,10 +485,42 @@ namespace FormulaTester
         }
 
         [TestMethod]
-        public void TestGetHashCode()
+        public void TestGetHashCodeEqualFormulae()
         {
+            Formula instance = new Formula("A6 + (43.56 / fdasD90)");
+            Formula instance2 = new Formula("A6+(43.56/fdasD90)");
 
+            Assert.AreEqual(instance.GetHashCode(), instance2.GetHashCode());
 
+            instance2 = instance;
+
+            Assert.AreEqual(instance.GetHashCode(), instance2.GetHashCode());
+        }
+
+        /// <summary>
+        /// This test method is used to determine how "good" my hash function is - a failed
+        /// test implies a poor hash function, not necessarily that GetHashCode() doesn't
+        /// work. The limit for i in the first for loop can be adjusted to determine the 
+        /// quality of the hash code.
+        /// </summary>
+        [TestMethod]
+        public void TestGetHashCodeQuality()
+        {
+            int currHashCode = -1;
+
+            Random rand = new Random(23423);
+            for (int i = 0; i < 100; i++)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < i; j++)
+                {
+                    sb.Append(rand.NextDouble() + "+");
+                }
+                sb.Append(rand.NextDouble());
+                Formula f = new Formula(sb.ToString());
+                Assert.AreNotEqual(f.GetHashCode(), currHashCode);
+                currHashCode = f.GetHashCode();
+            }
         }
 
     }
