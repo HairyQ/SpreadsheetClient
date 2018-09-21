@@ -272,7 +272,7 @@ namespace FormulaTester
         {
             Func<string, string> normalizer = s => s.ToLower();
             Func<string, bool> validator = s => true;
-            Formula instance = new Formula("X + x - 43 * X");
+            Formula instance = new Formula("X + x - 43 * X", normalizer, validator);
 
             int counter = 0;
             foreach (string s in instance.GetVariables())
@@ -286,24 +286,24 @@ namespace FormulaTester
         [TestMethod]
         public void TestGetVariablesDifferentCasesNoNormalizer()
         {
-            Func<string, string> normalizer = s => s; //No changes occur
-            Func<string, bool> validator = s => true;
             Formula instance = new Formula("X + x - 43 * X");
 
-            int counter = 0;
+            int capitalCounter = 0;
+            int lowercaseCounter = 0;
             foreach (string s in instance.GetVariables())
             {
-                counter++;
-                Assert.IsTrue(s.Equals("X") || s.Equals("x"));
+                if (s.Equals("x"))
+                    lowercaseCounter++;
+                else if (s.Equals("X"))
+                    capitalCounter++;
             }
-            Assert.Equals(2, counter);
+            Assert.IsTrue(capitalCounter == 1);
+            Assert.IsTrue(lowercaseCounter == 1);
         }
 
         [TestMethod]
         public void TestGetVariablesWithNoVariables()
         {
-            Func<string, string> normalizer = s => s;
-            Func<string, bool> validator = s => true;
             Formula instance = new Formula("12 + 8 - 43 * 2");
 
             Assert.IsFalse(instance.GetVariables().GetEnumerator().MoveNext());
@@ -317,6 +317,15 @@ namespace FormulaTester
 
             Assert.IsTrue(instance.ToString().Equals("43+x"));
             Assert.AreEqual(instance.ToString(), instance2.ToString());
+        }
+
+        [TestMethod]
+        public void TestToStringWithUppercaseNormalizer()
+        {
+            Func<string, string> normalizer = s => s.ToUpper();
+            Formula instance = new Formula("x + 43 + X", normalizer, null);
+
+            Assert.AreEqual(instance.ToString(), "X+43+X");
         }
 
         [TestMethod]
@@ -522,6 +531,10 @@ namespace FormulaTester
                 currHashCode = f.GetHashCode();
             }
         }
+
+        /////////////////////////////////////////////////////////////////////////////////
+        ///Exception Handling
+        /////////////////////////////////////////////////////////////////////////////////
 
     }
 }
