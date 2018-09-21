@@ -35,7 +35,7 @@ namespace FormulaTester
         public void TestConstructorSetDelegates()
         {
             Func<string, string> normalizer = s => s.ToLower(); //Converts each string to lowercase
-            bool validator (string s)
+            bool validator(string s)
             {
                 if (s.Equals("abcd1fdgdgjkt"))
                     return true;
@@ -228,7 +228,7 @@ namespace FormulaTester
             Formula formulaInstance = new Formula("8.6 - (64 / (5 + 3.9) * 3)");
             Assert.AreEqual("-12.97303371", formulaInstance.Evaluate(lookup).ToString());
         }
-        
+
         [TestMethod]
         public void TestComplexEquationsWithVariables()
         {
@@ -255,38 +255,232 @@ namespace FormulaTester
         [TestMethod]
         public void TestGetVariablesBasic()
         {
+            Formula instance = new Formula("X + 23 - (4/FDS78)");
 
+            int counter = 0;
+            foreach (string s in instance.GetVariables())
+            {
+                counter++;
+                Assert.IsTrue(s.Equals("X") || s.Equals("FDS78"));
+            }
+            Assert.Equals(2, counter);
+        }
+
+        [TestMethod]
+        public void TestGetVariablesDifferentCasesLowercaseNormalizer()
+        {
+            Func<string, string> normalizer = s => s.ToLower();
+            Func<string, bool> validator = s => true;
+            Formula instance = new Formula("X + x - 43 * X");
+
+            int counter = 0;
+            foreach (string s in instance.GetVariables())
+            {
+                counter++;
+                Assert.IsTrue(s.Equals("X"));
+            }
+            Assert.Equals(1, counter);
+        }
+
+        [TestMethod]
+        public void TestGetVariablesDifferentCasesNoNormalizer()
+        {
+            Func<string, string> normalizer = s => s; //No changes occur
+            Func<string, bool> validator = s => true;
+            Formula instance = new Formula("X + x - 43 * X");
+
+            int counter = 0;
+            foreach (string s in instance.GetVariables())
+            {
+                counter++;
+                Assert.IsTrue(s.Equals("X") || s.Equals("x"));
+            }
+            Assert.Equals(2, counter);
+        }
+
+        [TestMethod]
+        public void TestGetVariablesWithNoVariables()
+        {
+            Func<string, string> normalizer = s => s;
+            Func<string, bool> validator = s => true;
+            Formula instance = new Formula("12 + 8 - 43 * 2");
+
+            Assert.IsFalse(instance.GetVariables().GetEnumerator().MoveNext());
+        }
+
+        [TestMethod]
+        public void TestToStringBasicWithAndWithoutSpaces()
+        {
+            Formula instance = new Formula("43 + x");
+            Formula instance2 = new Formula("43+x");
+
+            Assert.IsTrue(instance.ToString().Equals("43+x"));
+            Assert.AreEqual(instance.ToString(), instance2.ToString());
+        }
+
+        [TestMethod]
+        public void TestToStringComplexFormulaSpaceTrimming()
+        {
+            Formula instance = new Formula("3242     *  CS889/8/(9 *43)");
+
+            Assert.AreEqual(instance.ToString(), "3242*CS889/8/(9*43)");
+        }
+
+        [TestMethod]
+        public void TestToStringUppercaseNormalizer()
+        {
+            Func<string, string> normalizer = s => s.ToUpper();
+            Formula instance = new Formula("x + X * NJ42bCd", normalizer, null);
+
+            Assert.AreEqual(instance.ToString(), "X+X*NJ42BCD");
+        }
+
+        [TestMethod]
+        public void TestEqualsReturnsFalseOnNoFormula()
+        {
+            Formula f = new Formula("1+1");
+
+            Assert.IsFalse(f.Equals(null));
+            Assert.IsFalse(f.Equals("Hello"));
 
         }
 
         [TestMethod]
-        public void TestToString()
+        public void TestEqualsWithAndWithoutSpaces()
         {
+            Formula instance = new Formula("2 +      3");
+            Formula instance2 = new Formula("2+3");
 
-
+            Assert.IsTrue(instance.Equals(instance2));
         }
 
         [TestMethod]
-        public void TestEquals()
+        public void TestEqualsUnequalFormulae()
         {
+            Formula instance = new Formula("2+3/5");
+            Formula instance2 = new Formula("2+3");
 
-
+            Assert.IsFalse(instance.Equals(instance2));
         }
 
         [TestMethod]
-        public void TestEqualsOperator
-            
-            ()
+        public void TestEqualsWithUppercaseNormalizer()
         {
+            Func<string, string> normalizer = s => s.ToUpper();
 
-
+            Assert.IsTrue(new Formula("a1+b2", normalizer, null).Equals(new Formula("A1 + B2")));
+            Assert.IsFalse(new Formula("a1+b2").Equals(new Formula("A1 + B2")));
         }
 
         [TestMethod]
-        public void TestNotEqualOperator()
+        public void TestEqualsMismatchedTokens()
         {
+            Assert.IsFalse(new Formula("A3 + B3").Equals(new Formula("B3 + A3")));
+            Assert.IsFalse(new Formula("14.3 + B43 - 100 + Bf43").Equals(new Formula("14.3-B43+100+Bf43")));
+        }
 
+        [TestMethod]
+        public void TestEqualsSameValueDiffFloats()
+        {
+            Assert.IsTrue(new Formula("X + 43.000").Equals(new Formula("X + 43.0")));
+        }
 
+        [TestMethod]
+        public void TestEqualsOperatorUnequalFormulae()
+        {
+            Formula instance = new Formula("2+3/5");
+            Formula instance2 = new Formula("2+3");
+
+            Assert.IsFalse(instance == instance2);
+        }
+
+        [TestMethod]
+        public void TestEqualsOperatorWithUppercaseNormalizer()
+        {
+            Func<string, string> normalizer = s => s.ToUpper();
+
+            Assert.IsTrue(new Formula("a1+b2", normalizer, null) == new Formula("A1 + B2"));
+            Assert.IsFalse(new Formula("a1+b2") == new Formula("A1 + B2"));
+        }
+
+        [TestMethod]
+        public void TestEqualOperatorsMismatchedTokens()
+        {
+            Assert.IsFalse(new Formula("A3 + B3") == (new Formula("B3 + A3")));
+            Assert.IsFalse(new Formula("14.3 + B43 - 100 + Bf43") == new Formula("14.3-B43+100+Bf43"));
+        }
+
+        [TestMethod]
+        public void TestEqualsOperatorSameValueDiffFloats()
+        {
+            Assert.IsTrue(new Formula("X + 43.000") == (new Formula("X + 43.0")));
+        }
+
+        [TestMethod]
+        public void TestEqualsOperatorBasicWithSpaces()
+        {
+            Assert.IsTrue(new Formula("1 + 3.4 -    B43") == new Formula("1+3.4-B43"));
+        }
+
+        [TestMethod]
+        public void TestEqualsOperatorNullValues()
+        {
+            Formula nullForm = null;
+            Formula nullForm2 = null;
+            Formula instance = new Formula("1 + 2");
+
+            Assert.IsTrue(nullForm == nullForm2);
+            Assert.IsFalse(instance == nullForm);
+            Assert.IsFalse(nullForm == instance);
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorBasic()
+        {
+            Formula instance = new Formula("2+3/5");
+            Formula instance2 = new Formula("2+3");
+
+            Assert.IsTrue(instance != instance2);
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorWithUppercaseNormalizer()
+        {
+            Func<string, string> normalizer = s => s.ToUpper();
+
+            Assert.IsFalse(new Formula("a1+b2", normalizer, null) != new Formula("A1 + B2"));
+            Assert.IsTrue(new Formula("a1+b2") != new Formula("A1 + B2"));
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorsMismatchedTokens()
+        {
+            Assert.IsTrue(new Formula("A3 + B3") != (new Formula("B3 + A3")));
+            Assert.IsTrue(new Formula("14.3 + B43 - 100 + Bf43") != new Formula("14.3-B43+100+Bf43"));
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorSameValueDiffFloats()
+        {
+            Assert.IsFalse(new Formula("X + 43.000") != new Formula("X + 43.0"));
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorBasicWithSpaces()
+        {
+            Assert.IsFalse(new Formula("1 + 3.4 -    B43") != new Formula("1+3.4-B43"));
+        }
+
+        [TestMethod]
+        public void TestNotEqualOperatorNullValues()
+        {
+            Formula nullForm = null;
+            Formula nullForm2 = null;
+            Formula instance = new Formula("1 + 2");
+
+            Assert.IsFalse(nullForm != nullForm2);
+            Assert.IsTrue(instance != nullForm);
+            Assert.IsTrue(nullForm != instance);
         }
 
         [TestMethod]
