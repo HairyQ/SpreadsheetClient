@@ -47,10 +47,8 @@ namespace FormulaTester
             //No assertions for the next lines - shouldn't throw exception
             Formula instance = new Formula("ABCD1FDGdgjkT + 1");
             instance = new Formula("ABCD1FDGdgjkT + 1", normalizer, null);
-            instance = new Formula("ABCD1FDGdgjkT + 1", null, validator);
+            instance = new Formula("abcd1fdgdgjkt + 1", null, validator);
             instance = new Formula("ABCD1FDGdgjkT + 1", normalizer, validator);
-
-            //Assert.AreEqual(instance.Evaluate(lookupDel), 4);
         }
 
         [TestMethod]

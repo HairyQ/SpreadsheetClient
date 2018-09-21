@@ -48,6 +48,10 @@ namespace SpreadsheetUtilities
         private Func<string, string> normalizer;
         private Func<string, bool> validator;
 
+        private Stack<double> values;
+        private Stack<string> operators;
+
+        private string expression;
 
         /// <summary>
         /// Creates a Formula from a string that consists of an infix expression written as
@@ -62,6 +66,8 @@ namespace SpreadsheetUtilities
         {
             normalizer = s => s;
             validator = s => true;
+
+            FormulaConstructorMethod(formula, normalizer, validator);
         }
 
         /// <summary>
@@ -102,7 +108,7 @@ namespace SpreadsheetUtilities
                 validator = isValid;
             }
 
-            
+            FormulaConstructorMethod(formula, normalizer, validator);
         }
 
         /// <summary>
@@ -246,6 +252,26 @@ namespace SpreadsheetUtilities
                 }
             }
 
+        }
+
+        private void FormulaConstructorMethod(string formula, Func<string, string> normalizer, Func<string, bool> validator)
+        {
+            StringBuilder finalString = new StringBuilder();
+
+            foreach (string token in GetTokens(formula))
+            {
+                if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+                {
+                    if (!validator(normalizer(token)))
+                    {
+                        throw new ArgumentException("Formula contains invalid variable");
+                    }
+
+                    finalString.Append(token);
+                }
+            }
+
+            expression = finalString.ToString();
         }
     }
 
