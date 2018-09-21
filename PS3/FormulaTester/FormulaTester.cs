@@ -43,14 +43,14 @@ namespace FormulaTester
                 return false;
             }
             Func<string, double> lookupDel = s => 4.0;
-
-            //No assertion - the validator just shouldn't throw an exception:
-            Formula instance = new Formula("ABCD1FDGdgjkT + 1", normalizer, validator);
-
-            //Again, should not throw an exception
-            instance = new Formula("ABCD1FDGdgjkT + 1");
+            
+            //No assertions for the next lines - shouldn't throw exception
+            Formula instance = new Formula("ABCD1FDGdgjkT + 1");
             instance = new Formula("ABCD1FDGdgjkT + 1", normalizer, null);
             instance = new Formula("ABCD1FDGdgjkT + 1", null, validator);
+            instance = new Formula("ABCD1FDGdgjkT + 1", normalizer, validator);
+
+            //Assert.AreEqual(instance.Evaluate(lookupDel), 4);
         }
 
         [TestMethod]
@@ -222,7 +222,7 @@ namespace FormulaTester
         }
 
         [TestMethod]
-        public void TestComplexEquationsNoVariables()
+        public void TestEvaluateComplexEquationsNoVariables()
         {
             Func<string, double> lookup = s => 0;
 
@@ -231,7 +231,7 @@ namespace FormulaTester
         }
 
         [TestMethod]
-        public void TestComplexEquationsWithVariables()
+        public void TestEvaluateComplexEquationsWithVariables()
         {
             double LookupDel(string s)
             {
