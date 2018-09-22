@@ -160,7 +160,7 @@ namespace SpreadsheetUtilities
                 {
                     currVal = lookup(normalizer(token));
                     VariableDoubleInstructions(currVal);
-                    if (!fE.Equals(gibberish))
+                    if (!fE.Reason.Equals(gibberish.Reason))
                     {
                         return fE;
                     }
@@ -168,18 +168,13 @@ namespace SpreadsheetUtilities
                 //Regex for finding just doubles (and ints)
                 else if (Regex.IsMatch(token, @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?") || Regex.IsMatch(token, @"(\s?[0-9]{1,}\s?)"))
                 {
-                    if (double.TryParse(token, out currVal))
-                    {
-                        VariableDoubleInstructions(currVal);
-                        if (!fE.Equals(gibberish))
-                        {
-                            return fE;
-                        }
-                    }
-                    else
-                    {
-                        return new FormulaError("Invalid integer token");
-                    }
+                    double.TryParse(token, out currVal);
+                    VariableDoubleInstructions(currVal);
+
+                    if (!fE.Equals(gibberish)) //Had to use this to pass a FormulaError from a helper method - 
+                    {                          //gibberish should never be returned, just represents whether or 
+                        return fE;             //not a Formula error was returned from VariableDoubleInstructions()
+                    }                          //based on whether or not gibberish has changed
                 }
                 //Regex for finding '+' and '-' operators
                 else if (Regex.IsMatch(token, @"(\s?\+|\-\s?)"))
@@ -248,10 +243,7 @@ namespace SpreadsheetUtilities
                     }
 
                     //Next operator should be '(' - pop it.
-                    if (operators.Count > 0 && !operators.Pop().Equals("("))
-                    {
-                        return new FormulaError("Each set of parentheses must have an opening and closing parenthesis");
-                    }
+                    operators.Pop();
 
                     if (operators.Count > 0 && (operators.Peek().Equals("*") || operators.Peek().Equals("/")))
                     {
@@ -371,7 +363,12 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator ==(Formula f1, Formula f2)
         {
-            return f1.Equals(f2);
+            if ((object)f1 == null && (object)f2 == null)
+                return true;
+            if ((object)f1 == null || (object)f2 == null)
+                return false;
+
+            return f1.GetHashCode() == f2.GetHashCode();
         }
 
         /// <summary>
@@ -381,7 +378,12 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator !=(Formula f1, Formula f2)
         {
-            return !f1.Equals(f2);
+            if ((object)f1 == null && (object)f2 == null)
+                return false;
+            if ((object)f1 == null || (object)f2 == null)
+                return true;
+
+                return f1.GetHashCode() != f2.GetHashCode();
         }
 
         /// <summary>
@@ -391,7 +393,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override int GetHashCode()
         {
-            return 0;
+            return expression.GetHashCode();
         }
 
         /// <summary>
@@ -435,29 +437,21 @@ namespace SpreadsheetUtilities
             //Exception case: The stack is empty, and can't be "peeked"
             if (operators.Count > 0 && operators.Peek().Equals("*"))
             {
-                try
-                {
-                    operators.Pop();
-                    currVal *= values.Pop();
-                    values.Push(currVal);
-                }
-                catch (InvalidOperationException e)
-                {
-                    fE = new FormulaError("Expressions cannot start with operators");
-                }
+                operators.Pop();
+                currVal *= values.Pop();
+                values.Push(currVal);
+                
             }
             else if (operators.Count > 0 && operators.Peek().Equals("/"))
             {
-                try
-                {
-                    operators.Pop();
-                    double placeHolder = values.Pop();
-                    currVal = placeHolder / currVal;
-                    values.Push(currVal);
-                }
-                catch (DivideByZeroException e)
+                operators.Pop();
+                double placeHolder = values.Pop();
+                currVal = placeHolder / currVal;
+                if (double.IsInfinity(currVal))
                 {
                     fE = new FormulaError("Cannot divide by 0");
+                } else { 
+                    values.Push(currVal);
                 }
             }
             else
@@ -483,7 +477,7 @@ namespace SpreadsheetUtilities
                 {
                     if (!validator(normalizer(token)))
                     {
-                        throw new ArgumentException("Formula contains invalid variable");
+                        throw new FormulaFormatException("Formula contains invalid variable");
                     }
 
                     if (!variables.Contains(normalizer(token)))
@@ -491,10 +485,16 @@ namespace SpreadsheetUtilities
                         variables.Add(normalizer(token));
                     }
 
-                    finalString.Append(normalizer(token));
+                    finalString.Append(normalizer(token).ToString());
+                } else if (token.ToCharArray().ToList().Contains('.'))  //Call this cheating if you 
+                {                                                          
+                    double.TryParse(token, out double currDouble);
+                    string s = currDouble.ToString();
+
+                    finalString.Append(currDouble.ToString());
                 } else
                 {
-                    finalString.Append(normalizer(token));
+                    finalString.Append(token.ToString());
                 }
             }
 

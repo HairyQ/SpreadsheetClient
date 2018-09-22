@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SpreadsheetUtilities;
@@ -355,7 +356,7 @@ namespace FormulaTester
         {
             Formula f = new Formula("1+1");
 
-            Assert.IsFalse(f.Equals(null));
+            Assert.IsFalse(f == null);
             Assert.IsFalse(f.Equals("Hello"));
 
         }
@@ -421,14 +422,16 @@ namespace FormulaTester
         [TestMethod]
         public void TestEqualOperatorsMismatchedTokens()
         {
-            Assert.IsFalse(new Formula("A3 + B3") == (new Formula("B3 + A3")));
+            Assert.IsFalse(new Formula("A3 + B3") == new Formula("B3 + A3"));
             Assert.IsFalse(new Formula("14.3 + B43 - 100 + Bf43") == new Formula("14.3-B43+100+Bf43"));
         }
 
         [TestMethod]
         public void TestEqualsOperatorSameValueDiffFloats()
         {
-            Assert.IsTrue(new Formula("X + 43.000") == (new Formula("X + 43.0")));
+            string s = ((double)43.0).ToString();
+            string x = ((double)43.0000).ToString();
+            Assert.IsTrue(new Formula("X + 43.000") == new Formula("X + 43.0"));
         }
 
         [TestMethod]
@@ -523,6 +526,7 @@ namespace FormulaTester
             int currHashCode = -1;
 
             Random rand = new Random(23423);
+            ArrayList list = new ArrayList(); 
             for (int i = 0; i < 100; i++)
             {
                 StringBuilder sb = new StringBuilder();
@@ -532,14 +536,94 @@ namespace FormulaTester
                 }
                 sb.Append(rand.NextDouble());
                 Formula f = new Formula(sb.ToString());
-                Assert.AreNotEqual(f.GetHashCode(), currHashCode);
+                Assert.IsFalse(list.Contains(f.GetHashCode()));
+                list.Add(f.GetHashCode());
                 currHashCode = f.GetHashCode();
             }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////
+        ///Formula Errors
+        /////////////////////////////////////////////////////////////////////////////////
+
+
+        [TestMethod]
+        public void TestTooFewOperatorsAddition()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("3.45 +");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+        }
+
+        [TestMethod]
+        public void TestTooFewOperatorsSubtraction()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("3.45 -");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("(3.45 - )");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+        }
+
+        [TestMethod]
+        public void TestMismatchedParentheses()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("3.45 - 43)");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("3.45 +)");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("(3.45 +))");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("(3.45 +))))))))))))))))))))))");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+        }
+
+        [TestMethod]
+        public void TestTooManyOrTooFewVariables()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("45 A568");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+        }
+
+        [TestMethod]
+        public void TestTooManyOperators()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("+ 544 -");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+
+            instance = new Formula("4553 + - z");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
+        }
+
+        [TestMethod]
+        public void TestDivideByZero()
+        {
+            Func<string, double> lookup = s => 0;
+            Formula instance = new Formula("5/0");
+            Assert.IsInstanceOfType(instance.Evaluate(lookup), typeof(FormulaError));
         }
 
         /////////////////////////////////////////////////////////////////////////////////
         ///Exception Handling
         /////////////////////////////////////////////////////////////////////////////////
 
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void TestInvalidVariableException()
+        {
+            Func<string, double> lookup = s => 0;
+            Func<string, bool> validator = s => false;
+            Formula instance = new Formula("X + 544", null, validator);
+        }
     }
 }
