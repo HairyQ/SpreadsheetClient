@@ -18,6 +18,7 @@
 
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -56,6 +57,7 @@ namespace SpreadsheetUtilities
 
         private FormulaError fE;
         private FormulaError gibberish = new FormulaError("vjaspv-023572395-=409uds256632iabfuiaw");
+        private ArrayList variables;
 
         /// <summary>
         /// Creates a Formula from a string that consists of an infix expression written as
@@ -71,6 +73,7 @@ namespace SpreadsheetUtilities
             values = new Stack<double>();
             operators = new Stack<string>();
             fE = gibberish;
+            variables = new ArrayList();
 
             normalizer = s => s;
             validator = s => true;
@@ -105,6 +108,7 @@ namespace SpreadsheetUtilities
             values = new Stack<double>();
             operators = new Stack<string>();
             fE = gibberish;
+            variables = new ArrayList();
 
             if (normalize == null)
             {
@@ -314,7 +318,10 @@ namespace SpreadsheetUtilities
         /// </summary>
         public IEnumerable<String> GetVariables()
         {
-            return null;
+            foreach (string variable in variables)
+            {
+                yield return variable;
+            }
         }
 
         /// <summary>
@@ -329,7 +336,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override string ToString()
         {
-            return null;
+            return expression;
         }
 
         /// <summary>
@@ -354,7 +361,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override bool Equals(object obj)
         {
-            return false;
+            return GetHashCode() == obj.GetHashCode();
         }
 
         /// <summary>
@@ -364,7 +371,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator ==(Formula f1, Formula f2)
         {
-            return false;
+            return f1.Equals(f2);
         }
 
         /// <summary>
@@ -374,7 +381,7 @@ namespace SpreadsheetUtilities
         /// </summary>
         public static bool operator !=(Formula f1, Formula f2)
         {
-            return false;
+            return !f1.Equals(f2);
         }
 
         /// <summary>
@@ -459,6 +466,13 @@ namespace SpreadsheetUtilities
             }
         }
 
+        /// <summary>
+        /// Helps the formula constructor create a string representation (without spaces)
+        /// of the formula, and builds the Arraylist of variables within the formula
+        /// </summary>
+        /// <param name="formula">String passed to formula</param>
+        /// <param name="normalizer">Normalizer delegate</param>
+        /// <param name="validator">Validator delegate</param>
         private void FormulaConstructorMethod(string formula, Func<string, string> normalizer, Func<string, bool> validator)
         {
             StringBuilder finalString = new StringBuilder();
@@ -472,10 +486,15 @@ namespace SpreadsheetUtilities
                         throw new ArgumentException("Formula contains invalid variable");
                     }
 
-                    finalString.Append(token);
+                    if (!variables.Contains(normalizer(token)))
+                    {
+                        variables.Add(normalizer(token));
+                    }
+
+                    finalString.Append(normalizer(token));
                 } else
                 {
-                    finalString.Append(token);
+                    finalString.Append(normalizer(token));
                 }
             }
 

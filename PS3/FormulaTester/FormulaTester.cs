@@ -257,13 +257,19 @@ namespace FormulaTester
         {
             Formula instance = new Formula("X + 23 - (4/FDS78)");
 
-            int counter = 0;
+            int xCounter = 0;
+            int FDS78Counter = 0;
+
             foreach (string s in instance.GetVariables())
             {
-                counter++;
-                Assert.IsTrue(s.Equals("X") || s.Equals("FDS78"));
+                if (s.Equals("X"))
+                    xCounter++;
+                else if (s.Equals("FDS78"))
+                    FDS78Counter++;
             }
-            Assert.Equals(2, counter);
+
+            Assert.IsTrue(xCounter == 1);
+            Assert.IsTrue(FDS78Counter == 1);
         }
 
         [TestMethod]
@@ -277,9 +283,9 @@ namespace FormulaTester
             foreach (string s in instance.GetVariables())
             {
                 counter++;
-                Assert.IsTrue(s.Equals("X"));
+                Assert.IsTrue(s.Equals("x"));
             }
-            Assert.Equals(1, counter);
+            Assert.IsTrue(counter == 1);
         }
 
         [TestMethod]
