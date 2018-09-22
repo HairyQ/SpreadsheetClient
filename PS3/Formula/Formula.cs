@@ -46,17 +46,50 @@ namespace SpreadsheetUtilities
     /// </summary>
     public class Formula
     {
+        /// <summary>
+        /// Normalizer delegate for transforming variables given certain parameters
+        /// </summary>
         private Func<string, string> normalizer;
+
+        /// <summary>
+        /// Validator delegate for determining whether or not a given variable is a
+        /// "valid" variable, as determined by the user
+        /// </summary>
         private Func<string, bool> validator;
 
+        /// <summary>
+        /// Stack containing the values of doubles and variables in the formula
+        /// </summary>
         private Stack<double> values;
+
+        /// <summary>
+        /// Stack containing operators given in the formula represented as strings
+        /// </summary>
         private Stack<string> operators;
 
+        /// <summary>
+        /// Normalized string representing the given formula
+        /// </summary>
         private string expression;
+
+        /// <summary>
+        /// Currently calculated value of the expression so far
+        /// </summary>
         private double currVal;
 
+        /// <summary>
+        /// Placeholder FormulaError for passing an error from a helper method
+        /// </summary>
         private FormulaError fE;
+
+        /// <summary>
+        /// Placeholder FormulaError for passing an error from a helper method
+        /// </summary>
         private FormulaError gibberish = new FormulaError("vjaspv-023572395-=409uds256632iabfuiaw");
+
+        /// <summary>
+        /// Running list of all variables involved in the formula
+        /// </summary>
         private ArrayList variables;
 
         /// <summary>
