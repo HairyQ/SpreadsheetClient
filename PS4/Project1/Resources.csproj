@@ -37,7 +37,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Libraries\DependencyGraph.dll" />
+    <Content Include="Libraries\DependencyGraph.xml" />
     <Content Include="Libraries\Formula.dll" />
+    <Content Include="Libraries\Formula.xml" />
     <Content Include="README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
