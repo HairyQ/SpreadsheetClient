@@ -10,12 +10,41 @@ namespace SS
     public class Spreadsheet : AbstractSpreadsheet
 
     {
+        public class Cell
+        {
+
+            private String name;
+            private Object contents;
+            private Object value;
+
+            public Cell(String newName)
+            {
+                name = newName;
+                contents = "";
+            }
+
+            public void SetContents(Formula formula)
+            {
+                contents = formula;
+            }
+
+            public void SetContents(String sentence)
+            {
+                contents = sentence;
+            }
+
+            public void SetContents(Double d)
+            {
+                contents = d;
+            }
+        }
+
         /// <summary>
         /// Zero-argument constructor
         /// </summary>
         public Spreadsheet()
         {
-
+            Cell c1 = new Cell("");
         }
 
         public override object GetCellContents(string name)
