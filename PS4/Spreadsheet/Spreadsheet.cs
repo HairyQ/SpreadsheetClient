@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SpreadsheetUtilities;
 
@@ -31,24 +32,33 @@ namespace SS
             public void SetContents(String sentence)
             {
                 contents = sentence;
+                value = sentence;
             }
 
             public void SetContents(Double d)
             {
                 contents = d;
+                value = d;
             }
         }
 
+        private Dictionary<string, Cell> allCells;
+
         /// <summary>
-        /// Zero-argument constructor
+        /// Zero-argument public constructor
         /// </summary>
         public Spreadsheet()
         {
-            Cell c1 = new Cell("");
+            allCells = new Dictionary<string, Cell>();
         }
 
         public override object GetCellContents(string name)
         {
+            //Regex for matching to variables
+            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*") || name.Equals(null))
+                throw new InvalidNameException();
+
+           
             throw new NotImplementedException();
         }
 
