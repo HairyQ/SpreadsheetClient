@@ -24,6 +24,11 @@ namespace SS
                 contents = "";
             }
 
+            public Object GetContents()
+            {
+                return contents;
+            }
+
             public void SetContents(Formula formula)
             {
                 contents = formula;
@@ -58,18 +63,22 @@ namespace SS
             if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*") || name.Equals(null))
                 throw new InvalidNameException();
 
-           
-            throw new NotImplementedException();
+            return allCells[name].GetContents();
         }
 
         public override IEnumerable<string> GetNamesOfAllNonemptyCells()
         {
-            throw new NotImplementedException();
+            foreach (String name in allCells.Keys)
+            {
+                yield return name;
+            }
         }
 
         public override ISet<string> SetCellContents(string name, double number)
         {
-            throw new NotImplementedException();
+            Cell newCell = new Cell(name);
+            newCell.SetContents(number);
+            allCells.Add(name, newCell);
         }
 
         public override ISet<string> SetCellContents(string name, string text)

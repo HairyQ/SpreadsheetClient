@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SpreadsheetUtilities;
 using SS;
@@ -81,9 +82,20 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestGetDirectDependents()
+        public void TestSetCellContentsWithDependencies()
         {
+            Spreadsheet spread = new Spreadsheet();
+            spread.SetCellContents("C1", "A1 + B1");
+            spread.SetCellContents("B1", "A1 + 3");
 
+            HashSet<String> hS = new HashSet<string>() { "A1", "B1", "C1" };
+            Assert.IsTrue(spread.SetCellContents("A1", 45).SetEquals(hS));
+
+            hS.Add("D1");
+            Assert.IsTrue(spread.SetCellContents("D1", "A1 + B1 + C1").SetEquals(hS));
+
+            hS.Add("E1");
+            Assert.IsFalse(spread.SetCellContents("E1", "Random String").SetEquals(hS));
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -121,13 +133,6 @@ namespace UnitTestProject1
             Spreadsheet spread = new Spreadsheet();
             spread.SetCellContents(null, "Here");
         }
-
-        //TODO
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestGetDirectDependentsArgumentNullException()
-        {
-            Spreadsheet spread = new Spreadsheet();
-        }
+        
     }
 }
