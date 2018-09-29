@@ -69,9 +69,9 @@ namespace SS
         {
             if (string.IsNullOrEmpty(name))
                 throw new InvalidNameException();
-
+            
             //Regex for matching to variables
-            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+            if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
                 throw new InvalidNameException();
 
             if (!allCells.ContainsKey(name))
@@ -128,9 +128,9 @@ namespace SS
                 throw new InvalidNameException();
 
             //Regex for matching to variables
-            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+            if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
                 throw new InvalidNameException();
-
+            
             if (allCells.ContainsKey(name))
             {
                 allCells[name].SetContents(contents);
