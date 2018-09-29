@@ -85,14 +85,20 @@ namespace UnitTestProject1
         public void TestSetCellContentsWithDependencies()
         {
             Spreadsheet spread = new Spreadsheet();
-            spread.SetCellContents("C1", "A1 + B1");
-            spread.SetCellContents("B1", "A1 + 3");
+            spread.SetCellContents("C1", new Formula("A1 + B1"));
+            spread.SetCellContents("B1", new Formula("A1 + 3"));
 
             HashSet<String> hS = new HashSet<string>() { "A1", "B1", "C1" };
             Assert.IsTrue(spread.SetCellContents("A1", 45).SetEquals(hS));
 
+            spread.SetCellContents("D1", new Formula("A1 + B1 + C1"));
             hS.Add("D1");
-            Assert.IsTrue(spread.SetCellContents("D1", "A1 + B1 + C1").SetEquals(hS));
+            Assert.IsTrue(spread.SetCellContents("A1", 456).SetEquals(hS));
+            
+            hS.Remove("A1");
+            hS.Remove("B1");
+            hS.Remove("C1");
+            Assert.IsTrue(spread.SetCellContents("D1", new Formula("A1 + B1 + C1")).SetEquals(hS));
 
             hS.Add("E1");
             Assert.IsFalse(spread.SetCellContents("E1", "Random String").SetEquals(hS));
@@ -107,7 +113,7 @@ namespace UnitTestProject1
         public void TestGetCellContentsInvalidNameException()
         {
             Spreadsheet spread = new Spreadsheet();
-            spread.GetCellContents("789s");
+            spread.GetCellContents("789_*s");
         }
 
         [TestMethod]

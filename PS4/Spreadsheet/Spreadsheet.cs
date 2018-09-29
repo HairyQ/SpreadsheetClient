@@ -45,9 +45,16 @@ namespace SS
                 contents = d;
                 value = d;
             }
+
+            public void SetContents(object o)
+            {
+                contents = o;
+            }
         }
 
         private Dictionary<string, Cell> allCells;
+
+        private DependencyGraph dependencies;
 
         /// <summary>
         /// Zero-argument public constructor
@@ -55,13 +62,22 @@ namespace SS
         public Spreadsheet()
         {
             allCells = new Dictionary<string, Cell>();
+            dependencies = new DependencyGraph();
         }
 
         public override object GetCellContents(string name)
         {
-            //Regex for matching to variables
-            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*") || name.Equals(null))
+            if (string.IsNullOrEmpty(name))
                 throw new InvalidNameException();
+
+            //Regex for matching to variables
+            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+                throw new InvalidNameException();
+
+            if (!allCells.ContainsKey(name))
+            {
+                return "";
+            }
 
             return allCells[name].GetContents();
         }
@@ -76,24 +92,69 @@ namespace SS
 
         public override ISet<string> SetCellContents(string name, double number)
         {
-            Cell newCell = new Cell(name);
-            newCell.SetContents(number);
-            allCells.Add(name, newCell);
+            return SetCellHelper(name, number);
         }
 
         public override ISet<string> SetCellContents(string name, string text)
         {
-            throw new NotImplementedException();
+            return SetCellHelper(name, text);
         }
 
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
-            throw new NotImplementedException();
+            foreach (String s in formula.GetVariables())
+            {
+                dependencies.AddDependency(s, name);
+            }
+
+            return SetCellHelper(name, formula);
         }
 
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Helper method for setting the contents of any cell - uses an object parameter to 
+        /// allow any type of object to be passed in. Should help improve readability
+        /// </summary>
+        /// <param name="name">Name of the cell to be added or changed</param>
+        /// <param name="contents"></param>
+        /// <returns></returns>
+        private ISet<string> SetCellHelper(string name, object contents)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new InvalidNameException();
+
+            //Regex for matching to variables
+            if (!Regex.IsMatch(name, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+                throw new InvalidNameException();
+
+            if (allCells.ContainsKey(name))
+            {
+                allCells[name].SetContents(contents);
+            }
+            else
+            {
+                if (contents.Equals(""))
+                {
+                    return new HashSet<string>() { name };
+                }
+ 
+                Cell newCell = new Cell(name);
+                newCell.SetContents(contents);
+                allCells.Add(name, newCell);
+            }
+
+            HashSet<string> retSet = new HashSet<string>();
+            retSet.Add(name);   //The Cell's own name should be in the Set
+            foreach (String s in dependencies.GetDependents(name))
+            {
+                retSet.Add(s);
+            }
+
+            return retSet;
         }
     }
 }
