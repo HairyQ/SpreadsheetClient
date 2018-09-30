@@ -139,6 +139,23 @@ namespace UnitTestProject1
             Spreadsheet spread = new Spreadsheet();
             spread.SetCellContents(null, "Here");
         }
-        
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestNullArgumentSetCellContentsWithString()
+        {
+            Spreadsheet spread = new Spreadsheet();
+            string newString = null;
+            spread.SetCellContents("A1", newString);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestNullArgumentSetCellContentsWithFormula()
+        {
+            Spreadsheet spread = new Spreadsheet();
+            Formula newFormula = null;
+            spread.SetCellContents("A1", newFormula);
+        }
     }
 }

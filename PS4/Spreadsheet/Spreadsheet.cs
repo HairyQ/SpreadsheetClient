@@ -65,14 +65,14 @@ namespace SS
             dependencies = new DependencyGraph();
         }
 
+        /// <summary>
+        /// Public accessor for cell contents
+        /// </summary>
+        /// <param name="name">Name of this cell</param>
+        /// <returns>Contents of a cell, whether the contents be of type String, Double, or Formula</returns>
         public override object GetCellContents(string name)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new InvalidNameException();
-            
-            //Regex for matching to variables
-            if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
-                throw new InvalidNameException();
+            CheckIfNullOrInvalidVariableName(name);
 
             if (!allCells.ContainsKey(name))
             {
@@ -82,6 +82,11 @@ namespace SS
             return allCells[name].GetContents();
         }
 
+        /// <summary>
+        /// Numerates through allCells, the collection of Cells that have thus far been initialized, 
+        /// or "changed" in the context of a spreadsheet
+        /// </summary>
+        /// <returns>IENumerable object numerating all "changed" (initialized) cells</returns>
         public override IEnumerable<string> GetNamesOfAllNonemptyCells()
         {
             foreach (String name in allCells.Keys)
@@ -90,18 +95,45 @@ namespace SS
             }
         }
 
+        /// <summary>
+        /// Sets the contents of a cell, given that cell's name, to that cell's value in the
+        /// form of a double
+        /// </summary>
+        /// <param name="name">Cell's name</param>
+        /// <param name="number">Double Value of Cell</param>
+        /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
         public override ISet<string> SetCellContents(string name, double number)
         {
             return SetCellHelper(name, number);
         }
 
+        /// <summary>
+        /// Sets the contents of a cell, given that cell's name, to that cell's value in the
+        /// form of a string
+        /// </summary>
+        /// <param name="name">Cell's name</param>
+        /// <param name="text">String Value for Cell</param>
+        /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
         public override ISet<string> SetCellContents(string name, string text)
         {
+            if (string.IsNullOrEmpty(text))
+                throw new ArgumentNullException();
+
             return SetCellHelper(name, text);
         }
 
+        /// <summary>
+        /// Sets the contents of a cell, given that cell's name, to that cell's value in the
+        /// form of a Formula
+        /// </summary>
+        /// <param name="name">Cell's name</param>
+        /// <param name="formula">Formula Value for Cell</param>
+        /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
+            if (formula == null)
+                throw new ArgumentNullException();
+
             foreach (String s in formula.GetVariables())
             {
                 dependencies.AddDependency(s, name);
@@ -112,6 +144,12 @@ namespace SS
 
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException();
+
+            CheckIfNullOrInvalidVariableName(name);
+
+            
             throw new NotImplementedException();
         }
 
@@ -124,20 +162,15 @@ namespace SS
         /// <returns></returns>
         private ISet<string> SetCellHelper(string name, object contents)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new InvalidNameException();
+            CheckIfNullOrInvalidVariableName(name);
 
-            //Regex for matching to variables
-            if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
-                throw new InvalidNameException();
-            
             if (allCells.ContainsKey(name))
             {
                 allCells[name].SetContents(contents);
             }
             else
             {
-                if (contents.Equals(""))
+                if (contents.Equals("")) //Has no variables, thus no dependents
                 {
                     return new HashSet<string>() { name };
                 }
@@ -149,12 +182,27 @@ namespace SS
 
             HashSet<string> retSet = new HashSet<string>();
             retSet.Add(name);   //The Cell's own name should be in the Set
-            foreach (String s in dependencies.GetDependents(name))
+            foreach (String s in dependencies.GetDependents(name)) //Add each dependent of Cell
             {
                 retSet.Add(s);
             }
 
             return retSet;
+        }
+
+        /// <summary>
+        /// Helper method to improve readability - determines if name isnull or not a valid variable name - 
+        /// throws exception in either case
+        /// </summary>
+        /// <param name="name">Cell name</param>
+        private void CheckIfNullOrInvalidVariableName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) //name is null
+                throw new InvalidNameException();
+
+            //Regex for finding valid variable names
+            if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
+                throw new InvalidNameException();
         }
     }
 }

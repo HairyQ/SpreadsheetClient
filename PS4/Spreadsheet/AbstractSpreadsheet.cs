@@ -201,6 +201,16 @@ namespace SS
         /// A helper for the GetCellsToRecalculate method.
         /// 
         ///   -- You should fully comment what is going on below --
+        ///   
+        /// This method determines the correct order in which cells should be recalculated using recursion
+        /// as well as a linked list and HashSet. When this method is first called, start and name are the 
+        /// same string. When the foreach loop is reached, if one of name's direct dependents is also 
+        /// dependent on name, throws a circular exception. Then, by calling itself again (depending on 
+        /// whether or not any more dependents remain that haven't been visited), the method numerates name 
+        /// to the next dependent, to see if any of its dependents are also dependent on the unchanged start
+        /// variable. If that is the case, throws a circular exception. As long as that is not the case, and
+        /// the spreadsheet contains no circular references, the linked list changed builds an ordered list 
+        /// determining which cells should be recalculcated first.
         /// </summary>
         private void Visit(String start, String name, ISet<String> visited, LinkedList<String> changed)
         {
