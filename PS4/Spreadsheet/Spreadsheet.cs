@@ -11,9 +11,12 @@ namespace SS
     public class Spreadsheet : AbstractSpreadsheet
 
     {
+        /// <summary>
+        /// Cell class for setting and getting cell's contents which could be of type Formula, String or Double,
+        /// as well as determining Cell's name
+        /// </summary>
         public class Cell
         {
-
             private String name;
             private Object contents;
             private Object value;
@@ -116,7 +119,7 @@ namespace SS
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
         public override ISet<string> SetCellContents(string name, string text)
         {
-            if (string.IsNullOrEmpty(text))
+            if (text == null)
                 throw new ArgumentNullException();
 
             return SetCellHelper(name, text);
@@ -144,7 +147,7 @@ namespace SS
 
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
-            if (string.IsNullOrEmpty(name))
+            if (name == null)
                 throw new ArgumentNullException();
 
             CheckIfNullOrInvalidVariableName(name);
@@ -197,7 +200,7 @@ namespace SS
         /// <param name="name">Cell name</param>
         private void CheckIfNullOrInvalidVariableName(string name)
         {
-            if (string.IsNullOrEmpty(name)) //name is null
+            if (name == null) //name is null
                 throw new InvalidNameException();
 
             //Regex for finding valid variable names
