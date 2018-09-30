@@ -12,6 +12,8 @@ namespace SS
 
     {
         /// <summary>
+        /// This will be modified to fit specifications for PS5
+        /// 
         /// Cell class for setting and getting cell's contents which could be of type Formula, String or Double,
         /// as well as determining Cell's name
         /// </summary>
