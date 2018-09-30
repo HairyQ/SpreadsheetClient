@@ -32,23 +32,6 @@ namespace SS
                 return contents;
             }
 
-            public void SetContents(Formula formula)
-            {
-                contents = formula;
-            }
-
-            public void SetContents(String sentence)
-            {
-                contents = sentence;
-                value = sentence;
-            }
-
-            public void SetContents(Double d)
-            {
-                contents = d;
-                value = d;
-            }
-
             public void SetContents(object o)
             {
                 contents = o;
@@ -152,8 +135,13 @@ namespace SS
 
             CheckIfNullOrInvalidVariableName(name);
 
-            
-            throw new NotImplementedException();
+            if (GetCellContents(name).GetType() == typeof(Formula))
+            {
+                foreach (string s in ((Formula)GetCellContents(name)).GetVariables())
+                {
+                    yield return s;
+                }
+            }
         }
 
         /// <summary>

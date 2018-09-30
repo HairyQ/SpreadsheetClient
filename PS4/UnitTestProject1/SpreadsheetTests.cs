@@ -104,6 +104,25 @@ namespace UnitTestProject1
             Assert.IsFalse(spread.SetCellContents("E1", "Random String").SetEquals(hS));
         }
 
+        [TestMethod]
+        public void TestGetDirectDependentsBasic()
+        {
+            Spreadsheet spread = new Spreadsheet();
+            PrivateObject spreadAccessor = new PrivateObject(spread);
+
+            spread.SetCellContents("A1", new Formula("D1 + 34 + B1"));
+            spread.SetCellContents("B1", new Formula("23423 + D1"));
+            spread.SetCellContents("D1", new Formula("Z234 / 5"));
+
+            int counter = 0; //counter for keeping track of the number of variables in the IEnumberable
+            HashSet<string> expectedVariables = new HashSet<string>() {"D1", "B1"};
+            foreach (string s in (IEnumerable<string>)spreadAccessor.Invoke("GetDirectDependents", new string[1] {"A1"}))
+            {
+                Assert.IsTrue(expectedVariables.Contains(s));
+                counter++;
+            }
+            Assert.IsTrue(counter == 2);
+        }
         ///////////////////////////////////////////////////////////////////////////////////////
         //                                  Exception testing
         ///////////////////////////////////////////////////////////////////////////////////////
