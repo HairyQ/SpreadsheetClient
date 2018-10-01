@@ -44,6 +44,8 @@ namespace SS
 
         private DependencyGraph dependencies;
 
+        public override bool Changed { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+
         /// <summary>
         /// Zero-argument public constructor
         /// </summary>
@@ -196,6 +198,26 @@ namespace SS
             //Regex for finding valid variable names
             if (!Regex.IsMatch(name, @"^[A-Za-z_]{1,}[A-Za-z_|\d]*$"))
                 throw new InvalidNameException();
+        }
+
+        public override string GetSavedVersion(string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Save(string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetCellValue(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ISet<string> SetContentsOfCell(string name, string content)
+        {
+            throw new NotImplementedException();
         }
     }
 }
