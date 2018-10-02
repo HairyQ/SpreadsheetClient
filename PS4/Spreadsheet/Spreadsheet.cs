@@ -128,7 +128,7 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="number">Double Value of Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        public override ISet<string> SetCellContents(string name, double number)
+        protected override ISet<string> SetCellContents(string name, double number)
         {
             return SetCellHelper(name, number);
         }
@@ -140,7 +140,7 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="text">String Value for Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        public override ISet<string> SetCellContents(string name, string text)
+        protected override ISet<string> SetCellContents(string name, string text)
         {
             if (text == null)
                 throw new ArgumentNullException();
@@ -155,7 +155,7 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="formula">Formula Value for Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        public override ISet<string> SetCellContents(string name, Formula formula)
+        protected override ISet<string> SetCellContents(string name, Formula formula)
         {
             if (formula == null)
                 throw new ArgumentNullException();
@@ -254,7 +254,21 @@ namespace SS
 
         public override ISet<string> SetContentsOfCell(string name, string content)
         {
-            throw new NotImplementedException();
+            Changed = true; //Spreadsheet has now officially been changed
+            double newDouble;   //Initialized double in case content is of type double
+
+            if (content.ToCharArray()[0] == '=')
+            {
+                return SetCellContents(name, new Formula(name.Substring(1)));
+            }
+            else if (Double.TryParse(content, out newDouble))
+            {
+                return SetCellContents(name, newDouble);
+            }
+            else
+            {
+                return SetCellContents(name, content);
+            }
         }
     }
 }
