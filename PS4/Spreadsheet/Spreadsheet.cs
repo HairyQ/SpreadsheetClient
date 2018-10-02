@@ -55,6 +55,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
+            Changed = false;
         }
 
         /// <summary>
@@ -70,6 +71,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
+            Changed = false;
         }
 
 
@@ -88,6 +90,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
+            Changed = false;
         }
 
         /// <summary>
@@ -100,9 +103,7 @@ namespace SS
             CheckIfNullOrInvalidVariableName(name);
 
             if (!allCells.ContainsKey(name))
-            {
                 return "";
-            }
 
             return allCells[name].GetContents();
         }
