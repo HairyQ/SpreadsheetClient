@@ -48,8 +48,43 @@ namespace SS
 
         /// <summary>
         /// Zero-argument public constructor
+        /// 
+        /// This constructor passes a default validator, normalizer, and version to AbstractSpreadsheet's constructor.
         /// </summary>
-        public Spreadsheet()
+        public Spreadsheet() : base(s => true, s => s, "default")
+        {
+            allCells = new Dictionary<string, Cell>();
+            dependencies = new DependencyGraph();
+        }
+
+        /// <summary>
+        /// Three-argument constructor
+        /// 
+        /// Allows user to define validator and normalizer delegates, and defines current version of Spreadsheet
+        /// </summary>
+        /// <param name="isValid">Function that returns bool based on validity of variable name</param>
+        /// <param name="normalize">Function that returns a "normalized" version of a variable name</param>
+        /// <param name="version">String representation of the current version of this spreadsheet</param>
+        public Spreadsheet(Func<string, bool> isValid, Func<string, string> normalize, string version) 
+            : base(isValid, normalize, version)
+        {
+            allCells = new Dictionary<string, Cell>();
+            dependencies = new DependencyGraph();
+        }
+
+
+        /// <summary>
+        /// Four-argument constructor
+        /// 
+        /// Allows user to defind validator and normalzier delegates, and defines current version of Spreadsheet
+        /// as well as defines a file path for saving this version of the Spreadsheet
+        /// </summary>
+        /// <param name="filePath">Path defining where the Spreadsheet should be saved</param>
+        /// <param name="isValid">Function that returns bool based on validity of variable name</param>
+        /// <param name="normalize">Function that returns a "normalized" version of a variable name</param>
+        /// <param name="version">String representation of the current version of this spreadsheet</param>
+        public Spreadsheet(string filePath, Func<string, bool> isValid, Func<string, string> normalize, string version)
+            : base(isValid, normalize, version)
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
@@ -202,6 +237,7 @@ namespace SS
 
         public override string GetSavedVersion(string filename)
         {
+            
             throw new NotImplementedException();
         }
 
