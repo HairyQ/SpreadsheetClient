@@ -174,6 +174,13 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void testUnbalancedParentheses()
+        {
+            Formula form = new Formula("(A3 + 4");
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullArgumentSetContentsOfCellWithString()
         {
