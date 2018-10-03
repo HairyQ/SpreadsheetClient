@@ -42,8 +42,13 @@ namespace SS
         /// <summary>
         /// Field determining whether or not this version of this Spreadsheet has been 'changed'
         /// </summary>
-        public override bool Changed { get => throw new NotImplementedException();
-            protected set => throw new NotImplementedException(); }
+        public override bool Changed { get => changed;
+            protected set => changed = value; }
+
+        /// <summary>
+        /// Native bool determining whether or not this version of this spreadsheet has been changed
+        /// </summary>
+        private bool changed;
 
         /// <summary>
         /// Zero-argument public constructor
@@ -54,7 +59,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
-            Changed = false;
+            changed = false;
         }
 
         /// <summary>
@@ -70,7 +75,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
-            Changed = false;
+            changed = false;
         }
 
 
@@ -89,7 +94,7 @@ namespace SS
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
-            Changed = false;
+            changed = false;
         }
 
         /// <summary>
@@ -217,14 +222,17 @@ namespace SS
         /// <returns></returns>
         public override ISet<string> SetContentsOfCell(string name, string content)
         {
-            Changed = true; //Spreadsheet has now officially been changed
+            changed = true; //Spreadsheet has now officially been changed
             double newDouble;   //Initialized double in case content is of type double
 
             name = Normalize(name); //Normalize name according to user's normalize delegate or default Function
             CheckIfNullOrInvalidVariableName(name);
 
+            if (content == "")  //Corner case - if we try to check its characters, exception will be thrown
+                return SetCellContents(name, content);
+
             if (content.ToCharArray()[0] == '=')                    //Content is Formula
-                return SetCellContents(name, new Formula(name.Substring(1), Normalize, IsValid));
+                return SetCellContents(name, new Formula(content.Substring(1), Normalize, IsValid));
 
             else if (Double.TryParse(content, out newDouble))       //Content is Double
                 return SetCellContents(name, newDouble);
