@@ -123,6 +123,19 @@ namespace UnitTestProject1
             }
             Assert.IsTrue(counter == 2);
         }
+
+        [TestMethod]
+        public void TestGetCellValueBasic()
+        {
+            Spreadsheet spread = new Spreadsheet();
+
+            spread.SetContentsOfCell("A1", "1");
+            spread.SetContentsOfCell("B1", "2");
+            spread.SetContentsOfCell("C1", "3");
+            spread.SetContentsOfCell("D1", "=A1 + B1 + C1");
+
+            Assert.IsTrue(spread.GetCellValue("D1").Equals(6));
+        }
         ///////////////////////////////////////////////////////////////////////////////////////
         //                                  Exception testing
         ///////////////////////////////////////////////////////////////////////////////////////

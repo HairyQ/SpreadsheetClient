@@ -207,7 +207,18 @@ namespace SS
 
         public override object GetCellValue(string name)
         {
-            throw new NotImplementedException();
+            name = Normalize(name); //Normalize name according to user specifications
+            CheckIfNullOrInvalidVariableName(name); //Check validity of name
+
+            if (GetCellContents(name).GetType().Equals(typeof(Formula)))
+            {
+                Formula f = (Formula)GetCellContents(name);
+                return f.Evaluate(s => (Double)GetCellValue(s));
+            }
+            else
+            {
+                return GetCellContents(name);
+            }
         }
 
         /// <summary>
@@ -253,15 +264,12 @@ namespace SS
             CheckIfNullOrInvalidVariableName(name);
 
             if (allCells.ContainsKey(name))
-            {
                 allCells[name].SetContents(contents);
-            }
+
             else
             {
                 if (contents.Equals("")) //Has no variables, thus no dependents
-                {
                     return new HashSet<string>() { name };
-                }
 
                 Cell newCell = new Cell(name);
                 newCell.SetContents(contents);

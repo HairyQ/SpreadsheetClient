@@ -31,6 +31,29 @@ namespace FormulaTester
         }
 
         /// <summary>
+        /// Test Method I created for PS5... Didn't help much
+        /// </summary>
+        [TestMethod]
+        public void TestExtraTest()
+        {
+            double lookupDelegate(string s)
+            {
+                if (s.Equals("A1"))
+                    return 1;
+                else if (s.Equals("B1"))
+                    return 2;
+                else if (s.Equals("C1"))
+                    return 3;
+                else
+                    return 0;
+            }
+
+            Formula instance = new Formula("A1 + B1 + C1");
+            Double result = (Double)instance.Evaluate(lookupDelegate);
+            Assert.AreEqual(result, 6);
+        }
+
+        /// <summary>
         /// Creates a new instance of a formula object - tests to see that 
         /// </summary>
         [TestMethod]
