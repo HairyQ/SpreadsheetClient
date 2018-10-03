@@ -134,7 +134,7 @@ namespace UnitTestProject1
             spread.SetContentsOfCell("C1", "3");
             spread.SetContentsOfCell("D1", "=A1 + B1 + C1");
 
-            Assert.IsTrue(spread.GetCellValue("D1").Equals(6));
+            Assert.AreEqual(spread.GetCellValue("D1"), 6.0);
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         //                                  Exception testing

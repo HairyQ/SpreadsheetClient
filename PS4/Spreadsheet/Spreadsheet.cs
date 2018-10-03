@@ -213,7 +213,7 @@ namespace SS
             if (GetCellContents(name).GetType().Equals(typeof(Formula)))
             {
                 Formula f = (Formula)GetCellContents(name);
-                return f.Evaluate(s => (Double)GetCellValue(s));
+                return (Double)f.Evaluate(s => (Double)GetCellValue(s));
             }
             else
             {
