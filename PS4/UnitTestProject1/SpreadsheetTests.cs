@@ -137,6 +137,24 @@ namespace UnitTestProject1
             Assert.AreEqual(spread.GetCellValue("D1"), 6.0);
         }
 
+        [TestMethod]
+        public void TestXMLReaderWriterBasic()
+        {
+            Spreadsheet spread = new Spreadsheet();
+
+            spread.SetContentsOfCell("A1", "1");
+
+            spread.Save("xmlfile");
+            Assert.AreEqual(spread.GetSavedVersion("xmlfile"), "default");
+
+            spread = new Spreadsheet(s => true, s => s, "RANDOM_STRING");
+            spread.SetContentsOfCell("A1", "=76 + B2");
+            spread.SetContentsOfCell("B2", "43");
+
+            spread.Save("RANDOM_FILE");
+            Assert.AreEqual(spread.GetSavedVersion("RANDOM_FILE"), "RANDOM_STRING");
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////
         //                                  Exception testing
         ///////////////////////////////////////////////////////////////////////////////////////

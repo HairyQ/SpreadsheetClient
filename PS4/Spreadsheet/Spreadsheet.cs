@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SpreadsheetUtilities;
+using System.Xml;
+using System.Data;
 
 namespace SS
 {
@@ -26,6 +28,17 @@ namespace SS
             public Object GetContents() { return contents; }
 
             public void SetContents(object o) { contents = o; }
+
+            public void WriteXML(XmlWriter w)
+            {
+                w.WriteString(Environment.NewLine); //separate each cell with newline
+
+                w.WriteStartElement("Cell");
+                w.WriteElementString("name", name);
+                w.WriteElementString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
+                    "=" + contents.ToString() : contents + "");                               //append '='
+                w.WriteEndElement();
+            }
         }
 
         /// <summary>
@@ -196,13 +209,44 @@ namespace SS
 
         public override string GetSavedVersion(string filename)
         {
-            
-            throw new NotImplementedException();
+            using (XmlReader read = XmlReader.Create(filename))
+            {
+                while (read.Read())
+                {
+                    if (read.IsStartElement())
+                    {
+                        switch (read.Name)
+                        {
+                            case "Spreadsheet" :
+                                read.Read();
+                                return read.Value.Substring(10);
+                        }
+                    }
+                }
+            }
+            throw new SpreadsheetReadWriteException("Version could not be found");
         }
 
         public override void Save(string filename)
         {
-            throw new NotImplementedException();
+            XmlWriterSettings xmlSettings = new XmlWriterSettings();   //Indentation to help with readability
+            xmlSettings.OmitXmlDeclaration = true;
+
+            using (XmlWriter write = XmlWriter.Create(filename, xmlSettings))
+            {
+                write.WriteStartDocument();
+                write.WriteStartElement("spreadsheet");
+                write.WriteElementString("Spreadsheet", "version = " + Version);
+
+                foreach (string s in allCells.Keys)
+                {
+                    allCells[s].WriteXML(write);
+                }
+                write.WriteString(Environment.NewLine);
+                
+                write.WriteEndElement(); 
+                write.WriteEndDocument();
+            }
         }
 
         public override object GetCellValue(string name)
