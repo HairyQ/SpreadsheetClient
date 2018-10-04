@@ -153,8 +153,12 @@ namespace UnitTestProject1
 
             spread.Save("RANDOM_FILE");
             Assert.AreEqual(spread.GetSavedVersion("RANDOM_FILE"), "RANDOM_STRING");
+        }
 
-            spread = new Spreadsheet("C:/Users/hquic/Documents/", s => true, s => s, "1.0");
+        [TestMethod]
+        public void TestXMLReaderWriterWithClasspath()
+        {
+            Spreadsheet spread = new Spreadsheet("C:/Users/hquic/Documents/", s => true, s => s, "1.0");
             spread.SetContentsOfCell("A1", "=76 + B2");
             spread.SetContentsOfCell("B2", "43");
 
@@ -212,6 +216,14 @@ namespace UnitTestProject1
             Spreadsheet spread = new Spreadsheet();
             string newString = null;
             spread.SetContentsOfCell("A1", newString);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SpreadsheetReadWriteException))]
+        public void TestNoSuchFileException()
+        {
+            Spreadsheet spread = new Spreadsheet();
+            spread.GetSavedVersion("randomFile");
         }
     }
 }

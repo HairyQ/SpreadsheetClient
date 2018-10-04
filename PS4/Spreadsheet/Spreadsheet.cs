@@ -215,45 +215,71 @@ namespace SS
             }
         }
 
+        /// <summary>
+        /// Returns the version of the spreadsheet saved in the given filename. Uses the user-defined
+        /// classpath to define filePath when searching for the file
+        /// </summary>
+        /// <param name="filename">name of XML file to search for</param>
+        /// <returns>Version of XML file saved in defined location</returns>
         public override string GetSavedVersion(string filename)
         {
-            using (XmlReader read = XmlReader.Create(path + filename))
+            try
             {
-                while (read.Read())
+                using (XmlReader read = XmlReader.Create(path + filename))
                 {
-                    if (read.IsStartElement())
+                    while (read.Read())
                     {
-                        switch (read.Name)
+                        if (read.IsStartElement())
                         {
-                            case "Spreadsheet" :
-                                read.Read();
-                                return read.Value.Substring(10);
+                            switch (read.Name)
+                            {
+                                case "Spreadsheet":
+                                    read.Read();
+                                    return read.Value.Substring(10);
+                            }
                         }
                     }
                 }
+            } catch (System.IO.FileNotFoundException)
+            {
+                throw new SpreadsheetReadWriteException("File could not be found");
+            } finally
+            {
+                throw new SpreadsheetReadWriteException("There were problems reading the file");
             }
             throw new SpreadsheetReadWriteException("Version could not be found");
         }
 
+        /// <summary>
+        /// Writes an XML file based on all the used cells in the Spreadsheet, saving pertinent information, 
+        /// including: File name, file path, file version, and also maps cells to their contents.
+        /// </summary>
+        /// <param name="filename">Name of file to save to</param>
         public override void Save(string filename)
         {
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();   //Indentation to help with readability
-            xmlSettings.OmitXmlDeclaration = true;
-
-            using (XmlWriter write = XmlWriter.Create(path + filename, xmlSettings))
+            try
             {
-                write.WriteStartDocument();
-                write.WriteStartElement("spreadsheet");
-                write.WriteElementString("Spreadsheet", "version = " + Version);
+                XmlWriterSettings xmlSettings = new XmlWriterSettings();   //Indentation to help with readability
+                xmlSettings.OmitXmlDeclaration = true;
 
-                foreach (string s in allCells.Keys)
+                using (XmlWriter write = XmlWriter.Create(path + filename, xmlSettings))
                 {
-                    allCells[s].WriteXML(write);
+                    write.WriteStartDocument();
+                    write.WriteStartElement("spreadsheet");
+                    write.WriteElementString("Spreadsheet", "version = " + Version);
+
+                    foreach (string s in allCells.Keys)
+                    {
+                        allCells[s].WriteXML(write);
+                    }
+                    write.WriteString(Environment.NewLine);
+
+                    write.WriteEndElement();
+                    write.WriteEndDocument();
                 }
-                write.WriteString(Environment.NewLine);
-                
-                write.WriteEndElement(); 
-                write.WriteEndDocument();
+            }catch (Exception)
+            {
+                throw new SpreadsheetReadWriteException("There were problems writing the XML file");
             }
         }
 
