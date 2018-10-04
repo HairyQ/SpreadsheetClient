@@ -64,6 +64,11 @@ namespace SS
         private bool changed;
 
         /// <summary>
+        /// Native accessor for determining where to save a file
+        /// </summary>
+        private string path;
+
+        /// <summary>
         /// Zero-argument public constructor
         /// 
         /// This constructor passes a default validator, normalizer, and version to AbstractSpreadsheet's constructor.
@@ -73,6 +78,7 @@ namespace SS
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
             changed = false;
+            path = "";
         }
 
         /// <summary>
@@ -83,12 +89,13 @@ namespace SS
         /// <param name="isValid">Function that returns bool based on validity of variable name</param>
         /// <param name="normalize">Function that returns a "normalized" version of a variable name</param>
         /// <param name="version">String representation of the current version of this spreadsheet</param>
-        public Spreadsheet(Func<string, bool> isValid, Func<string, string> normalize, string version) 
+        public Spreadsheet(Func<string, bool> isValid, Func<string, string> normalize, string version)
             : base(isValid, normalize, version)
         {
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
             changed = false;
+            path = "";
         }
 
 
@@ -108,6 +115,7 @@ namespace SS
             allCells = new Dictionary<string, Cell>();
             dependencies = new DependencyGraph();
             changed = false;
+            path = filePath;
         }
 
         /// <summary>
@@ -209,7 +217,7 @@ namespace SS
 
         public override string GetSavedVersion(string filename)
         {
-            using (XmlReader read = XmlReader.Create(filename))
+            using (XmlReader read = XmlReader.Create(path + filename))
             {
                 while (read.Read())
                 {
@@ -232,7 +240,7 @@ namespace SS
             XmlWriterSettings xmlSettings = new XmlWriterSettings();   //Indentation to help with readability
             xmlSettings.OmitXmlDeclaration = true;
 
-            using (XmlWriter write = XmlWriter.Create(filename, xmlSettings))
+            using (XmlWriter write = XmlWriter.Create(path + filename, xmlSettings))
             {
                 write.WriteStartDocument();
                 write.WriteStartElement("spreadsheet");

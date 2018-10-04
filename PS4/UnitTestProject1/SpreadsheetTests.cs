@@ -153,6 +153,13 @@ namespace UnitTestProject1
 
             spread.Save("RANDOM_FILE");
             Assert.AreEqual(spread.GetSavedVersion("RANDOM_FILE"), "RANDOM_STRING");
+
+            spread = new Spreadsheet("C:/Users/hquic/Documents/", s => true, s => s, "1.0");
+            spread.SetContentsOfCell("A1", "=76 + B2");
+            spread.SetContentsOfCell("B2", "43");
+
+            spread.Save("xmlfile.xml");
+            Assert.AreEqual(spread.GetSavedVersion("xmlfile.xml"), "1.0");
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////
