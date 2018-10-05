@@ -184,8 +184,17 @@ namespace SS
             if (formula == null)
                 throw new ArgumentNullException();
 
-            foreach (String s in formula.GetVariables())
+            foreach (string s in formula.GetVariables())
             {
+                if (dependencies.GetDependees(s).Contains(name))
+                {
+                    throw new CircularException();
+                }
+                foreach (string str in dependencies.GetDependents(name))
+                {
+                    dependencies.AddDependency(s, str);
+                }
+
                 dependencies.AddDependency(s, name);
             }
 
@@ -243,7 +252,7 @@ namespace SS
             } catch (System.IO.FileNotFoundException)
             {
                 throw new SpreadsheetReadWriteException("File could not be found");
-            } finally
+            } catch (Exception)
             {
                 throw new SpreadsheetReadWriteException("There were problems reading the file");
             }
