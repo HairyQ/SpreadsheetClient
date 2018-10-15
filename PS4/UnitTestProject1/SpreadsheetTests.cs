@@ -582,6 +582,7 @@ namespace UnitTestProject1
                     lastCells.Add("A1" + (i + 250));
                 }
                 Assert.IsTrue(s.SetCellContents("A1249", 25.0).SetEquals(firstCells));
+                HashSet<string> retSet = (HashSet<string>)s.SetCellContents("A1499", 0);
                 Assert.IsTrue(s.SetCellContents("A1499", 0).SetEquals(lastCells));
             }
             [TestMethod()]

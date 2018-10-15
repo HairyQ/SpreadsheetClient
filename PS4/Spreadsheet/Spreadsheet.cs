@@ -90,6 +90,19 @@ namespace SS
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
         public override ISet<string> SetCellContents(string name, double number)
         {
+            CheckIfNullOrInvalidVariableName(name);
+
+            if (allCells.ContainsKey(name))
+            {
+                List<string> dependeesOfName = dependencies.GetDependees(name).ToList();
+                foreach(string s in dependeesOfName)
+                {
+                    IEnumerable<string> dependentsOfS = dependencies.GetDependents(s);
+                    IEnumerable<string> dependentsOfName = dependencies.GetDependents(name);
+                    dependencies.ReplaceDependents(s, dependentsOfS.Except(dependentsOfName));
+                }
+            }
+
             return SetCellHelper(name, number);
         }
 
