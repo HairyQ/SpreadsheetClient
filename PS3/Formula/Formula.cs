@@ -183,150 +183,159 @@ namespace SpreadsheetUtilities
         /// </summary>
         public object Evaluate(Func<string, double> lookup)
         {
-            operators.Clear();
-            values.Clear();
-
-            foreach (string token in GetTokens(expression))
+            try
             {
-                //Regex for finding variables
-                if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
-                {
-                    currVal = lookup(normalizer(token));
-                    VariableDoubleInstructions(currVal);
-                    if (!fE.Reason.Equals(gibberish.Reason))
-                    {
-                        return fE;
-                    }
-                }
-                //Regex for finding just doubles (and ints)
-                else if (Regex.IsMatch(token, @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?") || Regex.IsMatch(token, @"(\s?[0-9]{1,}\s?)"))
-                {
-                    double.TryParse(token, out currVal);
-                    VariableDoubleInstructions(currVal);
+                operators.Clear();
+                values.Clear();
 
-                    if (!fE.Equals(gibberish)) //Had to use this to pass a FormulaError from a helper method - 
-                    {                          //gibberish should never be returned, just represents whether or 
-                        return fE;             //not a Formula error was returned from VariableDoubleInstructions()
-                    }                          //based on whether or not gibberish has changed
-                }
-                //Regex for finding '+' and '-' operators
-                else if (Regex.IsMatch(token, @"(\s?\+|\-\s?)"))
+                if (expression == "")
+                    return new FormulaError("Formula cannot be empty");
+
+                foreach (string token in GetTokens(expression))
                 {
-                    if (operators.Count > 0 && operators.Peek().Equals("+"))
+                    //Regex for finding variables
+                    if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
                     {
-                        if (values.Count < 2)
+                        currVal = lookup(normalizer(token));
+                        VariableDoubleInstructions(currVal);
+                        if (!fE.Reason.Equals(gibberish.Reason))
                         {
-                            return new FormulaError("Operators must have two operands");
+                            return fE;
                         }
-                        operators.Pop();
-                        values.Push(values.Pop() + values.Pop());
-                        operators.Push(token);
                     }
-                    else if (operators.Count > 0 && operators.Peek().Equals("-"))
+                    //Regex for finding just doubles (and ints)
+                    else if (Regex.IsMatch(token, @"(?: \d+\.\d* | \d*\.\d+ | \d+ ) (?: [eE][\+-]?\d+)?") || Regex.IsMatch(token, @"(\s?[0-9]{1,}\s?)"))
                     {
-                        if (values.Count < 2)
+                        double.TryParse(token, out currVal);
+                        VariableDoubleInstructions(currVal);
+
+                        if (!fE.Equals(gibberish)) //Had to use this to pass a FormulaError from a helper method - 
+                        {                          //gibberish should never be returned, just represents whether or 
+                            return fE;             //not a Formula error was returned from VariableDoubleInstructions()
+                        }                          //based on whether or not gibberish has changed
+                    }
+                    //Regex for finding '+' and '-' operators
+                    else if (Regex.IsMatch(token, @"(\s?\+|\-\s?)"))
+                    {
+                        if (operators.Count > 0 && operators.Peek().Equals("+"))
                         {
-                            return new FormulaError("Operators must have two operands");
+                            if (values.Count < 2)
+                            {
+                                return new FormulaError("Operators must have two operands");
+                            }
+                            operators.Pop();
+                            values.Push(values.Pop() + values.Pop());
+                            operators.Push(token);
                         }
-                        operators.Pop();
-                        double placeHolder = values.Pop();
-                        values.Push(values.Pop() - placeHolder);
-                        operators.Push(token);
-                    }
-                    else // '+' or '-' is not at the top of operators stack
-                        operators.Push(Regex.IsMatch(token, @"(\s?\+\s?)") ? "+" : "-");
-
-                }
-                //Regex for finding '*' and '/' operators
-                else if (Regex.IsMatch(token, @"(\s?\*|\/\s?)"))
-                {
-                    operators.Push(Regex.IsMatch(token, @"(\s?\*\s?)") ? "*" : "/");
-                }
-                //Regex for finding '(' left parentheses
-                else if (Regex.IsMatch(token, @"(\s?\(\s?)"))
-                {
-                    operators.Push("(");
-                }
-                //Regex for finding ')' right parentheses
-                else if (Regex.IsMatch(token, @"(\s?\)\s?)"))
-                {
-                    if (!operators.Contains("("))
-                    {
-                        return new FormulaError("Mismatched Parentheses");
-                    }
-
-                    if (operators.Peek().Equals("+"))
-                    {
-                        if (values.Count < 2)
+                        else if (operators.Count > 0 && operators.Peek().Equals("-"))
                         {
-                            return new FormulaError("Operators must have two operands");
+                            if (values.Count < 2)
+                            {
+                                return new FormulaError("Operators must have two operands");
+                            }
+                            operators.Pop();
+                            double placeHolder = values.Pop();
+                            values.Push(values.Pop() - placeHolder);
+                            operators.Push(token);
                         }
-                        operators.Pop();
-                        values.Push(values.Pop() + values.Pop());
+                        else // '+' or '-' is not at the top of operators stack
+                            operators.Push(Regex.IsMatch(token, @"(\s?\+\s?)") ? "+" : "-");
+
                     }
-                    else if (operators.Peek().Equals("-"))
+                    //Regex for finding '*' and '/' operators
+                    else if (Regex.IsMatch(token, @"(\s?\*|\/\s?)"))
                     {
-                        if (values.Count < 2)
+                        operators.Push(Regex.IsMatch(token, @"(\s?\*\s?)") ? "*" : "/");
+                    }
+                    //Regex for finding '(' left parentheses
+                    else if (Regex.IsMatch(token, @"(\s?\(\s?)"))
+                    {
+                        operators.Push("(");
+                    }
+                    //Regex for finding ')' right parentheses
+                    else if (Regex.IsMatch(token, @"(\s?\)\s?)"))
+                    {
+                        if (!operators.Contains("("))
                         {
-                            return new FormulaError("Operators must have two operands");
+                            return new FormulaError("Mismatched Parentheses");
                         }
+
+                        if (operators.Peek().Equals("+"))
+                        {
+                            if (values.Count < 2)
+                            {
+                                return new FormulaError("Operators must have two operands");
+                            }
+                            operators.Pop();
+                            values.Push(values.Pop() + values.Pop());
+                        }
+                        else if (operators.Peek().Equals("-"))
+                        {
+                            if (values.Count < 2)
+                            {
+                                return new FormulaError("Operators must have two operands");
+                            }
+                            operators.Pop();
+                            double placeHolder = values.Pop();
+                            values.Push(values.Pop() - placeHolder);
+                        }
+
+                        //Next operator should be '(' - pop it.
                         operators.Pop();
-                        double placeHolder = values.Pop();
-                        values.Push(values.Pop() - placeHolder);
+
+                        if (operators.Count > 0 && (operators.Peek().Equals("*") || operators.Peek().Equals("/")))
+                        {
+                            VariableDoubleInstructions(values.Pop());
+                        }
                     }
 
-                    //Next operator should be '(' - pop it.
-                    operators.Pop();
-
-                    if (operators.Count > 0 && (operators.Peek().Equals("*") || operators.Peek().Equals("/")))
+                }
+                //Final token has been processed - time to take final steps
+                if (operators.Count.Equals(0))
+                {
+                    if (!values.Count.Equals(1))
                     {
-                        VariableDoubleInstructions(values.Pop());
+                        return new FormulaError("Expression contains too many or too few integers and variables");
                     }
+                    double retVal = values.Pop();
+                    return retVal;
                 }
+                else if (operators.Count > 0 && operators.Peek().Equals("+"))
+                {
+                    if (!values.Count.Equals(2))
+                    {
+                        return new FormulaError("Expression contains too many or too few integers and variables");
+                    }
+                    if (operators.Count >= 2)
+                    {
+                        return new FormulaError("Expression contains too many operators");
+                    }
+                    double retVal = values.Pop() + values.Pop();
 
-            }
-            //Final token has been processed - time to take final steps
-            if (operators.Count.Equals(0))
-            {
-                if (!values.Count.Equals(1))
-                {
-                    return new FormulaError("Expression contains too many or too few integers and variables");
+                    return retVal;
                 }
-                double retVal = values.Pop();
-                return retVal;
-            }
-            else if (operators.Count > 0 && operators.Peek().Equals("+"))
-            {
-                if (!values.Count.Equals(2))
+                else if (operators.Count > 0 && operators.Peek().Equals("-"))
                 {
-                    return new FormulaError("Expression contains too many or too few integers and variables");
-                }
-                if (operators.Count >= 2)
-                {
-                    return new FormulaError("Expression contains too many operators");
-                }
-                double retVal = values.Pop() + values.Pop();
+                    if (!values.Count.Equals(2))
+                    {
+                        return new FormulaError("Expression contains too many or too few integers and variables");
+                    }
+                    double placeHolder = values.Pop();
+                    double retVal = values.Pop() - placeHolder;
 
-                return retVal;
-            }
-            else if (operators.Count > 0 && operators.Peek().Equals("-"))
-            {
-                if (!values.Count.Equals(2))
-                {
-                    return new FormulaError("Expression contains too many or too few integers and variables");
+                    return retVal;
                 }
-                double placeHolder = values.Pop();
-                double retVal = values.Pop() - placeHolder;
-
-                return retVal;
-            }
-            else
-            {
-                if (operators.Count > 0)
+                else
                 {
-                    return new FormulaError("Expression contains too many operators per operand");
+                    if (operators.Count > 0)
+                    {
+                        return new FormulaError("Expression contains too many operators per operand");
+                    }
+                    return new FormulaError("Expression contains too few operators or has other syntax problems");
                 }
-                return new FormulaError("Expression contains too few operators or has other syntax problems");
+            } catch (ArgumentException e)
+            {
+                return new FormulaError();
             }
         }
 
@@ -386,7 +395,13 @@ namespace SpreadsheetUtilities
         /// </summary>
         public override bool Equals(object obj)
         {
-            return GetHashCode() == obj.GetHashCode();
+            try
+            {
+                return GetHashCode() == obj.GetHashCode();
+            } catch (NullReferenceException e)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -504,31 +519,71 @@ namespace SpreadsheetUtilities
         {
             StringBuilder finalString = new StringBuilder();
 
+            int tokenCount = 0;
+            int numOperators = 0;
+            int numOperands = 0;
+            int numParenth = 0;
+
             foreach (string token in GetTokens(formula))
             {
-                if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
+                tokenCount++;
+
+                if (Regex.IsMatch(token, @"^\d+") || token.Contains('.'))  
+                {                                                          
+                    double.TryParse(token, out double currDouble);
+                    string s = currDouble.ToString();
+                    numOperands++;
+
+                    finalString.Append(currDouble.ToString());
+                }
+                else if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
                 {
                     if (!validator(normalizer(token)))
                     {
                         throw new FormulaFormatException("Formula contains invalid variable");
                     }
+                    numOperands++;
 
                     if (!variables.Contains(normalizer(token)))
                     {
                         variables.Add(normalizer(token));
                     }
-
                     finalString.Append(normalizer(token).ToString());
-                } else if (token.ToCharArray().ToList().Contains('.'))  //Call this cheating if you 
-                {                                                          
-                    double.TryParse(token, out double currDouble);
-                    string s = currDouble.ToString();
-
-                    finalString.Append(currDouble.ToString());
-                } else
+                }
+                else
                 {
+                    if (Regex.IsMatch(token, @"\+|\-|\*|\/"))
+                    {
+                        numOperators++;
+                    } else if (Regex.IsMatch(token, @"\("))
+                    {
+                        numParenth++;
+                    } else if (Regex.IsMatch(token, @"\)"))
+                    {
+                        numParenth--;
+                    }
                     finalString.Append(token.ToString());
                 }
+            }
+
+            if (numParenth != 0)
+            {
+                throw new FormulaFormatException("Formula contains mismatched parentheses");
+            }
+
+            if (tokenCount == 0)
+            {
+                throw new FormulaFormatException("Formula cannot be empty");
+            }
+
+            if (numOperators >= numOperands)
+            {
+                throw new FormulaFormatException("Operators cannot be greater than or equal to operands");
+            }
+
+            if ((numOperands - numOperators) > 1)
+            {
+                throw new FormulaFormatException("Too few operators per operand");
             }
 
             expression = finalString.ToString();

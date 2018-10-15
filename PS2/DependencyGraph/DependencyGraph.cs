@@ -166,6 +166,11 @@ namespace SpreadsheetUtilities
         /// <param name="t"></param>
         public void RemoveDependency(string s, string t)
         {
+            if (currSize == 0) //Graph is empty
+            {
+                return;
+            }
+
             dependents[s].Remove(t);
             dependees[t].Remove(s);
             currSize--;
