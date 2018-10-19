@@ -32,6 +32,7 @@
             this.cellNameField = new System.Windows.Forms.TextBox();
             this.cellContentsField = new System.Windows.Forms.TextBox();
             this.setButton = new System.Windows.Forms.Button();
+            this.cellValueField = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // spreadsheetPanel1
@@ -56,14 +57,14 @@
             // 
             // cellContentsField
             // 
-            this.cellContentsField.Location = new System.Drawing.Point(180, 8);
+            this.cellContentsField.Location = new System.Drawing.Point(332, 8);
             this.cellContentsField.Name = "cellContentsField";
             this.cellContentsField.Size = new System.Drawing.Size(146, 22);
             this.cellContentsField.TabIndex = 3;
             // 
             // setButton
             // 
-            this.setButton.Location = new System.Drawing.Point(332, 7);
+            this.setButton.Location = new System.Drawing.Point(484, 7);
             this.setButton.Name = "setButton";
             this.setButton.Size = new System.Drawing.Size(75, 23);
             this.setButton.TabIndex = 4;
@@ -71,11 +72,21 @@
             this.setButton.UseVisualStyleBackColor = true;
             this.setButton.Click += new System.EventHandler(this.setButton_Click);
             // 
+            // cellValueField
+            // 
+            this.cellValueField.Location = new System.Drawing.Point(180, 8);
+            this.cellValueField.Name = "cellValueField";
+            this.cellValueField.ReadOnly = true;
+            this.cellValueField.Size = new System.Drawing.Size(146, 22);
+            this.cellValueField.TabIndex = 5;
+            this.cellValueField.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.cellValueField);
             this.Controls.Add(this.setButton);
             this.Controls.Add(this.cellContentsField);
             this.Controls.Add(this.cellNameField);
@@ -93,6 +104,7 @@
         private System.Windows.Forms.TextBox cellNameField;
         private System.Windows.Forms.TextBox cellContentsField;
         private System.Windows.Forms.Button setButton;
+        private System.Windows.Forms.TextBox cellValueField;
     }
 }
 
