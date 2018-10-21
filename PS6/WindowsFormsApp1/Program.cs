@@ -12,7 +12,7 @@ namespace WindowsFormsApp1
         /// <summary>
         /// Keeps track of how many top-level forms are running
         /// </summary>
-        class SpreadsheetApplicationContext : ApplicationContext
+        public class SpreadsheetApplicationContext : ApplicationContext
         {
             // Number of open forms
             private int formCount = 0;

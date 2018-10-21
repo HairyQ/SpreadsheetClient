@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static WindowsFormsApp1.Program;
 
 namespace WindowsFormsApp1
 {
@@ -131,6 +133,11 @@ namespace WindowsFormsApp1
         private void openFileMenu(object sender, EventArgs e)
         {
             
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpreadsheetApplicationContext.GetAppContext().RunForm(new Form1());
         }
     }
 }
