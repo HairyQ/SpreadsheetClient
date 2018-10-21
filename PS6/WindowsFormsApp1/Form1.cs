@@ -100,5 +100,10 @@ namespace WindowsFormsApp1
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
         }
+
+        private void openFileMenu(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
