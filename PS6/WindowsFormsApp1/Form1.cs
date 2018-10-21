@@ -125,6 +125,7 @@ namespace WindowsFormsApp1
 
             //string value = sheet.GetCellValue(name).ToString();
 
+
             //update gui representation
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
@@ -135,9 +136,32 @@ namespace WindowsFormsApp1
             
         }
 
+        /// <summary>
+        /// Creates a new window with a fresh spreadsheet, running on the same thread as the current sheet
+        /// </summary>
+        /// <param name="sender">"new" menu button object that sent the event</param>
+        /// <param name="e">Event to be handled</param>
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SpreadsheetApplicationContext.GetAppContext().RunForm(new Form1());
+        }
+
+        /// <summary>
+        /// Handles closing the spreadsheet. Displays a message box warning about data loss if the 
+        /// spreadsheet has not been saved but has been changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sheet.Changed)
+            {
+                DialogResult result = MessageBox.Show("WARNING:\n\nSAll unsaved changes will be lost" +
+                    "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                    Close();
+            }
         }
     }
 }
