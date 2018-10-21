@@ -36,8 +36,17 @@
     <StartupObject>WindowsFormsApp1.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DependencyGraph">
+      <HintPath>..\Project1\Libraries\DependencyGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Formula">
+      <HintPath>..\Project1\Libraries\Formula.dll</HintPath>
+    </Reference>
+    <Reference Include="Spreadsheet">
+      <HintPath>..\Project1\Libraries\Spreadsheet.dll</HintPath>
+    </Reference>
     <Reference Include="SpreadsheetPanel">
-      <HintPath>..\..\..\Examples\PS6Skeleton\SpreadsheetPanel\bin\Debug\SpreadsheetPanel.dll</HintPath>
+      <HintPath>..\Project1\Libraries\SpreadsheetPanel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,12 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Project1\Resources.csproj">
-      <Project>{99da517e-ff29-4495-b4aa-3f463d294052}</Project>
-      <Name>Resources</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
