@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>WindowsFormsApp1.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DependencyGraph">
       <HintPath>..\Project1\Libraries\DependencyGraph.dll</HintPath>
