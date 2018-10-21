@@ -35,7 +35,7 @@ namespace WindowsFormsApp1
             this.AcceptButton = setButton;
 
             //create backing structure
-            sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-99]{1}$"), s => s.ToUpper(), "ps6");
+            sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{2}$"), s => s.ToUpper(), "ps6");
         }
 
 
