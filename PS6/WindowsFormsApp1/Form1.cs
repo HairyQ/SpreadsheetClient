@@ -1,4 +1,5 @@
-﻿using SS;
+﻿using SpreadsheetUtilities;
+using SS;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        Spreadsheet sheet;
+        SS.Spreadsheet sheet;
 
         public Form1()
         {
@@ -22,12 +23,18 @@ namespace WindowsFormsApp1
 
             //Register displaySelection as listener to selectionChanged
             spreadsheetPanel1.SelectionChanged += displaySelection;
+
+            //Select cell A1
             spreadsheetPanel1.SetSelection(0, 0);
+
+            //Move cursor to ContentsField
+            cellContentsField.Focus();
 
             //enter acts as set button
             this.AcceptButton = setButton;
 
-            sheet = new Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-99]{1}$"), s => s.ToUpper(), "ps6");
+            //create backing structure
+            sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-99]{1}$"), s => s.ToUpper(), "ps6");
         }
 
 
@@ -47,13 +54,13 @@ namespace WindowsFormsApp1
 
             cellNameField.Text = name;
 
-            //set CellContents from spreadsheet
-            if (sheet.GetCellContents(name) is SpreadsheetUtilities.Formula)
+            //set CellContentsField from spreadsheet
+            if (sheet.GetCellContents(name) is Formula)
                 cellContentsField.Text = "=" + sheet.GetCellContents(name).ToString();
             else
                 cellContentsField.Text = sheet.GetCellContents(name).ToString();
 
-            //set CellValue from spreadsheet
+            //set CellValueField from spreadsheet
             cellValueField.Text = sheet.GetCellValue(name).ToString();
 
             //highlight current contents
@@ -90,10 +97,30 @@ namespace WindowsFormsApp1
 
             string name = GetCellName(col, row);
             string contents = cellContentsField.Text;
+            string value = "";
 
-            sheet.SetContentsOfCell(name, contents);
+            try
+            {
+                sheet.SetContentsOfCell(name, contents);
 
-            string value = sheet.GetCellValue(name).ToString();
+                object valueObj = sheet.GetCellValue(name);
+
+                if (valueObj is Type FormulaError)
+                {
+                    FormulaError fe = (FormulaError)valueObj;
+                    value = fe.Reason;
+                }
+                else
+                    value = valueObj.ToString();
+            }
+            catch (Exception ffe)
+            {
+                //create error message window
+                MessageBox.Show(ffe.Message, "Formula Format Error");
+                string s = ffe.Message;
+            }
+
+            //string value = sheet.GetCellValue(name).ToString();
 
             //update gui representation
             cellValueField.Text = value;
