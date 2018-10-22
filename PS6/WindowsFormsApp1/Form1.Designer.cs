@@ -40,6 +40,14 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spreadsheetPanel1 = new SS.SpreadsheetPanel();
+            this.combineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aNDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.savingAndOpeningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.combiningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,7 +95,8 @@
             this.fileMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.fileMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.combineToolStripMenuItem});
             this.fileMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.fileMenuStrip.Name = "fileMenuStrip";
             this.fileMenuStrip.Size = new System.Drawing.Size(951, 28);
@@ -135,19 +144,84 @@
             // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.navigationToolStripMenuItem,
+            this.savingAndOpeningToolStripMenuItem,
+            this.combiningToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // spreadsheetPanel1
             // 
-            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
             this.spreadsheetPanel1.Size = new System.Drawing.Size(948, 457);
             this.spreadsheetPanel1.TabIndex = 0;
+            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
+            // 
+            // combineToolStripMenuItem
+            // 
+            this.combineToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aNDToolStripMenuItem,
+            this.oRToolStripMenuItem});
+            this.combineToolStripMenuItem.Name = "combineToolStripMenuItem";
+            this.combineToolStripMenuItem.Size = new System.Drawing.Size(173, 24);
+            this.combineToolStripMenuItem.Text = "Combine Spreadsheets";
+            // 
+            // aNDToolStripMenuItem
+            // 
+            this.aNDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFileToolStripMenuItem});
+            this.aNDToolStripMenuItem.Name = "aNDToolStripMenuItem";
+            this.aNDToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.aNDToolStripMenuItem.Text = "AND";
+            // 
+            // openFileToolStripMenuItem
+            // 
+            this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.openFileToolStripMenuItem.Text = "Open File";
+            this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            // 
+            // oRToolStripMenuItem
+            // 
+            this.oRToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFileToolStripMenuItem1});
+            this.oRToolStripMenuItem.Name = "oRToolStripMenuItem";
+            this.oRToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.oRToolStripMenuItem.Text = "OR";
+            // 
+            // openFileToolStripMenuItem1
+            // 
+            this.openFileToolStripMenuItem1.Name = "openFileToolStripMenuItem1";
+            this.openFileToolStripMenuItem1.Size = new System.Drawing.Size(216, 26);
+            this.openFileToolStripMenuItem1.Text = "Open File";
+            this.openFileToolStripMenuItem1.Click += new System.EventHandler(this.openFileToolStripMenuItem1_Click);
+            // 
+            // navigationToolStripMenuItem
+            // 
+            this.navigationToolStripMenuItem.Name = "navigationToolStripMenuItem";
+            this.navigationToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
+            this.navigationToolStripMenuItem.Text = "Navigation";
+            this.navigationToolStripMenuItem.Click += new System.EventHandler(this.navigationToolStripMenuItem_Click);
+            // 
+            // savingAndOpeningToolStripMenuItem
+            // 
+            this.savingAndOpeningToolStripMenuItem.Name = "savingAndOpeningToolStripMenuItem";
+            this.savingAndOpeningToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
+            this.savingAndOpeningToolStripMenuItem.Text = "Saving and Opening";
+            this.savingAndOpeningToolStripMenuItem.Click += new System.EventHandler(this.savingAndOpeningToolStripMenuItem_Click);
+            // 
+            // combiningToolStripMenuItem
+            // 
+            this.combiningToolStripMenuItem.Name = "combiningToolStripMenuItem";
+            this.combiningToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
+            this.combiningToolStripMenuItem.Text = "Combining";
+            this.combiningToolStripMenuItem.Click += new System.EventHandler(this.combiningToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -183,5 +257,13 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem combineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aNDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem oRToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem navigationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem savingAndOpeningToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem combiningToolStripMenuItem;
     }
 }

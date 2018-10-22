@@ -202,6 +202,8 @@ namespace WindowsFormsApp1
             return true;
         }
 
+        
+
         private void openFileMenu(object sender, EventArgs e)
         {
 
@@ -272,6 +274,16 @@ namespace WindowsFormsApp1
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            combineSheetsHelper("");
+
+        }
+
+        private void combineSheetsHelper(string booleanOperator)
+        {
+            //Clear current sheet if opening new file (opposed to combining)
+            if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR")) 
+                spreadsheetPanel1.Clear();
+
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Title = "Open Spreadsheet";
@@ -280,9 +292,6 @@ namespace WindowsFormsApp1
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    //Reset the open grid's cells
-                    spreadsheetPanel1.Clear();
-
                     //Populate correct cells from opened file
                     using (XmlReader reader = XmlReader.Create(ofd.FileName))
                     {
@@ -300,8 +309,25 @@ namespace WindowsFormsApp1
                                         int col = cellName[0] - 65;
                                         Int32.TryParse(cellName.Substring(1), out row);
 
-                                        SetCell(col, row - 1, cellContents);
-
+                                        if (booleanOperator.Equals("AND"))
+                                        {
+                                            if (!sheet.GetCellContents(cellName).ToString().Equals(cellContents))
+                                            {
+                                                SetCell(col, row - 1, "");
+                                            }
+                                        } else if (booleanOperator.Equals("OR"))
+                                        {
+                                            if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
+                                            {
+                                                SetCell(col, row - 1, cellContents);
+                                            } else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
+                                            {
+                                                SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
+                                            }
+                                        } else
+                                        {
+                                            SetCell(col, row - 1, cellContents);
+                                        }
                                         break;
                                 }
 
@@ -310,7 +336,78 @@ namespace WindowsFormsApp1
                     }
                 }
             }
+        }
 
+        /// <summary>
+        /// User clicked "AND" operation for combining spreadsheets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void openFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            combineSheetsHelper("AND");
+        }
+
+        /// <summary>
+        /// User clicked "OR" operation for combining spreadsheets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void openFileToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            combineSheetsHelper("OR");
+        }
+
+        /// <summary>
+        /// No idea why this needs to exist but I guess it does. Deleting it will break the app.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void spreadsheetPanel1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Help Menu Item MessageBox for Spreadsheet navigation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void navigationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Navigation:\n\nMove selection of the cells of this Spreadsheet using:\n\nArrow keys; mouse; \"Enter\"\n\n\n" +
+                "Note: Moving cell selection to a different cell sets the contents and value of the cell. Allowed inputs include:\n\n" +
+                "Formulas (By typing '=' into the cell),\nStrings (Words and Sentences),\nNumbers");
+        }
+
+        /// <summary>
+        /// Help Menu Item MessageBox for Opening and Closing Spreadsheets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void savingAndOpeningToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Saving and Opening:\n\nTo Save: Select File > Save As from the menu bar to save this spreadsheet as a *.sprd " +
+                "file locally to your computer\n\nOpening: Select File > Open to navigate through your files until you find the specified " +
+                "spreadsheet file with extension \"*.sprd\". Select the file and click \"OK\" to open the file.\n\nThe save and open file " +
+                "dialog boxes allow you to choose between just files of type \"*.sprd\" and All File Types");
+        }
+        
+        /// <summary>
+        /// Help Menu Item MessageBox for describing Spreadsheet combination operations
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void combiningToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Combining Spreadsheets:\n\nBy selecting \"Combine Spreadsheets\" from the file menu, you are " +
+                "able to select between two operations: AND and OR\n\nAND: By selecting AND, and selecting a saved Spreadsheet " +
+                "from your computer, every cell that contains the same contents on this Spreadsheet as the corresponding cell " +
+                "on the selected spreadsheet will remain on the sheet, and any other cells will reset their contents.\n\nOR: By" +
+                " selecting OR, and selecting a saved Spreadsheet from your computer, any cell that is populated on either sheet" +
+                " that is not populated on the other becomes populated on this Spreadsheet with whatever contents were present." +
+                " If the corresponding cell contains different contents on both sheets, the contents of the cell on this sheet don't " +
+                "change");
         }
     }
 }
