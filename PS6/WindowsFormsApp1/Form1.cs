@@ -11,11 +11,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using static WindowsFormsApp1.Program;
 
 namespace WindowsFormsApp1
 {
-    
+
     public partial class Form1 : Form
     {
         SS.Spreadsheet sheet;
@@ -151,7 +152,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show(ffe.Message, "Formula Format Error");
                 string s = ffe.Message;
             }
-            
+
             //update gui representation
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
@@ -203,7 +204,7 @@ namespace WindowsFormsApp1
 
         private void openFileMenu(object sender, EventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -226,14 +227,16 @@ namespace WindowsFormsApp1
         {
             if (sheet.Changed)
             {
-                DialogResult result = MessageBox.Show("Warning:\n\nSAll unsaved changes will be lost" +
+                DialogResult result = MessageBox.Show("Warning:\n\nAll unsaved changes will be lost" +
                     "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                     Close();
             }
-
-            Close();
+            else
+            {
+                Close();
+            }
         }
 
         /// <summary>
@@ -277,10 +280,37 @@ namespace WindowsFormsApp1
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
+                    //Reset the open grid's cells
+                    spreadsheetPanel1.Clear();
 
+                    //Populate correct cells from opened file
+                    using (XmlReader reader = XmlReader.Create(ofd.FileName))
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.NodeType is XmlNodeType element)
+                            {
+                                switch (reader.Name)
+                                {
+                                    case "Cell":
+                                        string cellName = reader.GetAttribute(0);
+                                        string cellContents = reader.GetAttribute(1);
+
+                                        int row;
+                                        int col = cellName[0] - 65;
+                                        Int32.TryParse(cellName.Substring(1), out row);
+
+                                        SetCell(col, row - 1, cellContents);
+
+                                        break;
+                                }
+
+                            }
+                        }
+                    }
                 }
-
             }
+
         }
     }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+}

@@ -34,8 +34,8 @@ namespace SS
                 w.WriteString(Environment.NewLine); //separate each cell with newline
 
                 w.WriteStartElement("Cell");
-                w.WriteElementString("name", name);
-                w.WriteElementString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
+                w.WriteAttributeString("name", name);
+                w.WriteAttributeString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
                     "=" + contents.ToString() : contents + "");                               //append '='
                 w.WriteEndElement();
             }
