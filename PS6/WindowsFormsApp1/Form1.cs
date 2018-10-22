@@ -162,6 +162,8 @@ namespace WindowsFormsApp1
                 if (result == DialogResult.Yes)
                     Close();
             }
+
+            Close();
         }
 
         /// <summary>
@@ -172,33 +174,43 @@ namespace WindowsFormsApp1
         /// <param name="e"></param>
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Save Spreadsheet";
-            sfd.FileName = "Spreadsheet";
-            sfd.DefaultExt = ".sprd";
-            sfd.Filter = "Spreadsheet|*.sprd|All Files|*.*";
-
-            if (sfd.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
-                string fileName = sfd.FileName;
+                sfd.Title = "Save Spreadsheet Explorer";
+                sfd.FileName = "Spreadsheet";
+                sfd.DefaultExt = ".sprd";
+                sfd.Filter = "Spreadsheet|*.sprd|All Files|*.*";
 
-                if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    sheet.Save(fileName.Substring(fileName.Length - 5).Equals(".sprd") ? fileName : fileName + ".sprd");
-                } else
-                {
-                    sheet.Save(fileName + ".sprd"); //Append ".sprd" if "All File Types" is selected
+                    string fileName = sfd.FileName;
+
+                    if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
+                    {
+                        sheet.Save(fileName.Substring(fileName.Length - 5).Equals(".sprd") ? fileName : fileName + ".sprd");
+                    }
+                    else
+                    {
+                        sheet.Save(fileName + ".sprd"); //Append ".sprd" if "All File Types" is selected
+                    }
                 }
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.DefaultExt = ".sprd";
-            ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Open Spreadsheet";
+                ofd.DefaultExt = ".sprd";
+                ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
 
-            ofd.ShowDialog();
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+
+            }
         }
     }
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
