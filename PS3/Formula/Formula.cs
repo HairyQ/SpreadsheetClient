@@ -199,11 +199,12 @@ namespace SpreadsheetUtilities
                         try
                         {
                             currVal = lookup(normalizer(token));
+                            VariableDoubleInstructions(currVal);
                         } catch (Exception)
                         {
                             return new FormulaError("Formula contains invalid variable names");
                         }
-                        VariableDoubleInstructions(currVal);
+                        
                         if (!fE.Reason.Equals(gibberish.Reason))
                         {
                             return fE;

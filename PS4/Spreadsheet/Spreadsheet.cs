@@ -303,8 +303,16 @@ namespace SS
 
             if (GetCellContents(name).GetType().Equals(typeof(Formula)))
             {
-                Formula f = (Formula)GetCellContents(name);
-                return (Double)f.Evaluate(s => (Double)GetCellValue(s));
+                try
+                {
+                    Formula f = (Formula)GetCellContents(name);
+                    return (Double)f.Evaluate(s => (Double)GetCellValue(s));
+                }
+                catch (Exception e)
+                {
+                    return new FormulaError("Invalid formula");
+                }
+
             }
             else
             {
