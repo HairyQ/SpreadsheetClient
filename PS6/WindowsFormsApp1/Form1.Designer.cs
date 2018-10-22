@@ -44,6 +44,7 @@
             // 
             // cellNameField
             // 
+            this.cellNameField.Enabled = false;
             this.cellNameField.Location = new System.Drawing.Point(12, 31);
             this.cellNameField.Name = "cellNameField";
             this.cellNameField.ReadOnly = true;
@@ -71,6 +72,7 @@
             // 
             // cellValueField
             // 
+            this.cellValueField.Enabled = false;
             this.cellValueField.Location = new System.Drawing.Point(164, 31);
             this.cellValueField.Name = "cellValueField";
             this.cellValueField.ReadOnly = true;
@@ -104,19 +106,19 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.closeToolStripMenuItem.Text = "Close";
             // 
             // helpToolStripMenuItem
@@ -130,7 +132,7 @@
             this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(12, 75);
+            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
             this.spreadsheetPanel1.Size = new System.Drawing.Size(948, 457);
             this.spreadsheetPanel1.TabIndex = 0;
