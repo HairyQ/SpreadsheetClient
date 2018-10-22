@@ -156,12 +156,49 @@ namespace WindowsFormsApp1
         {
             if (sheet.Changed)
             {
-                DialogResult result = MessageBox.Show("WARNING:\n\nSAll unsaved changes will be lost" +
+                DialogResult result = MessageBox.Show("Warning:\n\nSAll unsaved changes will be lost" +
                     "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                     Close();
             }
+        }
+
+        /// <summary>
+        /// Saves this spreadsheet to a ".sprd" file locally to the user's computer.
+        /// Utilizes Spreadsheet's xmlWriter in the Save method to write this spreadsheet's info to the disk
+        /// </summary>
+        /// <param name="sender">"Save As" option from the file menu</param>
+        /// <param name="e"></param>
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save Spreadsheet";
+            sfd.FileName = "Spreadsheet";
+            sfd.DefaultExt = ".sprd";
+            sfd.Filter = "Spreadsheet|*.sprd|All Files|*.*";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = sfd.FileName;
+
+                if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
+                {
+                    sheet.Save(fileName.Substring(fileName.Length - 5).Equals(".sprd") ? fileName : fileName + ".sprd");
+                } else
+                {
+                    sheet.Save(fileName + ".sprd"); //Append ".sprd" if "All File Types" is selected
+                }
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.DefaultExt = ".sprd";
+            ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
+
+            ofd.ShowDialog();
         }
     }
 }
