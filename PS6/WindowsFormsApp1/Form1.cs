@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp1
 {
-    
+
     public partial class Form1 : Form
     {
         SS.Spreadsheet sheet;
@@ -38,10 +38,6 @@ namespace WindowsFormsApp1
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
         }
 
-        private void selectionChanged(object sender, EventArgs e)
-        {
-            MessageBox.Show("selection changed");
-        }
         /// <summary>
         /// Every time the selection changes, this method is called with the
         /// Spreadsheet as its parameter. CellName, CellValue, CellContents fields
@@ -50,14 +46,26 @@ namespace WindowsFormsApp1
         /// <param name="ss"></param>
         private void displaySelection(SpreadsheetPanel ss)
         {
-            cellContentsField.Focus();
-
+            //get current position
             ss.GetSelection(out int col, out int row);
 
             string name = GetCellName(col, row);
+            UpdateGUIFields(name);
+        }
+
+        /// <summary>
+        /// Given cell name, moves cursor to contents field,
+        /// and updates name, contents, and value fields
+        /// with values corresponding to cell
+        /// </summary>
+        /// <param name="name"></param>
+        private void UpdateGUIFields(string name)
+        {
+            //move cursor to contents field
+            cellContentsField.Focus();
 
             cellNameField.Text = name;
-            
+
             //set CellContentsField from spreadsheet
             if (sheet.GetCellContents(name) is Formula)
                 cellContentsField.Text = "=" + sheet.GetCellContents(name).ToString();
@@ -100,10 +108,11 @@ namespace WindowsFormsApp1
             //get current cell
             spreadsheetPanel1.GetSelection(out int col, out int row);
 
-            //extract contents contents
+            //extract contents
             string contents = cellContentsField.Text;
 
             SetCell(col, row, contents);
+
         }
 
         /// <summary>
@@ -114,7 +123,7 @@ namespace WindowsFormsApp1
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <param name="contents"></param>
-        private void SetCell(int col, int row,  string contents)
+        private void SetCell(int col, int row, string contents)
         {
             string name = GetCellName(col, row);
             string value = "";
@@ -152,39 +161,61 @@ namespace WindowsFormsApp1
 
         private void openFileMenu(object sender, EventArgs e)
         {
-            
+
         }
 
+        /// <summary>
+        /// Takes keypress message, if an arrow key, sets current cell to current
+        /// contents. Moves one cell over in corresponding direction, and updates
+        /// sheetpanel and gui accordingly.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            //capture up arrow key
-            if (keyData == Keys.Up)
+            //get current position
+            spreadsheetPanel1.GetSelection(out int col, out int row);
+            string name, contents;
+
+            //keypress handling logic
+            switch (keyData)
             {
-                spreadsheetPanel1.GetSelection(out int col, out int row);
-                row++;
-                string name = GetCellName(col, row);
-                MessageBox.Show("You pressed Up arrow key");
-                return true;
+                case Keys.Up:
+                    contents = cellContentsField.Text;
+                    SetCell(col, row, contents);
+                    row--;
+                    break;
+                case Keys.Down:
+                    contents = cellContentsField.Text;
+                    SetCell(col, row, contents);
+                    row++;
+                    break;
+                case Keys.Left:
+                    contents = cellContentsField.Text;
+                    SetCell(col, row, contents);
+                    col--;
+                    break;
+                case Keys.Right:
+                    contents = cellContentsField.Text;
+                    SetCell(col, row, contents);
+                    col++;
+                    break;
+                //pass key event onto regular form handling
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
             }
-            //capture down arrow key
-            if (keyData == Keys.Down)
+
+            //update selection
+            if (spreadsheetPanel1.SetSelection(col, row))
             {
-                MessageBox.Show("You pressed Down arrow key");
-                return true;
+                name = GetCellName(col, row);
+                UpdateGUIFields(name);
             }
-            //capture left arrow key
-            if (keyData == Keys.Left)
-            {
-                MessageBox.Show("You pressed Left arrow key");
-                return true;
-            }
-            //capture right arrow key
-            if (keyData == Keys.Right)
-            {
-                MessageBox.Show("You pressed Right arrow key");
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
+
+            //event has been handled
+            return true;
+
         }
     }
 }
