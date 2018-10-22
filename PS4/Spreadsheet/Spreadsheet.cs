@@ -34,8 +34,8 @@ namespace SS
                 w.WriteString(Environment.NewLine); //separate each cell with newline
 
                 w.WriteStartElement("Cell");
-                w.WriteElementString("name", name);
-                w.WriteElementString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
+                w.WriteAttributeString("name", name);
+                w.WriteAttributeString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
                     "=" + contents.ToString() : contents + "");                               //append '='
                 w.WriteEndElement();
             }
@@ -290,6 +290,10 @@ namespace SS
             {
                 throw new SpreadsheetReadWriteException("There were problems writing the XML file");
             }
+
+            //File has been saved, and therefore no warning message for lost data will be shown when
+            //spreadsheet is closed if changed = false
+            changed = false;
         }
 
         public override object GetCellValue(string name)

@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using static WindowsFormsApp1.Program;
 
 namespace WindowsFormsApp1
 {
@@ -38,6 +41,7 @@ namespace WindowsFormsApp1
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
         }
 
+
         /// <summary>
         /// Every time the selection changes, this method is called with the
         /// Spreadsheet as its parameter. CellName, CellValue, CellContents fields
@@ -47,12 +51,14 @@ namespace WindowsFormsApp1
         private void displaySelection(SpreadsheetPanel ss)
         {
             //get current position
+            cellContentsField.Focus();
+
             ss.GetSelection(out int col, out int row);
 
             string name = GetCellName(col, row);
+
             UpdateGUIFields(name);
         }
-
         /// <summary>
         /// Given cell name, moves cursor to contents field,
         /// and updates name, contents, and value fields
@@ -110,11 +116,8 @@ namespace WindowsFormsApp1
 
             //extract contents
             string contents = cellContentsField.Text;
-
             SetCell(col, row, contents);
-
         }
-
         /// <summary>
         /// takes string contents and column and row number,
         /// converts col and row to a cell value, adds cell
@@ -127,22 +130,18 @@ namespace WindowsFormsApp1
         {
             string name = GetCellName(col, row);
             string value = "";
-
             try
             {
                 //store contents in backing sheet
                 sheet.SetContentsOfCell(name, contents);
-
                 //get value of cell from backing sheet
                 object valueObj = sheet.GetCellValue(name);
-
                 //handle formula errors
                 if (valueObj is Type FormulaError)
                 {
                     FormulaError fe = (FormulaError)valueObj;
                     value = fe.Reason;
                 }
-
                 //store value of cell
                 else
                     value = valueObj.ToString();
@@ -159,22 +158,8 @@ namespace WindowsFormsApp1
             spreadsheetPanel1.SetValue(col, row, value);
         }
 
-        private void openFileMenu(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// Takes keypress message, if an arrow key, sets current cell to current
-        /// contents. Moves one cell over in corresponding direction, and updates
-        /// sheetpanel and gui accordingly.
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="keyData"></param>
-        /// <returns></returns>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            //get current position
             spreadsheetPanel1.GetSelection(out int col, out int row);
             string name, contents;
 
@@ -215,6 +200,116 @@ namespace WindowsFormsApp1
 
             //event has been handled
             return true;
+        }
+
+        private void openFileMenu(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new window with a fresh spreadsheet, running on the same thread as the current sheet
+        /// </summary>
+        /// <param name="sender">"new" menu button object that sent the event</param>
+        /// <param name="e">Event to be handled</param>
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpreadsheetApplicationContext.GetAppContext().RunForm(new Form1());
+        }
+
+        /// <summary>
+        /// Handles closing the spreadsheet. Displays a message box warning about data loss if the 
+        /// spreadsheet has not been saved but has been changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sheet.Changed)
+            {
+                DialogResult result = MessageBox.Show("Warning:\n\nAll unsaved changes will be lost" +
+                    "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                    Close();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        /// <summary>
+        /// Saves this spreadsheet to a ".sprd" file locally to the user's computer.
+        /// Utilizes Spreadsheet's xmlWriter in the Save method to write this spreadsheet's info to the disk
+        /// </summary>
+        /// <param name="sender">"Save As" option from the file menu</param>
+        /// <param name="e"></param>
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Title = "Save Spreadsheet Explorer";
+                sfd.FileName = "Spreadsheet";
+                sfd.DefaultExt = ".sprd";
+                sfd.Filter = "Spreadsheet|*.sprd|All Files|*.*";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    string fileName = sfd.FileName;
+
+                    if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
+                    {
+                        sheet.Save(fileName.Substring(fileName.Length - 5).Equals(".sprd") ? fileName : fileName + ".sprd");
+                    }
+                    else
+                    {
+                        sheet.Save(fileName + ".sprd"); //Append ".sprd" if "All File Types" is selected
+                    }
+                }
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Open Spreadsheet";
+                ofd.DefaultExt = ".sprd";
+                ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    //Reset the open grid's cells
+                    spreadsheetPanel1.Clear();
+
+                    //Populate correct cells from opened file
+                    using (XmlReader reader = XmlReader.Create(ofd.FileName))
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.NodeType is XmlNodeType element)
+                            {
+                                switch (reader.Name)
+                                {
+                                    case "Cell":
+                                        string cellName = reader.GetAttribute(0);
+                                        string cellContents = reader.GetAttribute(1);
+
+                                        int row;
+                                        int col = cellName[0] - 65;
+                                        Int32.TryParse(cellName.Substring(1), out row);
+
+                                        SetCell(col, row - 1, cellContents);
+
+                                        break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
 
         }
     }
