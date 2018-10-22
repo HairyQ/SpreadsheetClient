@@ -196,7 +196,13 @@ namespace SpreadsheetUtilities
                     //Regex for finding variables
                     if (Regex.IsMatch(token, @"[a-zA-Z_](?: [a-zA-Z_]|\d)*"))
                     {
-                        currVal = lookup(normalizer(token));
+                        try
+                        {
+                            currVal = lookup(normalizer(token));
+                        } catch (Exception)
+                        {
+                            return new FormulaError("Formula contains invalid variable names");
+                        }
                         VariableDoubleInstructions(currVal);
                         if (!fE.Reason.Equals(gibberish.Reason))
                         {

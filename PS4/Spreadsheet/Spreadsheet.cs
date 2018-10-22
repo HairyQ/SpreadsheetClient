@@ -290,6 +290,10 @@ namespace SS
             {
                 throw new SpreadsheetReadWriteException("There were problems writing the XML file");
             }
+
+            //File has been saved, and therefore no warning message for lost data will be shown when
+            //spreadsheet is closed if changed = false
+            changed = false;
         }
 
         public override object GetCellValue(string name)
