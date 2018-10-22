@@ -137,7 +137,7 @@ namespace WindowsFormsApp1
                 //get value of cell from backing sheet
                 object valueObj = sheet.GetCellValue(name);
                 //handle formula errors
-                if (valueObj is Type FormulaError)
+                if (valueObj.GetType().Equals(typeof(FormulaError)))
                 {
                     FormulaError fe = (FormulaError)valueObj;
                     value = fe.Reason;
