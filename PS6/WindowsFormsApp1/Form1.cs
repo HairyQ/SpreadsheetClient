@@ -25,6 +25,8 @@ namespace WindowsFormsApp1
         /// <summary> boolean determining whether or not data hasn't been saved </summary>
         bool isChanged;
 
+        string fileName;
+
         public Form1()
         {
             InitializeComponent();
@@ -43,6 +45,8 @@ namespace WindowsFormsApp1
 
             //IsChanged is false initially
             isChanged = false;
+
+            fileName = "Spreadsheet";
 
             //Register Form1_Closing as listener to Exiting/Closing the sheet
             this.FormClosing += Form1_Closing;
@@ -237,7 +241,7 @@ namespace WindowsFormsApp1
         /// <param name="e"></param>
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (sheet.Changed)
+            if (isChanged)
             {
                 DialogResult result = MessageBox.Show("Warning:\n\nAll unsaved changes will be lost" +
                     "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
@@ -262,13 +266,13 @@ namespace WindowsFormsApp1
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 sfd.Title = "Save Spreadsheet Explorer";
-                sfd.FileName = "Spreadsheet";
+                sfd.FileName = fileName;
                 sfd.DefaultExt = ".sprd";
                 sfd.Filter = "Spreadsheet|*.sprd|All Files|*.*";
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    string fileName = sfd.FileName;
+                    fileName = Path.GetFileName(sfd.FileName);
 
                     if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
                     {
@@ -299,19 +303,20 @@ namespace WindowsFormsApp1
 
                 if (result == DialogResult.Yes)
                 {
-                    combineSheetsHelper("");
+                    OpenAndCombineFileViewer("");
                     isChanged = false;
                 }
             }
             else
             {
-                combineSheetsHelper("");
+                OpenAndCombineFileViewer("");
                 isChanged = false;
             }
         }
 
         /// <summary>
-        /// Helper method that handles the logic behind "combining" spreadsheets
+        /// Helper method that handles the logic behind "combining" spreadsheets, and also provides an OpenFileDialog
+        /// for opening a file from the disk
         /// 
         /// If the user has a Spreadsheet open, Spreadsheet A, and they choose the menu option Combine Spreadsheets,
         /// they are given an option between two operators: AND and OR. After choosing an operator, they choose a 
@@ -320,17 +325,18 @@ namespace WindowsFormsApp1
         /// If the user chooses AND, the contents of occupied cells in Spreadsheet A are checked against their 
         /// corresponding cells in Spreadsheet B. Following the logic of boolean operation, if both cells contain
         /// the same value, Spreadsheet A (the Spreadsheet the user had open originally) retains those cells' 
-        /// contents, while all other cells' contents are reset to an empty string.
+        /// contents, while all other cells' contents are reset to an empty string. If corresponding cells contain 
+        /// different contents, Spreadsheet A's cell's contents are reset to an empty string.
         /// 
         /// If the user chooses OR, the contents are again checked between both Spreadsheets' corresponding cells, 
         /// and if any cells contain contents in either Spreadsheet, Spreadsheet A is amended so that all of those
         /// cells that were populated in Spreadsheet B are also populated in Spreadsheet A, and it contains all of
         /// its cells' original contents. If corresponding cells contain different contents, Spreadsheet A's cell's
         /// original contents are retained.
-        /// 
+        ///
         /// </summary>
         /// <param name="booleanOperator"></param>
-        private void combineSheetsHelper(string booleanOperator)
+        private void OpenAndCombineFileViewer(string booleanOperator)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -341,9 +347,10 @@ namespace WindowsFormsApp1
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     //Clear current sheet if opening new file (opposed to combining)
-                    if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
+                    if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR")) 
                         spreadsheetPanel1.Clear();
 
+                    fileName = Path.GetFileName(ofd.FileName);
                     //Populate correct cells from opened file
                     using (XmlReader reader = XmlReader.Create(ofd.FileName))
                     {
@@ -380,10 +387,11 @@ namespace WindowsFormsApp1
                                         }
                                         break;
                                 }
-
                             }
                         }
                     }
+                    if (booleanOperator.Equals(""))
+                        isChanged = false;
                 }
             }
         }
@@ -395,7 +403,7 @@ namespace WindowsFormsApp1
         /// <param name="e"></param>
         private void openFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            combineSheetsHelper("AND");
+            OpenAndCombineFileViewer("AND");
         }
 
         /// <summary>
@@ -405,7 +413,7 @@ namespace WindowsFormsApp1
         /// <param name="e"></param>
         private void openFileToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            combineSheetsHelper("OR");
+            OpenAndCombineFileViewer("OR");
         }
 
         /// <summary>

@@ -47,6 +47,7 @@
     <Content Include="Libraries\Spreadsheet.xml" />
     <Content Include="Libraries\SpreadsheetPanel.dll" />
     <Content Include="Libraries\SpreadsheetPanel.XML" />
+    <Content Include="README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
