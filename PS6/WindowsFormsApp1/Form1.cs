@@ -36,9 +36,6 @@ namespace WindowsFormsApp1
             //Move cursor to ContentsField
             cellContentsField.Focus();
 
-            //enter acts as set button
-            this.AcceptButton = setButton;
-
             //create backing structure
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
 
@@ -176,6 +173,7 @@ namespace WindowsFormsApp1
                     SetCell(col, row, contents);
                     row--;
                     break;
+                case Keys.Enter:
                 case Keys.Down:
                     contents = cellContentsField.Text;
                     SetCell(col, row, contents);
@@ -186,6 +184,7 @@ namespace WindowsFormsApp1
                     SetCell(col, row, contents);
                     col--;
                     break;
+                case Keys.Tab:
                 case Keys.Right:
                     contents = cellContentsField.Text;
                     SetCell(col, row, contents);
