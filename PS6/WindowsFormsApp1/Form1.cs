@@ -19,9 +19,13 @@ namespace WindowsFormsApp1
 
     public partial class Form1 : Form
     {
+        /// <summary> Instance of the Spreadsheet to provide Model for the grid </summary>
         SS.Spreadsheet sheet;
 
         bool contentsChanged = false;
+
+        /// <summary> boolean determining whether or not data hasn't been saved </summary>
+        bool isChanged;
 
         public Form1()
         {
@@ -40,7 +44,10 @@ namespace WindowsFormsApp1
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
 
             //IsChanged is false initially
-            contentsChanged = false;
+            isChanged = false;
+
+            //Register Form1_Closing as listener to Exiting/Closing the sheet
+            this.FormClosing += Form1_Closing;
         }
 
 
@@ -158,6 +165,7 @@ namespace WindowsFormsApp1
                 string s = ffe.Message;
             }
 
+            isChanged = sheet.Changed;
             //update gui representation
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
@@ -276,15 +284,23 @@ namespace WindowsFormsApp1
                     if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
                     {
                         sheet.Save(fileName.Substring(fileName.Length - 5).Equals(".sprd") ? fileName : fileName + ".sprd");
+                        isChanged = false;
                     }
                     else
                     {
                         sheet.Save(fileName + ".sprd"); //Append ".sprd" if "All File Types" is selected
+                        isChanged = false;
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Opens a saved Spreadsheet from the user's disk, and writes the data to the already open 
+        /// Spreadsheet, rather than opening a new window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (sheet.Changed)
@@ -295,14 +311,36 @@ namespace WindowsFormsApp1
                 if (result == DialogResult.Yes)
                 {
                     combineSheetsHelper("");
+                    isChanged = false;
                 }
             }
             else
             {
                 combineSheetsHelper("");
+                isChanged = false;
             }
         }
 
+        /// <summary>
+        /// Helper method that handles the logic behind "combining" spreadsheets
+        /// 
+        /// If the user has a Spreadsheet open, Spreadsheet A, and they choose the menu option Combine Spreadsheets,
+        /// they are given an option between two operators: AND and OR. After choosing an operator, they choose a 
+        /// Spreadsheet file, Spreadsheet B. 
+        /// 
+        /// If the user chooses AND, the contents of occupied cells in Spreadsheet A are checked against their 
+        /// corresponding cells in Spreadsheet B. Following the logic of boolean operation, if both cells contain
+        /// the same value, Spreadsheet A (the Spreadsheet the user had open originally) retains those cells' 
+        /// contents, while all other cells' contents are reset to an empty string.
+        /// 
+        /// If the user chooses OR, the contents are again checked between both Spreadsheets' corresponding cells, 
+        /// and if any cells contain contents in either Spreadsheet, Spreadsheet A is amended so that all of those
+        /// cells that were populated in Spreadsheet B are also populated in Spreadsheet A, and it contains all of
+        /// its cells' original contents. If corresponding cells contain different contents, Spreadsheet A's cell's
+        /// original contents are retained.
+        /// 
+        /// </summary>
+        /// <param name="booleanOperator"></param>
         private void combineSheetsHelper(string booleanOperator)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -337,22 +375,17 @@ namespace WindowsFormsApp1
                                         if (booleanOperator.Equals("AND"))
                                         {
                                             if (!sheet.GetCellContents(cellName).ToString().Equals(cellContents))
-                                            {
                                                 SetCell(col, row - 1, "");
-                                            }
-                                        }
-                                        else if (booleanOperator.Equals("OR"))
+
+                                        } else if (booleanOperator.Equals("OR"))
                                         {
                                             if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
-                                            {
                                                 SetCell(col, row - 1, cellContents);
-                                            }
+
                                             else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
-                                            {
                                                 SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
-                                            }
-                                        }
-                                        else
+                                            
+                                        } else
                                         {
                                             SetCell(col, row - 1, cellContents);
                                         }
@@ -439,9 +472,25 @@ namespace WindowsFormsApp1
                 "change");
         }
 
-        private void cellContentsField_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Listener for Close() action, whether from the 'X' in the top right corner, or the Close()
+        /// file menu option
+        /// 
+        /// If data on the Spreadsheet has been edited but not saved, provides a warning message giving
+        /// the user a chance to save their data before closing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Form1_Closing(object sender, CancelEventArgs e)
         {
-            contentsChanged = true;
+            if (isChanged)
+            {
+                DialogResult result = MessageBox.Show("Warning:\n\nAll unsaved changes will be lost" +
+                        "\n\nClose anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                    e.Cancel = true;
+            }
         }
     }
 }
