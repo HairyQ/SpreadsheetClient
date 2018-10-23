@@ -21,7 +21,7 @@ namespace WindowsFormsApp1
     {
         SS.Spreadsheet sheet;
 
-        bool isChanged;
+        bool isChanged = false;
 
         public Form1()
         {
@@ -113,6 +113,9 @@ namespace WindowsFormsApp1
 
         private void setButton_Click(object sender, EventArgs e)
         {
+            if (isChanged == false)
+                return;
+
             //get current cell
             spreadsheetPanel1.GetSelection(out int col, out int row);
 
@@ -158,6 +161,8 @@ namespace WindowsFormsApp1
             //update gui representation
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
+
+            isChanged = false;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -170,24 +175,28 @@ namespace WindowsFormsApp1
             {
                 case Keys.Up:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (isChanged == true)
+                        SetCell(col, row, contents);
                     row--;
                     break;
                 case Keys.Enter:
                 case Keys.Down:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (isChanged == true)
+                        SetCell(col, row, contents);
                     row++;
                     break;
                 case Keys.Left:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (isChanged == true)
+                        SetCell(col, row, contents);
                     col--;
                     break;
                 case Keys.Tab:
                 case Keys.Right:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (isChanged == true)
+                        SetCell(col, row, contents);
                     col++;
                     break;
                 //pass key event onto regular form handling
@@ -206,7 +215,7 @@ namespace WindowsFormsApp1
             return true;
         }
 
-        
+
 
         private void openFileMenu(object sender, EventArgs e)
         {
@@ -331,16 +340,19 @@ namespace WindowsFormsApp1
                                             {
                                                 SetCell(col, row - 1, "");
                                             }
-                                        } else if (booleanOperator.Equals("OR"))
+                                        }
+                                        else if (booleanOperator.Equals("OR"))
                                         {
                                             if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
                                             {
                                                 SetCell(col, row - 1, cellContents);
-                                            } else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
+                                            }
+                                            else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
                                             {
                                                 SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
                                             }
-                                        } else
+                                        }
+                                        else
                                         {
                                             SetCell(col, row - 1, cellContents);
                                         }
@@ -409,7 +421,7 @@ namespace WindowsFormsApp1
                 "spreadsheet file with extension \"*.sprd\". Select the file and click \"OK\" to open the file.\n\nThe save and open file " +
                 "dialog boxes allow you to choose between just files of type \"*.sprd\" and All File Types");
         }
-        
+
         /// <summary>
         /// Help Menu Item MessageBox for describing Spreadsheet combination operations
         /// </summary>
@@ -425,6 +437,11 @@ namespace WindowsFormsApp1
                 " that is not populated on the other becomes populated on this Spreadsheet with whatever contents were present." +
                 " If the corresponding cell contains different contents on both sheets, the contents of the cell on this sheet don't " +
                 "change");
+        }
+
+        private void cellContentsField_TextChanged(object sender, EventArgs e)
+        {
+            isChanged = true;
         }
     }
 }
