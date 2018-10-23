@@ -21,6 +21,8 @@ namespace WindowsFormsApp1
     {
         SS.Spreadsheet sheet;
 
+        bool isChanged;
+
         public Form1()
         {
             InitializeComponent();
@@ -39,6 +41,9 @@ namespace WindowsFormsApp1
 
             //create backing structure
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
+
+            //IsChanged is false initially
+            isChanged = false;
         }
 
 
@@ -274,16 +279,24 @@ namespace WindowsFormsApp1
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            combineSheetsHelper("");
+            if (sheet.Changed)
+            {
+                DialogResult result = MessageBox.Show("Warning:\n\nAll unsaved changes will be lost" +
+                    "\n\nOpen new file anyway?", "Unsaved Changes", MessageBoxButtons.YesNo);
 
+                if (result == DialogResult.Yes)
+                {
+                    combineSheetsHelper("");
+                }
+            }
+            else
+            {
+                combineSheetsHelper("");
+            }
         }
 
         private void combineSheetsHelper(string booleanOperator)
         {
-            //Clear current sheet if opening new file (opposed to combining)
-            if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR")) 
-                spreadsheetPanel1.Clear();
-
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Title = "Open Spreadsheet";
@@ -292,6 +305,10 @@ namespace WindowsFormsApp1
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
+                    //Clear current sheet if opening new file (opposed to combining)
+                    if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
+                        spreadsheetPanel1.Clear();
+
                     //Populate correct cells from opened file
                     using (XmlReader reader = XmlReader.Create(ofd.FileName))
                     {
@@ -375,7 +392,8 @@ namespace WindowsFormsApp1
         /// <param name="e"></param>
         private void navigationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Navigation:\n\nMove selection of the cells of this Spreadsheet using:\n\nArrow keys; mouse; \"Enter\"\n\n\n" +
+            MessageBox.Show("Navigation:\n\nMove selection of the cells of this Spreadsheet using:\n\nArrow keys; mouse\n\nTo set " +
+                "value of cell:\nClick \"Set Value\" button\n\n\n" +
                 "Note: Moving cell selection to a different cell sets the contents and value of the cell. Allowed inputs include:\n\n" +
                 "Formulas (By typing '=' into the cell),\nStrings (Words and Sentences),\nNumbers");
         }
