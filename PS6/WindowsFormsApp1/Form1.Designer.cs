@@ -68,7 +68,6 @@
             this.cellContentsField.Name = "cellContentsField";
             this.cellContentsField.Size = new System.Drawing.Size(146, 22);
             this.cellContentsField.TabIndex = 3;
-            this.cellContentsField.TextChanged += new System.EventHandler(this.cellContentsField_TextChanged);
             // 
             // setButton
             // 
