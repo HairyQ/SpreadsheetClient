@@ -22,6 +22,8 @@ namespace WindowsFormsApp1
         /// <summary> Instance of the Spreadsheet to provide Model for the grid </summary>
         SS.Spreadsheet sheet;
 
+        bool contentsChanged = false;
+
         /// <summary> boolean determining whether or not data hasn't been saved </summary>
         bool isChanged;
 
@@ -122,6 +124,9 @@ namespace WindowsFormsApp1
 
         private void setButton_Click(object sender, EventArgs e)
         {
+            if (contentsChanged == false)
+                return;
+
             //get current cell
             spreadsheetPanel1.GetSelection(out int col, out int row);
 
@@ -168,6 +173,8 @@ namespace WindowsFormsApp1
             //update gui representation
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
+
+            contentsChanged = false;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -180,24 +187,28 @@ namespace WindowsFormsApp1
             {
                 case Keys.Up:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (contentsChanged == true)
+                        SetCell(col, row, contents);
                     row--;
                     break;
                 case Keys.Enter:
                 case Keys.Down:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (contentsChanged == true)
+                        SetCell(col, row, contents);
                     row++;
                     break;
                 case Keys.Left:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (contentsChanged == true)
+                        SetCell(col, row, contents);
                     col--;
                     break;
                 case Keys.Tab:
                 case Keys.Right:
                     contents = cellContentsField.Text;
-                    SetCell(col, row, contents);
+                    if (contentsChanged == true)
+                        SetCell(col, row, contents);
                     col++;
                     break;
                 //pass key event onto regular form handling
@@ -216,7 +227,7 @@ namespace WindowsFormsApp1
             return true;
         }
 
-        
+
 
         private void openFileMenu(object sender, EventArgs e)
         {
@@ -451,7 +462,7 @@ namespace WindowsFormsApp1
                 "spreadsheet file with extension \"*.sprd\". Select the file and click \"OK\" to open the file.\n\nThe save and open file " +
                 "dialog boxes allow you to choose between just files of type \"*.sprd\" and All File Types");
         }
-        
+
         /// <summary>
         /// Help Menu Item MessageBox for describing Spreadsheet combination operations
         /// </summary>
@@ -488,6 +499,11 @@ namespace WindowsFormsApp1
                 if (result == DialogResult.No)
                     e.Cancel = true;
             }
+        }
+
+        private void cellContentsField_TextChanged(object sender, EventArgs e)
+        {
+            contentsChanged = true;
         }
     }
 }

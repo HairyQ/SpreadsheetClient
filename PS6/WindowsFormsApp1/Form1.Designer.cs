@@ -43,11 +43,11 @@
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.spreadsheetPanel1 = new SS.SpreadsheetPanel();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.savingAndOpeningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.combiningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spreadsheetPanel1 = new SS.SpreadsheetPanel();
             this.fileMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +68,7 @@
             this.cellContentsField.Name = "cellContentsField";
             this.cellContentsField.Size = new System.Drawing.Size(146, 22);
             this.cellContentsField.TabIndex = 3;
+            this.cellContentsField.TextChanged += new System.EventHandler(this.cellContentsField_TextChanged);
             // 
             // setButton
             // 
@@ -156,13 +157,13 @@
             this.aNDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFileToolStripMenuItem});
             this.aNDToolStripMenuItem.Name = "aNDToolStripMenuItem";
-            this.aNDToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.aNDToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.aNDToolStripMenuItem.Text = "AND";
             // 
             // openFileToolStripMenuItem
             // 
             this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(160, 26);
             this.openFileToolStripMenuItem.Text = "Choose File";
             this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
             // 
@@ -171,26 +172,15 @@
             this.oRToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFileToolStripMenuItem1});
             this.oRToolStripMenuItem.Name = "oRToolStripMenuItem";
-            this.oRToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.oRToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.oRToolStripMenuItem.Text = "OR";
             // 
             // openFileToolStripMenuItem1
             // 
             this.openFileToolStripMenuItem1.Name = "openFileToolStripMenuItem1";
-            this.openFileToolStripMenuItem1.Size = new System.Drawing.Size(216, 26);
+            this.openFileToolStripMenuItem1.Size = new System.Drawing.Size(160, 26);
             this.openFileToolStripMenuItem1.Text = "Choose File";
             this.openFileToolStripMenuItem1.Click += new System.EventHandler(this.openFileToolStripMenuItem1_Click);
-            // 
-            // spreadsheetPanel1
-            // 
-            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
-            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(948, 457);
-            this.spreadsheetPanel1.TabIndex = 0;
-            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
             // 
             // helpToolStripMenuItem
             // 
@@ -219,6 +209,17 @@
             this.combiningToolStripMenuItem.Name = "combiningToolStripMenuItem";
             this.combiningToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
             this.combiningToolStripMenuItem.Text = "Combining";
+            // 
+            // spreadsheetPanel1
+            // 
+            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
+            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(948, 457);
+            this.spreadsheetPanel1.TabIndex = 0;
+            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
             // 
             // Form1
             // 
