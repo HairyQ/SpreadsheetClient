@@ -21,7 +21,7 @@ namespace WindowsFormsApp1
     {
         SS.Spreadsheet sheet;
 
-        bool isChanged = false;
+        bool contentsChanged = false;
 
         public Form1()
         {
@@ -40,7 +40,7 @@ namespace WindowsFormsApp1
             sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
 
             //IsChanged is false initially
-            isChanged = false;
+            contentsChanged = false;
         }
 
 
@@ -113,7 +113,7 @@ namespace WindowsFormsApp1
 
         private void setButton_Click(object sender, EventArgs e)
         {
-            if (isChanged == false)
+            if (contentsChanged == false)
                 return;
 
             //get current cell
@@ -162,7 +162,7 @@ namespace WindowsFormsApp1
             cellValueField.Text = value;
             spreadsheetPanel1.SetValue(col, row, value);
 
-            isChanged = false;
+            contentsChanged = false;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -175,27 +175,27 @@ namespace WindowsFormsApp1
             {
                 case Keys.Up:
                     contents = cellContentsField.Text;
-                    if (isChanged == true)
+                    if (contentsChanged == true)
                         SetCell(col, row, contents);
                     row--;
                     break;
                 case Keys.Enter:
                 case Keys.Down:
                     contents = cellContentsField.Text;
-                    if (isChanged == true)
+                    if (contentsChanged == true)
                         SetCell(col, row, contents);
                     row++;
                     break;
                 case Keys.Left:
                     contents = cellContentsField.Text;
-                    if (isChanged == true)
+                    if (contentsChanged == true)
                         SetCell(col, row, contents);
                     col--;
                     break;
                 case Keys.Tab:
                 case Keys.Right:
                     contents = cellContentsField.Text;
-                    if (isChanged == true)
+                    if (contentsChanged == true)
                         SetCell(col, row, contents);
                     col++;
                     break;
@@ -441,7 +441,7 @@ namespace WindowsFormsApp1
 
         private void cellContentsField_TextChanged(object sender, EventArgs e)
         {
-            isChanged = true;
+            contentsChanged = true;
         }
     }
 }
