@@ -492,5 +492,10 @@ namespace WindowsFormsApp1
                     e.Cancel = true;
             }
         }
+
+        private void cellContentsField_TextChanged(object sender, EventArgs e)
+        {
+            contentsChanged = true;
+        }
     }
 }
