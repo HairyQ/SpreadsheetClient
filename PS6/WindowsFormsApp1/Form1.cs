@@ -481,8 +481,7 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
-        /// Listener for Close() action, whether from the 'X' in the top right corner, or the Close()
-        /// file menu option
+        /// Listener for Close() action, when the user closes from the 'X' in the top right corner
         /// 
         /// If data on the Spreadsheet has been edited but not saved, provides a warning message giving
         /// the user a chance to save their data before closing
