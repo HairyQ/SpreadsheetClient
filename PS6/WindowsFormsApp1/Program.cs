@@ -61,14 +61,19 @@ namespace WindowsFormsApp1
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Start an application context and run one form inside it
             SpreadsheetApplicationContext appContext = SpreadsheetApplicationContext.GetAppContext();
-            appContext.RunForm(new Form1());
+            Form1 instance = new Form1();
+            appContext.RunForm(instance);
+
+            if (args.Length > 0)
+                instance.openFile(args[0]);
+
             Application.Run(appContext);
 
         }
