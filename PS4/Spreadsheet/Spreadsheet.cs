@@ -55,8 +55,11 @@ namespace SS
         /// <summary>
         /// Field determining whether or not this version of this Spreadsheet has been 'changed'
         /// </summary>
-        public override bool Changed { get => changed;
-            protected set => changed = value; }
+        public override bool Changed
+        {
+            get => changed;
+            protected set => changed = value;
+        }
 
         /// <summary>
         /// Native bool determining whether or not this version of this spreadsheet has been changed
@@ -249,10 +252,12 @@ namespace SS
                         }
                     }
                 }
-            } catch (System.IO.FileNotFoundException)
+            }
+            catch (System.IO.FileNotFoundException)
             {
                 throw new SpreadsheetReadWriteException("File could not be found");
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 throw new SpreadsheetReadWriteException("There were problems reading the file");
             }
@@ -286,7 +291,8 @@ namespace SS
                     write.WriteEndElement();
                     write.WriteEndDocument();
                 }
-            }catch (Exception)
+            }
+            catch (Exception)
             {
                 throw new SpreadsheetReadWriteException("There were problems writing the XML file");
             }

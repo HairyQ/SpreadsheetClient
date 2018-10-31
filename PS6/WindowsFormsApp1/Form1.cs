@@ -16,7 +16,7 @@ using static WindowsFormsApp1.Program;
 
 namespace WindowsFormsApp1
 {
-//Adding comment to commit
+    //Adding comment to commit
     public partial class Form1 : Form
     {
         /// <summary> Instance of the Spreadsheet to provide Model for the grid </summary>
@@ -24,9 +24,10 @@ namespace WindowsFormsApp1
 
         bool contentsChanged = false;
 
-        /// <summary> boolean determining whether or not data hasn't been saved </summary>
+        /// <summary> bool determining whether or not data has NOT been saved </summary>
         bool isChanged;
 
+        /// <summary> Name of file to be opened / saved </summary>
         string fileName;
 
         public Form1()
@@ -276,7 +277,7 @@ namespace WindowsFormsApp1
         {
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
-                
+
                 sfd.Title = "Save Spreadsheet Explorer";
                 sfd.FileName = fileName;
                 sfd.DefaultExt = ".sprd";
@@ -284,7 +285,7 @@ namespace WindowsFormsApp1
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    fileName = Path.GetFileName(sfd.FileName);
+                    fileName = sfd.FileName;
 
                     if (sfd.FilterIndex == 1) //User chose option 1: ".sprd files only" is selected
                     {
@@ -327,8 +328,49 @@ namespace WindowsFormsApp1
         }
 
         /// <summary>
-        /// Helper method that handles the logic behind "combining" spreadsheets, and also provides an OpenFileDialog
-        /// for opening a file from the disk
+        /// Helper method that provides an OpenFileDialog for opening a file from the disk
+        /// </summary>
+        /// <param name="booleanOperator"></param>
+        private void OpenAndCombineFileViewer(string booleanOperator)
+        {
+            /// If sprd file was opened from file explorer, the file path is sent as an argument to main, which
+            /// calls openFile() with that file path as a parameter, which calls this method using the same argument
+            /// for the parameter. Therefore booleanOperator is a valid filePath for the target file.
+            if (!booleanOperator.Equals("") && !booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
+            {
+                openAndCombineHelper(booleanOperator, booleanOperator);
+                isChanged = false;
+                fileName = Path.GetFileName(booleanOperator);
+            }
+            else
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "Open Spreadsheet";
+                    ofd.DefaultExt = ".sprd";
+                    ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
+
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        //Clear current sheet if opening new file (opposed to combining)
+                        if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
+                            spreadsheetPanel1.Clear();
+
+                        fileName = Path.GetFileName(ofd.FileName);
+                        //Populate correct cells from opened file
+
+                        openAndCombineHelper(ofd.FileName, booleanOperator);
+
+
+                        if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
+                            isChanged = false;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method that handles the logic behind "combining" spreadsheets
         /// 
         /// If the user has a Spreadsheet open, Spreadsheet A, and they choose the menu option Combine Spreadsheets,
         /// they are given an option between two operators: AND and OR. After choosing an operator, they choose a 
@@ -345,51 +387,10 @@ namespace WindowsFormsApp1
         /// cells that were populated in Spreadsheet B are also populated in Spreadsheet A, and it contains all of
         /// its cells' original contents. If corresponding cells contain different contents, Spreadsheet A's cell's
         /// original contents are retained.
-        ///
-        /// </summary>
-        /// <param name="booleanOperator"></param>
-        private void OpenAndCombineFileViewer(string booleanOperator)
-        {
-            if (!booleanOperator.Equals("") && !booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
-            {
-                opener(booleanOperator, booleanOperator);
-                isChanged = false;
-                fileName = Path.GetFileName(booleanOperator);
-            }
-            else
-            {
-
-                using (OpenFileDialog ofd = new OpenFileDialog())
-                {
-                    ofd.Title = "Open Spreadsheet";
-                    ofd.DefaultExt = ".sprd";
-                    ofd.Filter = "Spreadsheets|*.sprd|All Files|*.*";
-
-                    if (ofd.ShowDialog() == DialogResult.OK)
-                    {
-                        //Clear current sheet if opening new file (opposed to combining)
-                        if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
-                            spreadsheetPanel1.Clear();
-
-                        fileName = Path.GetFileName(ofd.FileName);
-                        //Populate correct cells from opened file
-
-                        opener(ofd.FileName, booleanOperator);
-
-                        
-                        if (!booleanOperator.Equals("AND") && !booleanOperator.Equals("OR"))
-                            isChanged = false;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Uses an xml reader to fill out the spreadsheet according to the info contained in that file's xml
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="booleanOperator"></param>
-        private void opener(string filePath, string booleanOperator)
+        private void openAndCombineHelper(string filePath, string booleanOperator)
         {
             using (XmlReader reader = XmlReader.Create(filePath))
             {
@@ -397,36 +398,34 @@ namespace WindowsFormsApp1
                 {
                     if (reader.NodeType is XmlNodeType element)
                     {
-                        switch (reader.Name)
+                        if (reader.Name.Equals("Cell"))
                         {
-                            case "Cell":
-                                string cellName = reader.GetAttribute(0);
-                                string cellContents = reader.GetAttribute(1);
+                            string cellName = reader.GetAttribute(0);
+                            string cellContents = reader.GetAttribute(1);
 
-                                int row;
-                                int col = cellName[0] - 65;
-                                Int32.TryParse(cellName.Substring(1), out row);
+                            int row;
+                            int col = cellName[0] - 65;
+                            Int32.TryParse(cellName.Substring(1), out row);
 
-                                if (booleanOperator.Equals("AND"))
-                                {
-                                    if (!sheet.GetCellContents(cellName).ToString().Equals(cellContents))
-                                        SetCell(col, row - 1, "");
+                            if (booleanOperator.Equals("AND"))
+                            {
+                                if (!sheet.GetCellContents(cellName).ToString().Equals(cellContents))
+                                    SetCell(col, row - 1, "");
 
-                                }
-                                else if (booleanOperator.Equals("OR"))
-                                {
-                                    if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
-                                        SetCell(col, row - 1, cellContents);
-
-                                    else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
-                                        SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
-
-                                }
-                                else
-                                {
+                            }
+                            else if (booleanOperator.Equals("OR"))
+                            {
+                                if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
                                     SetCell(col, row - 1, cellContents);
-                                }
-                                break;
+
+                                else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
+                                    SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
+
+                            }
+                            else
+                            {
+                                SetCell(col, row - 1, cellContents);
+                            }
                         }
                     }
                 }
