@@ -8,17 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApp1
+namespace ClientGUI
 {
     public partial class Form1 : Form
     {
-        private ClientController.ClientController client;
-
         public Form1()
         {
             InitializeComponent();
-            client = new ClientController.ClientController();
-
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
