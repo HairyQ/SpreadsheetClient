@@ -26,7 +26,7 @@ namespace ClientGUI
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.Append(textBox1.Text);
             messageBuilder.Append("\n");
-            clientController.SendMessage(messageBuilder.ToString());
+            clientController.CreateAndSendMessage("open", messageBuilder.ToString());
         }
     }
 }
