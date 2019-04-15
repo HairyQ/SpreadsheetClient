@@ -8,16 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Controller;
+using Resources;
 
 namespace ClientGUI
 {
     public partial class Spreadsheets : Form
     {
         private ClientController clientController;
+        private StaticState state;
+        private ListBox listBox1;
 
-        public Spreadsheets(ClientController c)
+        public Spreadsheets(ClientController c, StaticState s)
         {
             clientController = c;
+            state = s;
+            clientController.RegisterSpreadsheetListHandler(displaySheets);
             InitializeComponent();
         }
 
@@ -27,6 +32,23 @@ namespace ClientGUI
             messageBuilder.Append(textBox1.Text);
             messageBuilder.Append("\n");
             clientController.CreateAndSendMessage("open", messageBuilder.ToString());
+        }
+
+        private void displaySheets()
+        {
+            listBox1 = new ListBox();
+            listBox1.Location = new System.Drawing.Point(12, 12);
+            listBox1.Name = "ListBox1";
+            listBox1.Size = new System.Drawing.Size(245, 200);
+            listBox1.BackColor = System.Drawing.Color.White;
+            listBox1.ForeColor = System.Drawing.Color.Black;
+
+            foreach(string s in state.Spreadsheets)
+            {
+                listBox1.Items.Add(s);
+            }
+
+            Controls.Add(listBox1);
         }
     }
 }

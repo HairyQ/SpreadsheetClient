@@ -49,11 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="InitialWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="InitialWindow.Designer.cs">
+      <DependentUpon>InitialWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,8 +63,8 @@
     <Compile Include="Spreadsheets.Designer.cs">
       <DependentUpon>Spreadsheets.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="InitialWindow.resx">
+      <DependentUpon>InitialWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -96,6 +96,10 @@
     <ProjectReference Include="..\ClassLibrary1\Controller.csproj">
       <Project>{3d9736d3-cf1f-4b96-b8b6-05857a2e2e7e}</Project>
       <Name>Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClassLibrary2\Resources.csproj">
+      <Project>{98df4422-e0f0-4641-a856-adca8524039f}</Project>
+      <Name>Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
