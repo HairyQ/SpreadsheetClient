@@ -16,7 +16,7 @@ namespace ClientGUI
     {
         private ClientController clientController;
         private StaticState state;
-        private ListBox listBox1;
+        public ListBox listBox1;
 
         public Spreadsheets(ClientController c, StaticState s)
         {
@@ -36,19 +36,22 @@ namespace ClientGUI
 
         private void displaySheets()
         {
-            listBox1 = new ListBox();
-            listBox1.Location = new System.Drawing.Point(12, 12);
-            listBox1.Name = "ListBox1";
-            listBox1.Size = new System.Drawing.Size(245, 200);
-            listBox1.BackColor = System.Drawing.Color.White;
-            listBox1.ForeColor = System.Drawing.Color.Black;
-
-            foreach(string s in state.Spreadsheets)
+            this.Invoke((MethodInvoker)delegate
             {
-                listBox1.Items.Add(s);
-            }
+                listBox1 = new ListBox();
+                listBox1.Location = new System.Drawing.Point(12, 12);
+                listBox1.Name = "ListBox1";
+                listBox1.Size = new System.Drawing.Size(245, 200);
+                listBox1.BackColor = System.Drawing.Color.White;
+                listBox1.ForeColor = System.Drawing.Color.Black;
 
-            Controls.Add(listBox1);
+                foreach (string s in state.Spreadsheets)
+                {
+                    listBox1.Items.Add(s);
+                }
+
+                Controls.Add(listBox1);
+            });
         }
     }
 }

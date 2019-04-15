@@ -111,11 +111,12 @@ namespace Controller
             }
 
             ss.SB.Clear();
-            /*
+            
             ss.CallMe = ReceiveServerMessages;
             Network.GetData(ss);
-            displayLists();
-            */
+            
+            displayLists.Invoke();
+            
         }
 
         public void ReceiveServerMessages(SocketState ss)
