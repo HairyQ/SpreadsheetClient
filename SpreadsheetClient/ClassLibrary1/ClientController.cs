@@ -75,22 +75,22 @@ namespace Controller
             switch (type)
             {
                 case ("open"):
-                    string[] contents = Regex.Split(content, @"\`(.*?)\`");
-                    string spreadsheetName = contents[0];
-                    string username = contents[1];
-                    string password = contents[2];
+                    //string[] contents = Regex.Split(content, @"\`(.*?)\`");
+                    Console.WriteLine(content);
+                    string spreadsheetName = content;
 
                     OpenMessage newMessage = new OpenMessage(spreadsheetName, username, password);
 
                     string s = JsonConvert.SerializeObject(newMessage);
                     Console.WriteLine(s);
+                    SendMessage(newMessage);
                     break;
             }
         }
 
         public void SendMessage(Message newMessage)
         {
-            String message = JsonConvert.SerializeObject(newMessage) + "\n\n";
+            String message = JsonConvert.SerializeObject(newMessage) + "\n";
             Network.Send(theServer, message);
         }
 

@@ -157,8 +157,13 @@ namespace Controller
     /// </summary>
     public static class Network
     {
-        private const int DEFAULT_PORT = 11000;
+        private static int DEFAULT_PORT = 11000;
         private static int IDCounter = 0;
+
+        public static void setPort(int x)
+        {
+            DEFAULT_PORT = x;
+        }
 
 
         /// <summary>

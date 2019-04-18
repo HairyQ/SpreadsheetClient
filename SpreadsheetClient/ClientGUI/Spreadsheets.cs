@@ -26,14 +26,6 @@ namespace ClientGUI
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            StringBuilder messageBuilder = new StringBuilder();
-            messageBuilder.Append(textBox1.Text);
-            messageBuilder.Append("\n");
-            clientController.CreateAndSendMessage("open", messageBuilder.ToString());
-        }
-
         private void displaySheets()
         {
             this.Invoke((MethodInvoker)delegate
@@ -52,6 +44,13 @@ namespace ClientGUI
 
                 Controls.Add(listBox1);
             });
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.Append(listBox1.SelectedItem);
+            clientController.CreateAndSendMessage("open", messageBuilder.ToString());
         }
     }
 }
