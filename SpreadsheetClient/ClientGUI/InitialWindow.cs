@@ -28,7 +28,7 @@ namespace ClientGUI
             clientController.ReceiveStartupData(textBox3.Text, textBox4.Text, textBox1.Text);
 
             Spreadsheets newSpreads = new Spreadsheets(clientController, state);
-            this.Hide();
+            Hide();
             newSpreads.Show();
         }
     }

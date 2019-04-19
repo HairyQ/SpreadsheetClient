@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp1
+﻿namespace SpreadsheetGUI
 {
     partial class Form1
     {

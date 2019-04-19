@@ -51,6 +51,7 @@ namespace ClientGUI
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.Append(listBox1.SelectedItem);
             clientController.CreateAndSendMessage("open", messageBuilder.ToString());
+
         }
     }
 }

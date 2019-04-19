@@ -12,11 +12,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using static WindowsFormsApp1.Program;
+using static SpreadsheetGUI.Program;
 
-//Commenting to check something
-
-namespace WindowsFormsApp1
+namespace SpreadsheetGUI
 {
     //Adding comment to commit
     public partial class Form1 : Form

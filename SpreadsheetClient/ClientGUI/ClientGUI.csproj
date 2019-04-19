@@ -101,6 +101,10 @@
       <Project>{98df4422-e0f0-4641-a856-adca8524039f}</Project>
       <Name>Resources</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SpreadsheetGUI\SpreadsheetGUI.csproj">
+      <Project>{672df303-c673-470a-80e1-85f635c98c02}</Project>
+      <Name>SpreadsheetGUI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
