@@ -8,15 +8,74 @@ namespace WindowsFormsApp1
 {
     static class Program
     {
+        
+        /// <summary>
+        /// Keeps track of how many top-level forms are running
+        /// </summary>
+        public class SpreadsheetApplicationContext : ApplicationContext
+        {
+            // Number of open forms
+            private int formCount = 0;
+
+            // Singleton ApplicationContext
+            private static SpreadsheetApplicationContext appContext;
+
+            /// <summary>
+            /// Private constructor for singleton pattern
+            /// </summary>
+            private SpreadsheetApplicationContext()
+            {
+            }
+
+            /// <summary>
+            /// Returns the one DemoApplicationContext.
+            /// </summary>
+            public static SpreadsheetApplicationContext GetAppContext()
+            {
+                if (appContext == null)
+                {
+                    appContext = new SpreadsheetApplicationContext();
+                }
+                return appContext;
+            }
+
+            /// <summary>
+            /// Runs the form
+            /// </summary>
+            public void RunForm(Form form)
+            {
+                // One more form is running
+                formCount++;
+
+                // When this form closes, we want to find out
+                form.FormClosed += (o, e) => { if (--formCount <= 0) ExitThread(); };
+
+                // Run the form
+                form.Show();
+            }
+
+        }
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            // Start an application context and run one form inside it
+            SpreadsheetApplicationContext appContext = SpreadsheetApplicationContext.GetAppContext();
+            Form1 instance = new Form1();
+            appContext.RunForm(instance);
+
+            if (args.Length > 0)
+                instance.openFile(args[0]);
+
+            Application.Run(appContext);
+
         }
     }
 }
