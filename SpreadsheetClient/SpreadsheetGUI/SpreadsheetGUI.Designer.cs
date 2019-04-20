@@ -34,13 +34,7 @@
             this.cellValueField = new System.Windows.Forms.TextBox();
             this.fileMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.savingAndOpeningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.combiningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spreadsheetPanel1 = new SS.SpreadsheetPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -91,8 +85,7 @@
             this.fileMenuStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.fileMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.fileMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.fileToolStripMenuItem});
             this.fileMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.fileMenuStrip.Name = "fileMenuStrip";
             this.fileMenuStrip.Size = new System.Drawing.Size(1791, 28);
@@ -102,24 +95,10 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.openToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
-            // 
-            // newToolStripMenuItem
-            // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
-            // 
-            // openToolStripMenuItem
-            // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
@@ -127,34 +106,6 @@
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.navigationToolStripMenuItem,
-            this.savingAndOpeningToolStripMenuItem,
-            this.combiningToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // navigationToolStripMenuItem
-            // 
-            this.navigationToolStripMenuItem.Name = "navigationToolStripMenuItem";
-            this.navigationToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
-            this.navigationToolStripMenuItem.Text = "Navigation";
-            // 
-            // savingAndOpeningToolStripMenuItem
-            // 
-            this.savingAndOpeningToolStripMenuItem.Name = "savingAndOpeningToolStripMenuItem";
-            this.savingAndOpeningToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
-            this.savingAndOpeningToolStripMenuItem.Text = "Saving and Opening";
-            // 
-            // combiningToolStripMenuItem
-            // 
-            this.combiningToolStripMenuItem.Name = "combiningToolStripMenuItem";
-            this.combiningToolStripMenuItem.Size = new System.Drawing.Size(218, 26);
-            this.combiningToolStripMenuItem.Text = "Combining";
             // 
             // spreadsheetPanel1
             // 
@@ -218,13 +169,7 @@
         private System.Windows.Forms.MenuStrip fileMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private SS.SpreadsheetPanel spreadsheetPanel1;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem navigationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem savingAndOpeningToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem combiningToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
     }
