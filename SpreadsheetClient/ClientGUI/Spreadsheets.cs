@@ -33,7 +33,7 @@ namespace ClientGUI
                 listBox1 = new ListBox();
                 listBox1.Location = new System.Drawing.Point(12, 12);
                 listBox1.Name = "ListBox1";
-                listBox1.Size = new System.Drawing.Size(245, 200);
+                listBox1.Size = new System.Drawing.Size(250, 340);
                 listBox1.BackColor = System.Drawing.Color.White;
                 listBox1.ForeColor = System.Drawing.Color.Black;
 
@@ -52,6 +52,9 @@ namespace ClientGUI
             messageBuilder.Append(listBox1.SelectedItem);
             clientController.CreateAndSendMessage("open", messageBuilder.ToString());
 
+            SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state);
+            Hide();
+            spread.Show();
         }
     }
 }

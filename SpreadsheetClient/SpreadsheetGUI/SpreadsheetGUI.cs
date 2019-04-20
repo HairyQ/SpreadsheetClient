@@ -12,7 +12,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using Controller;
+using Resources;
 using static SpreadsheetGUI.Program;
+using System.Collections;
 
 namespace SpreadsheetGUI
 {
@@ -22,6 +25,10 @@ namespace SpreadsheetGUI
         /// <summary> Instance of the Spreadsheet to provide Model for the grid </summary>
         SS.Spreadsheet sheet;
 
+        StaticState state;
+
+        ClientController controller;
+
         bool contentsChanged = false;
 
         /// <summary> bool determining whether or not data has NOT been saved </summary>
@@ -30,9 +37,15 @@ namespace SpreadsheetGUI
         /// <summary> Name of file to be opened / saved </summary>
         string fileName;
 
-        public Form1()
+        public Form1(ClientController Controller, StaticState ss)
         {
             InitializeComponent();
+
+            controller = Controller;
+
+            state = ss;
+
+            controller.RegisterSpreadsheetEditHandler(ChangeCellContents);
 
             //Register displaySelection as listener to selectionChanged
             spreadsheetPanel1.SelectionChanged += displaySelection;
@@ -133,8 +146,16 @@ namespace SpreadsheetGUI
 
             //extract contents
             string contents = cellContentsField.Text;
-            SetCell(col, row, contents);
+            SendEdit(col, row, contents);
         }
+
+        private bool isValid(string s)
+        {
+            if (Regex.IsMatch(s, @"^[A-Za-z]{1}[\d]{1,2}$"))
+                return true;
+            return false;
+        }
+
         /// <summary>
         /// takes string contents and column and row number,
         /// converts col and row to a cell value, adds cell
@@ -143,16 +164,86 @@ namespace SpreadsheetGUI
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <param name="contents"></param>
-        private void SetCell(int col, int row, string contents)
+        private void SendEdit(int col, int row, string contents)
         {
             string name = GetCellName(col, row);
+
+            isChanged = sheet.Changed;
+
+            EditMessage newEdit = new EditMessage();
+            newEdit.cell = name;
+            if (contents.Length > 0 && contents[0] == '=')
+            {
+                try
+                {
+                    Formula newFormula = new Formula(contents.Substring(1, contents.Length - 1), s => s.ToUpper(), isValid);
+                    Console.WriteLine("Contents: " + contents.Substring(1, contents.Length - 1));
+                }
+                catch (FormulaFormatException ffe)
+                {
+                    MessageBox.Show(ffe.Message, "Formula Format Error");
+                    string s = ffe.Message;
+                }
+                System.Console.WriteLine("Formula reached");
+                string pattern = @"[A-Za-z]{1}[\d]{1,2}";
+                
+                ArrayList dependencies = new ArrayList();
+
+                foreach (Match m in Regex.Matches(contents, pattern))
+                {
+                    dependencies.Add(m.ToString());
+                    System.Console.WriteLine(m.ToString());
+                }
+
+                newEdit.dependencies = dependencies;
+            }
+            else
+            {
+                double cellDouble;
+                if (Double.TryParse(contents, out cellDouble))
+                {
+                    EditMessageDoubleType actualMessage = new EditMessageDoubleType();
+                    actualMessage.value = cellDouble;
+                    actualMessage.dependencies = new ArrayList();
+                    actualMessage.cell = name;
+                    controller.SendMessage(actualMessage);
+                    return;
+                }
+
+                newEdit.dependencies = new ArrayList();
+            }
+            newEdit.value = contents;
+            
+            if (contentsChanged)
+                controller.SendMessage(newEdit);
+
+            contentsChanged = false;
+        }
+
+        /// <summary>
+        /// /////////////////////////////////////////////////////////////////////////////////////
+        /// I added this method with the intent it be used for when cell change messages are 
+        /// received from the server
+        /// /////////////////////////////////////////////////////////////////////////////////////
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="row"></param>
+        /// <param name="contents"></param>
+        private void ChangeCellContents()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+            string name = state.CellName;
             string value = "";
             try
             {
-                //store contents in backing sheet
-                sheet.SetContentsOfCell(name, contents);
-                //get value of cell from backing sheet
-                object valueObj = sheet.GetCellValue(name);
+                    //store contents in backing sheet
+                    if (state.Contents.Length > 0 && state.Contents[0] == '=')
+                        sheet.SetContentsOfCell(name, state.Contents.ToUpper());
+                    else
+                        sheet.SetContentsOfCell(name, state.Contents);
+                    //get value of cell from backing sheet
+                    object valueObj = sheet.GetCellValue(name);
                 //handle formula errors
                 if (valueObj.GetType().Equals(typeof(FormulaError)))
                 {
@@ -165,20 +256,27 @@ namespace SpreadsheetGUI
             }
             catch (FormulaFormatException ffe)
             {
-                //create error message window
-                MessageBox.Show(ffe.Message, "Formula Format Error");
-                string s = ffe.Message;
+                value = ffe.Message;
             }
+                /*
 
-            isChanged = sheet.Changed;
-            //update gui representation
-            cellValueField.Text = value;
-            spreadsheetPanel1.SetValue(col, row, value);
+                if (state.Contents.Length > 0 && state.Contents[0] == '=')
+                {
+                    Formula newFormula = new Formula(state.Contents);
+                    sheet.SetContentsOfCell(name, newFormula);
+                }
+                */
+                //set CellValueField from spreadsheet
+                cellValueField.Text = value;
+            spreadsheetPanel1.SetValue(state.Col, state.Row, value);
+
+            UpdateGUIFields(name);
 
             contentsChanged = false;
+            });
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, Keys keyData)
         {
             spreadsheetPanel1.GetSelection(out int col, out int row);
             string name, contents;
@@ -189,27 +287,27 @@ namespace SpreadsheetGUI
                 case Keys.Up:
                     contents = cellContentsField.Text;
                     if (contentsChanged == true)
-                        SetCell(col, row, contents);
+                        SendEdit(col, row, contents);
                     row--;
                     break;
                 case Keys.Enter:
                 case Keys.Down:
                     contents = cellContentsField.Text;
                     if (contentsChanged == true)
-                        SetCell(col, row, contents);
+                        SendEdit(col, row, contents);
                     row++;
                     break;
                 case Keys.Left:
                     contents = cellContentsField.Text;
                     if (contentsChanged == true)
-                        SetCell(col, row, contents);
+                        SendEdit(col, row, contents);
                     col--;
                     break;
                 case Keys.Tab:
                 case Keys.Right:
                     contents = cellContentsField.Text;
                     if (contentsChanged == true)
-                        SetCell(col, row, contents);
+                        SendEdit(col, row, contents);
                     col++;
                     break;
                 //pass key event onto regular form handling
@@ -233,16 +331,6 @@ namespace SpreadsheetGUI
         private void openFileMenu(object sender, EventArgs e)
         {
 
-        }
-
-        /// <summary>
-        /// Creates a new window with a fresh spreadsheet, running on the same thread as the current sheet
-        /// </summary>
-        /// <param name="sender">"new" menu button object that sent the event</param>
-        /// <param name="e">Event to be handled</param>
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SpreadsheetApplicationContext.GetAppContext().RunForm(new Form1());
         }
 
         /// <summary>
@@ -410,21 +498,21 @@ namespace SpreadsheetGUI
                             if (booleanOperator.Equals("AND"))
                             {
                                 if (!sheet.GetCellContents(cellName).ToString().Equals(cellContents))
-                                    SetCell(col, row - 1, "");
+                                    SendEdit(col, row - 1, "");
 
                             }
                             else if (booleanOperator.Equals("OR"))
                             {
                                 if (sheet.GetCellContents(cellName).ToString().Equals("") && !cellContents.Equals(""))
-                                    SetCell(col, row - 1, cellContents);
+                                    SendEdit(col, row - 1, cellContents);
 
                                 else if (!sheet.GetCellContents(cellName).ToString().Equals("") && cellContents.Equals(""))
-                                    SetCell(col, row - 1, sheet.GetCellContents(cellName).ToString());
+                                    SendEdit(col, row - 1, sheet.GetCellContents(cellName).ToString());
 
                             }
                             else
                             {
-                                SetCell(col, row - 1, cellContents);
+                                SendEdit(col, row - 1, cellContents);
                             }
                         }
                     }

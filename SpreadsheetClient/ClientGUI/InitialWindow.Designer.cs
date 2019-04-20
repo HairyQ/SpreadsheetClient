@@ -66,6 +66,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(193, 22);
             this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "127.0.0.1";
             // 
             // textBox2
             // 
@@ -111,6 +112,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(193, 22);
             this.textBox4.TabIndex = 8;
+            this.textBox4.Text = "password";
             // 
             // label5
             // 
@@ -128,6 +130,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(193, 22);
             this.textBox3.TabIndex = 6;
+            this.textBox3.Text = "user";
             // 
             // InitialWindow
             // 

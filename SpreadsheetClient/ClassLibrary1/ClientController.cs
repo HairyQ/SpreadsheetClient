@@ -18,8 +18,10 @@ namespace Controller
         private Socket theServer;
         public string username, password;
 
+        public delegate void SpreadsheetEditHandler();
         public delegate void SpreadsheetListHandler();
 
+        private event SpreadsheetEditHandler displayEdit;
         private event SpreadsheetListHandler displayLists;
 
         /// <summary>
@@ -30,6 +32,11 @@ namespace Controller
         public ClientController(StaticState s)
         {
             state = s;
+        }
+
+        public void RegisterSpreadsheetEditHandler(SpreadsheetEditHandler s)
+        {
+            displayEdit += s;
         }
 
         public void RegisterSpreadsheetListHandler(SpreadsheetListHandler s)
@@ -76,13 +83,11 @@ namespace Controller
             {
                 case ("open"):
                     //string[] contents = Regex.Split(content, @"\`(.*?)\`");
-                    Console.WriteLine(content);
                     string spreadsheetName = content;
 
                     OpenMessage newMessage = new OpenMessage(spreadsheetName, username, password);
 
                     string s = JsonConvert.SerializeObject(newMessage);
-                    Console.WriteLine(s);
                     SendMessage(newMessage);
                     break;
             }
@@ -90,8 +95,11 @@ namespace Controller
 
         public void SendMessage(Message newMessage)
         {
-            String message = JsonConvert.SerializeObject(newMessage) + "\n";
-            Network.Send(theServer, message);
+            lock (state)
+            {
+                String message = JsonConvert.SerializeObject(newMessage) + "\n\n";
+                Network.Send(theServer, message);
+            }
         }
 
         /// <summary>
@@ -105,38 +113,33 @@ namespace Controller
             SpreadsheetListMessage sentMessage = JsonConvert.DeserializeObject<SpreadsheetListMessage>(startupData);
             state.Spreadsheets = sentMessage.spreadsheets;
 
-            foreach (string s in state.Spreadsheets)
-            {
-                Console.WriteLine(s);
-            }
-
             ss.SB.Clear();
             
             ss.CallMe = ReceiveServerMessages;
             Network.GetData(ss);
             
             displayLists.Invoke();
-            
         }
 
         public void ReceiveServerMessages(SocketState ss)
         {
             string totalData = ss.SB.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\n])");
+            string[] parts = Regex.Split(totalData, @"(?<=[\\n\\n])");
             ArrayList totalMessages = new ArrayList();
 
             foreach (string p in parts)
             {
+                Console.WriteLine(p);
                 // Ignore empty strings added by the regex splitter
                 if (p.Length == 0)
                     continue;
                 // The regex splitter will include the last string even if it doesn't end with a '\n',
                 // So we need to ignore it if this happens. 
-                if (p[p.Length - 1] != '\n')
+                if (p[p.Length - 1] != '\n' || p[p.Length - 2] != '\n')
                     break;
 
                 string subString = p.Substring(2, 4);
-                if (!subString.Equals("ship") && !subString.Equals("star") && !subString.Equals("proj"))
+                if (!subString.Equals("type"))
                     break;
 
                 totalMessages.Add(p);
@@ -145,16 +148,41 @@ namespace Controller
             DeserializeJsonAndUpdateWindow(totalMessages);
 
             Network.GetData(ss);
-            //sendKeys(ss);
         }
 
         public void DeserializeJsonAndUpdateWindow(ArrayList messages)
         {
-            foreach (string message in messages)
+            lock (state)
             {
-                JObject obj = JObject.Parse(message);
+                foreach (string message in messages)
+                {
+                    JObject obj = JObject.Parse(message);
+                    Console.WriteLine("Message" + message);
 
+                    JToken isEdit = obj["spreadsheet"];
 
+                    if (isEdit != null)
+                    {
+                        Console.WriteLine("full send received");
+                        FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
+
+                        foreach (string s in edit.spreadsheet.Keys)
+                        {
+                            state.Col = s[0] - 65;
+                            int row;
+                            if (Int32.TryParse(s.Substring(1, s.Length - 1), out row))
+                                state.Row = row - 1;
+                            object value;
+                            if (edit.spreadsheet.TryGetValue(s, out value))
+                            {
+                                state.Contents = value + "";
+                            }
+                            state.CellName = s;
+
+                            displayEdit.Invoke();
+                        }
+                    }
+                }
             }
         }
     }

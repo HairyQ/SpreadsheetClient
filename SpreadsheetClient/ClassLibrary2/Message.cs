@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +48,23 @@ namespace Resources
         public string value;
 
         [JsonProperty(PropertyName = "dependencies")]
-        public List<string> dependencies;
+        public ArrayList dependencies;
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class EditMessageDoubleType : Message
+    {
+        [JsonProperty(PropertyName = "type")]
+        public string type = "edit";
+
+        [JsonProperty(PropertyName = "cell")]
+        public string cell;
+
+        [JsonProperty(PropertyName = "value")]
+        public double value;
+
+        [JsonProperty(PropertyName = "dependencies")]
+        public ArrayList dependencies;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -103,6 +120,6 @@ namespace Resources
         public string type = "full send";
 
         [JsonProperty(PropertyName = "spreadsheet")]
-        public List<Dictionary<string, string>> spreadsheet;
+        public Dictionary<string, object> spreadsheet;
     }
 }

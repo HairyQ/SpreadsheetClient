@@ -64,17 +64,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="SpreadsheetGUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpreadsheetGUI.Designer.cs">
+      <DependentUpon>SpreadsheetGUI.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -84,6 +81,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SpreadsheetGUI.resx">
+      <DependentUpon>SpreadsheetGUI.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -101,6 +101,10 @@
     <ProjectReference Include="..\ClassLibrary1\Controller.csproj">
       <Project>{3d9736d3-cf1f-4b96-b8b6-05857a2e2e7e}</Project>
       <Name>Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClassLibrary2\Resources.csproj">
+      <Project>{98df4422-e0f0-4641-a856-adca8524039f}</Project>
+      <Name>Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

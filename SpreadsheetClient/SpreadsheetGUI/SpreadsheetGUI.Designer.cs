@@ -36,13 +36,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.combineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aNDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.oRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.navigationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.savingAndOpeningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,11 +90,10 @@
             this.fileMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.fileMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.combineToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.fileMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.fileMenuStrip.Name = "fileMenuStrip";
-            this.fileMenuStrip.Size = new System.Drawing.Size(951, 28);
+            this.fileMenuStrip.Size = new System.Drawing.Size(1791, 28);
             this.fileMenuStrip.TabIndex = 6;
             this.fileMenuStrip.Text = "menuStrip1";
             // 
@@ -109,7 +102,6 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
-            this.saveToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
@@ -118,69 +110,21 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(135, 26);
-            this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(135, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(135, 26);
-            this.saveToolStripMenuItem.Text = "Save As";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(135, 26);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(120, 26);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
-            // combineToolStripMenuItem
-            // 
-            this.combineToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aNDToolStripMenuItem,
-            this.oRToolStripMenuItem});
-            this.combineToolStripMenuItem.Name = "combineToolStripMenuItem";
-            this.combineToolStripMenuItem.Size = new System.Drawing.Size(173, 24);
-            this.combineToolStripMenuItem.Text = "Combine Spreadsheets";
-            // 
-            // aNDToolStripMenuItem
-            // 
-            this.aNDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFileToolStripMenuItem});
-            this.aNDToolStripMenuItem.Name = "aNDToolStripMenuItem";
-            this.aNDToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
-            this.aNDToolStripMenuItem.Text = "AND";
-            // 
-            // openFileToolStripMenuItem
-            // 
-            this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(160, 26);
-            this.openFileToolStripMenuItem.Text = "Choose File";
-            this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
-            // 
-            // oRToolStripMenuItem
-            // 
-            this.oRToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFileToolStripMenuItem1});
-            this.oRToolStripMenuItem.Name = "oRToolStripMenuItem";
-            this.oRToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
-            this.oRToolStripMenuItem.Text = "OR";
-            // 
-            // openFileToolStripMenuItem1
-            // 
-            this.openFileToolStripMenuItem1.Name = "openFileToolStripMenuItem1";
-            this.openFileToolStripMenuItem1.Size = new System.Drawing.Size(160, 26);
-            this.openFileToolStripMenuItem1.Text = "Choose File";
-            this.openFileToolStripMenuItem1.Click += new System.EventHandler(this.openFileToolStripMenuItem1_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -217,7 +161,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(948, 457);
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(1788, 619);
             this.spreadsheetPanel1.TabIndex = 0;
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
             // 
@@ -225,7 +169,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(951, 526);
+            this.ClientSize = new System.Drawing.Size(1791, 688);
             this.Controls.Add(this.cellValueField);
             this.Controls.Add(this.setButton);
             this.Controls.Add(this.cellContentsField);
@@ -250,18 +194,12 @@
         private System.Windows.Forms.MenuStrip fileMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private SS.SpreadsheetPanel spreadsheetPanel1;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem combineToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aNDToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem oRToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem navigationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem savingAndOpeningToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem combiningToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
     }
 }
