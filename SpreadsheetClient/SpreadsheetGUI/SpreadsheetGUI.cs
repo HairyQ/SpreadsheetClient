@@ -1,25 +1,14 @@
 ﻿using SpreadsheetUtilities;
 using SS;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using Controller;
 using Resources;
-using static SpreadsheetGUI.Program;
 using System.Collections;
 
 namespace SpreadsheetGUI
 {
-    //Adding comment to commit
     public partial class Form1 : Form
     {
         /// <summary> Instance of the Spreadsheet to provide Model for the grid </summary>
@@ -128,7 +117,6 @@ namespace SpreadsheetGUI
 
             return name;
         }
-
 
         private void setButton_Click(object sender, EventArgs e)
         {
