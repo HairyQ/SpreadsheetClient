@@ -636,5 +636,22 @@ namespace SpreadsheetGUI
                 MessageBox.Show("Incorrect username and/or password");
             });
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            UndoMessage newUndo = new UndoMessage();
+
+            controller.SendMessage(newUndo);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int col, row;
+            spreadsheetPanel1.GetSelection(out col, out row);
+            RevertMessage newRevert = new RevertMessage();
+            newRevert.cell = GetCellName(col, row);
+
+            controller.SendMessage(newRevert);
+        }
     }
 }
