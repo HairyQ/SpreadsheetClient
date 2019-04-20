@@ -27,7 +27,7 @@ namespace ClientGUI
             //Send username, password and IP to clientcontroller
             clientController.ReceiveStartupData(textBox3.Text, textBox4.Text, textBox1.Text);
 
-            Spreadsheets newSpreads = new Spreadsheets(clientController, state);
+            Spreadsheets newSpreads = new Spreadsheets(clientController, state, this);
             Hide();
             newSpreads.Show();
         }

@@ -16,14 +16,22 @@ namespace ClientGUI
     {
         private ClientController clientController;
         private StaticState state;
+        private InitialWindow initial;
         public ListBox listBox1;
 
-        public Spreadsheets(ClientController c, StaticState s)
+        public Spreadsheets(ClientController c, StaticState s, InitialWindow Initial)
         {
+            initial = Initial;
             clientController = c;
             state = s;
             clientController.RegisterSpreadsheetListHandler(displaySheets);
             InitializeComponent();
+            this.FormClosing += new FormClosingEventHandler(Options_OnClosing);
+        }
+
+        private void Options_OnClosing(object sender, FormClosingEventArgs e)
+        {
+            initial.Close();
         }
 
         private void displaySheets()

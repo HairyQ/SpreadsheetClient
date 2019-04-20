@@ -91,7 +91,7 @@ namespace Resources
         public string type = "error";
 
         [JsonProperty(PropertyName = "code")]
-        public string code;
+        public int code;
 
         [JsonProperty(PropertyName = "source")]
         public string source;

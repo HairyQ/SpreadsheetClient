@@ -46,6 +46,8 @@ namespace SpreadsheetGUI
             state = ss;
 
             controller.RegisterSpreadsheetEditHandler(ChangeCellContents);
+            controller.RegisterErrorHandler(circularErrorDisplay);
+            controller.RegisterLoginErrorHandler(loginErrorDisplay);
 
             //Register displaySelection as listener to selectionChanged
             spreadsheetPanel1.SelectionChanged += displaySelection;
@@ -258,15 +260,7 @@ namespace SpreadsheetGUI
             {
                 value = ffe.Message;
             }
-                /*
 
-                if (state.Contents.Length > 0 && state.Contents[0] == '=')
-                {
-                    Formula newFormula = new Formula(state.Contents);
-                    sheet.SetContentsOfCell(name, newFormula);
-                }
-                */
-                //set CellValueField from spreadsheet
                 cellValueField.Text = value;
             spreadsheetPanel1.SetValue(state.Col, state.Row, value);
 
@@ -556,7 +550,7 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
         {
-
+            Console.WriteLine("Yeee, made it here");
         }
 
         /// <summary>
@@ -625,6 +619,22 @@ namespace SpreadsheetGUI
         private void cellContentsField_TextChanged(object sender, EventArgs e)
         {
             contentsChanged = true;
+        }
+
+        private void circularErrorDisplay()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                MessageBox.Show("Circular Dependency detected at cell " + state.CellName + " change not accepted");
+            });
+        }
+
+        private void loginErrorDisplay()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                MessageBox.Show("Incorrect username and/or password");
+            });
         }
     }
 }

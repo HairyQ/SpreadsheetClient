@@ -20,9 +20,13 @@ namespace Controller
 
         public delegate void SpreadsheetEditHandler();
         public delegate void SpreadsheetListHandler();
+        public delegate void CircularDependencyError();
+        public delegate void LoginError();
 
         private event SpreadsheetEditHandler displayEdit;
         private event SpreadsheetListHandler displayLists;
+        private event CircularDependencyError displayError;
+        private event LoginError loginError;
 
         /// <summary>
         /// Constructor for ClientController should take a StaticState as a parameter, so that all of the 
@@ -44,6 +48,16 @@ namespace Controller
             displayLists += s;
         }
 
+        public void RegisterErrorHandler(CircularDependencyError c)
+        {
+            displayError += c;
+        }
+
+        public void RegisterLoginErrorHandler(LoginError l)
+        {
+            loginError += l;
+        }
+
         /// <summary>
         /// This method is called from the GUI when the user presses the "connect" button. It passes the callMe
         /// delegate and server address to the NetworkController's ConnectToServer.
@@ -51,15 +65,6 @@ namespace Controller
         /// <param name="ip"></param>
         public void InitiateFirstContact(string address)
         {
-            //////////////////////////////////////
-            SpreadsheetListMessage newMessage = new SpreadsheetListMessage();
-            newMessage.spreadsheets.Add("newSprd");
-            newMessage.spreadsheets.Add("newSprd2");
-            newMessage.spreadsheets.Add("newSprd3");
-            string jsonString = JsonConvert.SerializeObject(newMessage);
-            Console.WriteLine(jsonString);
-            //////////////////////////////////////
-
             myDelegate callMe = FirstContact;
             theServer = Network.ConnectToServer(callMe, address);
         }
@@ -160,11 +165,12 @@ namespace Controller
                     Console.WriteLine("Message" + message);
 
                     JToken isEdit = obj["spreadsheet"];
+                    JToken isError = obj["code"];
 
                     if (isEdit != null)
                     {
-                        Console.WriteLine("full send received");
                         FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
+                        Console.WriteLine(edit.ToString());
 
                         foreach (string s in edit.spreadsheet.Keys)
                         {
@@ -180,6 +186,21 @@ namespace Controller
                             state.CellName = s;
 
                             displayEdit.Invoke();
+                        }
+                    }
+                    else if (isError != null)
+                    {
+                        Console.WriteLine("Error message ");
+                        ErrorMessage newError = JsonConvert.DeserializeObject<ErrorMessage>(message);
+
+                        if (newError.code == 2)
+                        {
+                            state.CellName = newError.source;
+                            displayError.Invoke();
+                        }
+                        else
+                        {
+                            loginError.Invoke();
                         }
                     }
                 }
