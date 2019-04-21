@@ -104,6 +104,7 @@ namespace Controller
             lock (state)
             {
                 String message = JsonConvert.SerializeObject(newMessage) + "\n\n";
+                Console.WriteLine("Message sent: " + message);
                 Network.Send(theServer, message);
             }
         }
@@ -120,10 +121,10 @@ namespace Controller
             state.Spreadsheets = sentMessage.spreadsheets;
 
             ss.SB.Clear();
-            
+
             ss.CallMe = ReceiveServerMessages;
             Network.GetData(ss);
-            
+
             displayLists.Invoke();
         }
 
@@ -133,24 +134,22 @@ namespace Controller
             string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.None);//Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
+            
+
             foreach (string p in parts)
             {
-                Console.WriteLine(p);
                 // Ignore empty strings added by the regex splitter
                 if (p.Length == 0)
                     continue;
                 // The regex splitter will include the last string even if it doesn't end with a '\n',
                 // So we need to ignore it if this happens. 
-                if (p[p.Length - 1] != '\n' || p[p.Length - 2] != '\n')
-                    break;
-
-                string subString = p.Substring(2, 4);
-                if (!subString.Equals("type"))
+                if (p[p.Length - 1] != '}' || p[0] != '{')
                     break;
 
                 totalMessages.Add(p);
                 ss.SB.Remove(0, p.Length);
             }
+
             DeserializeJsonAndUpdateWindow(totalMessages);
 
             Network.GetData(ss);
@@ -158,9 +157,9 @@ namespace Controller
 
         public void DeserializeJsonAndUpdateWindow(ArrayList messages)
         {
-            lock (state)
+            foreach (string message in messages)
             {
-                foreach (string message in messages)
+                try
                 {
                     JObject obj = JObject.Parse(message);
                     Console.WriteLine("Message" + message);
@@ -171,7 +170,7 @@ namespace Controller
                     if (isEdit != null)
                     {
                         FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
-                        Console.WriteLine(edit.ToString());
+                        Console.WriteLine(edit.ToString() + "This is full send message");
 
                         foreach (string s in edit.spreadsheet.Keys)
                         {
@@ -204,6 +203,10 @@ namespace Controller
                             loginError.Invoke();
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    continue;
                 }
             }
         }

@@ -23,7 +23,9 @@ namespace SpreadsheetGUI
         /// <summary> bool determining whether or not data has NOT been saved </summary>
         bool isChanged;
 
-        public Form1(ClientController Controller, StaticState ss)
+        Form F;
+
+        public Form1(ClientController Controller, StaticState ss, Form f)
         {
             InitializeComponent();
 
@@ -49,6 +51,10 @@ namespace SpreadsheetGUI
 
             //IsChanged is false initially
             isChanged = false;
+
+            FormClosing += new FormClosingEventHandler(Options_OnClosing);
+
+            F = f;
         }
 
 
@@ -356,6 +362,18 @@ namespace SpreadsheetGUI
             newRevert.cell = GetCellName(col, row);
 
             controller.SendMessage(newRevert);
+        }
+
+        private void Options_OnClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Application.MessageLoop)
+            {
+                Application.Exit();
+            }
+            else
+            {
+                Environment.Exit(1);
+            }
         }
     }
 }

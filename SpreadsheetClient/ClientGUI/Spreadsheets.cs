@@ -31,7 +31,14 @@ namespace ClientGUI
 
         private void Options_OnClosing(object sender, FormClosingEventArgs e)
         {
-            initial.Close();
+            if (Application.MessageLoop)
+            {
+                Application.Exit();
+            }
+            else
+            {
+                Environment.Exit(1);
+            }
         }
 
         private void displaySheets()
@@ -60,7 +67,7 @@ namespace ClientGUI
             messageBuilder.Append(listBox1.SelectedItem);
             clientController.CreateAndSendMessage("open", messageBuilder.ToString());
 
-            SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state);
+            SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state, this);
             Hide();
             spread.Show();
         }
