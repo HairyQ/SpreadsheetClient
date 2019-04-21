@@ -14,6 +14,7 @@ namespace Controller
     /// </summary>
     public class ClientController
     {
+        //Commenting to commit
         public StaticState state;
         private Socket theServer;
         public string username, password;
@@ -129,7 +130,7 @@ namespace Controller
         public void ReceiveServerMessages(SocketState ss)
         {
             string totalData = ss.SB.ToString();
-            string[] parts = Regex.Split(totalData, @"(?<=[\\n\\n])");
+            string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.None);//Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
             foreach (string p in parts)
