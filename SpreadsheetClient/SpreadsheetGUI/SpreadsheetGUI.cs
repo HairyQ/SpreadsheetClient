@@ -95,7 +95,7 @@ namespace SpreadsheetGUI
                 cellContentsField.Text = sheet.GetCellContents(name).ToString();
 
             //set CellValueField from spreadsheet
-            foreach (string s in sheet.)
+            
             cellValueField.Text = sheet.GetCellValue(name).ToString();
 
             //highlight current contents
@@ -171,7 +171,6 @@ namespace SpreadsheetGUI
                 try
                 {
                     Formula newFormula = new Formula(contents.Substring(1, contents.Length - 1), s => s.ToUpper(), isValid);
-                    Console.WriteLine("Contents: " + contents.Substring(1, contents.Length - 1));
                 }
                 catch (FormulaFormatException ffe)
                 {
@@ -186,7 +185,6 @@ namespace SpreadsheetGUI
                 foreach (Match m in Regex.Matches(contents, pattern))
                 {
                     dependencies.Add(m.ToString());
-                    System.Console.WriteLine(m.ToString());
                 }
 
                 newEdit.dependencies = dependencies;
@@ -256,7 +254,15 @@ namespace SpreadsheetGUI
                 cellValueField.Text = value;
             spreadsheetPanel1.SetValue(state.Col, state.Row, value);
 
-            UpdateGUIFields(name);
+                foreach (string s in sheet.CheckValues(name))
+                {
+                    int row, col;
+                    Int32.TryParse(s.Substring(1, s.Length - 1), out row);
+                    col = s[0] - 65;
+                    spreadsheetPanel1.SetValue(col, row, sheet.GetCellValue(s).ToString());
+                }
+
+                UpdateGUIFields(name);
 
             contentsChanged = false;
             });

@@ -443,5 +443,19 @@
             </summary>
             <param name="name">Cell name</param>
         </member>
+        <member name="M:SS.Spreadsheet.Reevaluate(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Reevaluates all the cells to make sure their values are correct
+            </summary>
+            <param name="CellsToRecalculate">List of cells to reevaluate</param>
+        </member>
+        <member name="M:SS.Spreadsheet.CheckValues(System.String)">
+            <summary>
+            Determines which ceels need to be recalculated, changes their values accordingly, and returns
+            the list of recalculated cells. Now their values are updated, and just need to be changed by the GUI
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>
