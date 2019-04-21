@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +52,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libs\DependencyGraph.dll" />
+    <Content Include="Libs\DependencyGraph.xml" />
+    <Content Include="Libs\Formula.dll" />
+    <Content Include="Libs\Formula.xml" />
+    <Content Include="Libs\Spreadsheet.dll" />
+    <Content Include="Libs\Spreadsheet.xml" />
+    <Content Include="Libs\SpreadsheetPanel.dll" />
+    <Content Include="Libs\SpreadsheetPanel.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
