@@ -259,7 +259,9 @@ namespace SpreadsheetGUI
                     int row, col;
                     Int32.TryParse(s.Substring(1, s.Length - 1), out row);
                     col = s[0] - 65;
-                    spreadsheetPanel1.SetValue(col, row, sheet.GetCellValue(s).ToString());
+                    string newS = "";
+                    spreadsheetPanel1.SetValue(col - 1, row, sheet.GetCellValue(s).ToString());
+                    Console.WriteLine("Cell: " + s + " Row: " + row + " Col: " + col);
                 }
 
                 UpdateGUIFields(name);

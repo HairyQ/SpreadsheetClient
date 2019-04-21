@@ -65,11 +65,14 @@ namespace ClientGUI
         {
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.Append(listBox1.SelectedItem);
-            clientController.CreateAndSendMessage("open", messageBuilder.ToString());
-
-            SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state, this);
-            Hide();
-            spread.Show();
+            Console.WriteLine(messageBuilder.ToString() + "This is message");
+            if (messageBuilder.Length > 0)
+            {
+                clientController.CreateAndSendMessage("open", messageBuilder.ToString());
+                SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state, this);
+                Hide();
+                spread.Show();
+            }
         }
     }
 }
