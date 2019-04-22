@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SpreadsheetUtilities;
 using System.Xml;
 using System.Data;
+using System.Collections;
 
 namespace SS
 {
@@ -313,7 +314,7 @@ namespace SS
             name = Normalize(name); //Normalize name according to user specifications
             CheckIfNullOrInvalidVariableName(name); //Check validity of name
 
-            if (GetCellContents(name) is String && GetCellContents[0] == '=')
+            if (GetCellContents(name).GetType().Equals(typeof(Formula)))
             {
                 try
                 {
@@ -459,6 +460,8 @@ namespace SS
             IEnumerable<string> cellsToRecalculate = GetCellsToRecalculate(new HashSet<string>() { name });
 
             Reevaluate(cellsToRecalculate);
+
+            ArrayList newList = new ArrayList();
 
             foreach (string s in cellsToRecalculate)
                 yield return s;

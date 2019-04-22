@@ -12,4 +12,10 @@
     <ProjectReference Include="..\ClassLibrary2\Resources.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Spreadsheet">
+      <HintPath>..\..\PS4\Spreadsheet\bin\Debug\Spreadsheet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

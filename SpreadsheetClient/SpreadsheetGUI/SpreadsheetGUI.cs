@@ -84,7 +84,7 @@ namespace SpreadsheetGUI
         private void UpdateGUIFields(string name)
         {
             //move cursor to contents field
-            //cellContentsField.Focus();
+            cellContentsField.Focus();
 
             cellNameField.Text = name;
 
@@ -94,18 +94,11 @@ namespace SpreadsheetGUI
             else
                 cellContentsField.Text = sheet.GetCellContents(name).ToString();
 
-            //set CellValueField from spreadsheet
-            
-            cellValueField.Text = sheet.GetCellValue(name).ToString();
+            cellValueField.Text = sheet.GetCellValue(name) + "";
 
             //highlight current contents
             cellContentsField.SelectionStart = 0;
             cellContentsField.SelectionLength = cellContentsField.Text.Length;
-        }
-
-        private void RecursiveReevaluate(string name)
-        {
-
         }
 
         /// <summary>
@@ -260,15 +253,20 @@ namespace SpreadsheetGUI
                 cellValueField.Text = value;
             spreadsheetPanel1.SetValue(state.Col, state.Row, value);
 
-                foreach (string s in sheet.CheckValues(name))
+                try
                 {
-                    int row, col;
-                    Int32.TryParse(s.Substring(1, s.Length - 1), out row);
-                    col = s[0] - 65;
-                    spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
+                    foreach (string s in sheet.CheckValues(name))
+                    {
+                        int row, col;
+                        Int32.TryParse(s.Substring(1, s.Length - 1), out row);
+                        col = s[0] - 65;
+                        spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
+                        UpdateGUIFields(s);
+                    }
+                } catch (Exception e)
+                {
+                    MessageBox.Show("You can't do that");
                 }
-
-                UpdateGUIFields(name);
 
             contentsChanged = false;
             });

@@ -42,8 +42,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Spreadsheet">
-      <HintPath>..\ClassLibrary2\Libs\Spreadsheet.dll</HintPath>
+    <Reference Include="Spreadsheet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\PS4\Spreadsheet\bin\Debug\Spreadsheet.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetPanel">
       <HintPath>..\ClassLibrary2\Libs\SpreadsheetPanel.dll</HintPath>
