@@ -95,11 +95,17 @@ namespace SpreadsheetGUI
                 cellContentsField.Text = sheet.GetCellContents(name).ToString();
 
             //set CellValueField from spreadsheet
+            foreach (string s in sheet.)
             cellValueField.Text = sheet.GetCellValue(name).ToString();
 
             //highlight current contents
             cellContentsField.SelectionStart = 0;
             cellContentsField.SelectionLength = cellContentsField.Text.Length;
+        }
+
+        private void RecursiveReevaluate(string name)
+        {
+
         }
 
         /// <summary>

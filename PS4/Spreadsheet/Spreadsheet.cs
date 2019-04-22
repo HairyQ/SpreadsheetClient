@@ -23,6 +23,12 @@ namespace SS
             private Object contents;
             private Object value;
 
+            public Object Value
+            {
+                get { return value; }
+                set { value = this.value; }
+            }
+
             public Cell(String newName) { name = newName; contents = ""; } //Cell constructor
 
             public Object GetContents() { return contents; }
@@ -407,6 +413,52 @@ namespace SS
 
             if (!IsValid(name)) //name is invalid according to user
                 throw new InvalidNameException();
+        }
+
+        /// <summary>
+        /// Reevaluates all the cells to make sure their values are correct
+        /// </summary>
+        /// <param name="CellsToRecalculate">List of cells to reevaluate</param>
+        protected void Reevaluate(IEnumerable<string> CellsToRecalculate)
+        {
+            changed = true;
+            //for each cell name specified
+            foreach (string key in CellsToRecalculate)
+            {
+                //get cell and contents for this cell name
+                Cell currentCell = allCells[key];
+                object currentContent = currentCell.GetContents();
+                double resultingDouble;
+
+                //change values accordingly
+                if (currentContent is Formula currentFormula)
+                {
+                    currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
+                }
+                else if (Double.TryParse(currentContent.ToString(), out resultingDouble))
+                {
+                    currentCell.Value = resultingDouble;
+                }
+                else
+                {
+                    currentCell.Value = currentContent;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determines which ceels need to be recalculated, changes their values accordingly, and returns
+        /// the list of recalculated cells. Now their values are updated, and just need to be changed by the GUI
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IEnumerable<string> CheckValues(string name)
+        {
+            IEnumerable<string> cellsToRecalculate = GetCellsToRecalculate(new HashSet<string>() { name });
+
+            Reevaluate(cellsToRecalculate);
+
+            return cellsToRecalculate;
         }
     }
 }
