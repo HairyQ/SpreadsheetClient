@@ -106,6 +106,7 @@ namespace Controller
                 String message = JsonConvert.SerializeObject(newMessage) + "\n\n";
                 Console.WriteLine("Message sent: " + message);
                 Network.Send(theServer, message);
+                Console.WriteLine(message);
             }
         }
 
@@ -116,6 +117,7 @@ namespace Controller
         public void ReceiveSpreadsheets(SocketState ss)
         {
             string startupData = ss.SB.ToString();
+            Console.WriteLine("Message received: " + startupData.ToString());
 
             SpreadsheetListMessage sentMessage = JsonConvert.DeserializeObject<SpreadsheetListMessage>(startupData);
             state.Spreadsheets = sentMessage.spreadsheets;
@@ -131,7 +133,9 @@ namespace Controller
         public void ReceiveServerMessages(SocketState ss)
         {
             string totalData = ss.SB.ToString();
-            string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.None);//Regex.Split(totalData, @"(?<=[\n][\n])");
+            Console.Write(totalData);
+            string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
             
@@ -148,6 +152,7 @@ namespace Controller
 
                 totalMessages.Add(p);
                 ss.SB.Remove(0, p.Length);
+                ss.SB.Remove(0, 2);
             }
 
             DeserializeJsonAndUpdateWindow(totalMessages);

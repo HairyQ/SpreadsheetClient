@@ -225,6 +225,8 @@ namespace SpreadsheetGUI
         {
             this.Invoke((MethodInvoker)delegate
             {
+                Console.WriteLine("Reached Method Invoker");
+
             string name = state.CellName;
             string value = "";
             try
@@ -234,8 +236,12 @@ namespace SpreadsheetGUI
                         sheet.SetContentsOfCell(name, state.Contents.ToUpper());
                     else
                         sheet.SetContentsOfCell(name, state.Contents);
+
+                    object valueObj = "";
                     //get value of cell from backing sheet
-                    object valueObj = sheet.GetCellValue(name);
+                    if (sheet.GetCellContents(name) is String && !sheet.GetCellContents(name).Equals(""))
+                        valueObj = sheet.GetCellValue(name);
+
                 //handle formula errors
                 if (valueObj.GetType().Equals(typeof(FormulaError)))
                 {
@@ -259,9 +265,7 @@ namespace SpreadsheetGUI
                     int row, col;
                     Int32.TryParse(s.Substring(1, s.Length - 1), out row);
                     col = s[0] - 65;
-                    string newS = "";
-                    spreadsheetPanel1.SetValue(col - 1, row, sheet.GetCellValue(s).ToString());
-                    Console.WriteLine("Cell: " + s + " Row: " + row + " Col: " + col);
+                    spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
                 }
 
                 UpdateGUIFields(name);

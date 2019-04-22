@@ -74,5 +74,16 @@ namespace ClientGUI
                 spread.Show();
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string name = NameBox.Text;
+            if (name.Length > 0)
+                clientController.CreateAndSendMessage("open", name);
+
+            SpreadsheetGUI.Form1 spread = new SpreadsheetGUI.Form1(clientController, state, this);
+            Hide();
+            spread.Show();
+        }
     }
 }

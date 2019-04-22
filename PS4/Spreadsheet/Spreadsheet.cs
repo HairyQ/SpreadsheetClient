@@ -313,7 +313,7 @@ namespace SS
             name = Normalize(name); //Normalize name according to user specifications
             CheckIfNullOrInvalidVariableName(name); //Check validity of name
 
-            if (GetCellContents(name).GetType().Equals(typeof(Formula)))
+            if (GetCellContents(name) is String && GetCellContents[0] == '=')
             {
                 try
                 {
@@ -426,6 +426,8 @@ namespace SS
             foreach (string key in CellsToRecalculate)
             {
                 //get cell and contents for this cell name
+                if (!allCells.ContainsKey(key))
+                    continue;
                 Cell currentCell = allCells[key];
                 object currentContent = currentCell.GetContents();
                 double resultingDouble;
@@ -458,7 +460,8 @@ namespace SS
 
             Reevaluate(cellsToRecalculate);
 
-            return cellsToRecalculate;
+            foreach (string s in cellsToRecalculate)
+                yield return s;
         }
     }
 }
