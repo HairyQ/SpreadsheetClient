@@ -84,7 +84,7 @@ namespace SpreadsheetGUI
         private void UpdateGUIFields(string name)
         {
             //move cursor to contents field
-            cellContentsField.Focus();
+            //cellContentsField.Focus();
 
             cellNameField.Text = name;
 
