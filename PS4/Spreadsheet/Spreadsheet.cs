@@ -26,24 +26,39 @@ namespace SS
 
             public Object Value
             {
-                get { return value; }
-                set { value = this.value; }
+                get
+                {
+                    return value;
+                }
+                set
+                {
+                    value=this.value;
+                }
             }
 
-            public Cell(String newName) { name = newName; contents = ""; } //Cell constructor
+            public Cell(String newName)
+            {
+                name=newName; contents="";
+            } //Cell constructor
 
-            public Object GetContents() { return contents; }
+            public Object GetContents()
+            {
+                return contents;
+            }
 
-            public void SetContents(object o) { contents = o; }
+            public void SetContents(object o)
+            {
+                contents=o;
+            }
 
             public void WriteXML(XmlWriter w)
             {
                 w.WriteString(Environment.NewLine); //separate each cell with newline
 
                 w.WriteStartElement("Cell");
-                w.WriteAttributeString("name", name);
-                w.WriteAttributeString("contents", contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
-                    "=" + contents.ToString() : contents + "");                               //append '='
+                w.WriteAttributeString("name",name);
+                w.WriteAttributeString("contents",contents.GetType().Equals(typeof(Formula)) ? //if type == formula,
+                    "="+contents.ToString() : contents+"");                               //append '='
                 w.WriteEndElement();
             }
         }
@@ -52,7 +67,7 @@ namespace SS
         /// Dictionary mapping cell names to cell objects.
         /// Contains all cells whose values have been 'changed', thus a list of all initialized cells
         /// </summary>
-        private Dictionary<string, Cell> allCells;
+        private Dictionary<string,Cell> allCells;
 
         /// <summary>
         /// Dependency graph representing dependencies between cells according to their formulae
@@ -65,7 +80,7 @@ namespace SS
         public override bool Changed
         {
             get => changed;
-            protected set => changed = value;
+            protected set => changed=value;
         }
 
         /// <summary>
@@ -83,12 +98,12 @@ namespace SS
         /// 
         /// This constructor passes a default validator, normalizer, and version to AbstractSpreadsheet's constructor.
         /// </summary>
-        public Spreadsheet() : base(s => true, s => s, "default")
+        public Spreadsheet() : base(s => true,s => s,"default")
         {
-            allCells = new Dictionary<string, Cell>();
-            dependencies = new DependencyGraph();
-            changed = false;
-            path = "";
+            allCells=new Dictionary<string,Cell>();
+            dependencies=new DependencyGraph();
+            changed=false;
+            path="";
         }
 
         /// <summary>
@@ -99,13 +114,13 @@ namespace SS
         /// <param name="isValid">Function that returns bool based on validity of variable name</param>
         /// <param name="normalize">Function that returns a "normalized" version of a variable name</param>
         /// <param name="version">String representation of the current version of this spreadsheet</param>
-        public Spreadsheet(Func<string, bool> isValid, Func<string, string> normalize, string version)
-            : base(isValid, normalize, version)
+        public Spreadsheet(Func<string,bool> isValid,Func<string,string> normalize,string version)
+            : base(isValid,normalize,version)
         {
-            allCells = new Dictionary<string, Cell>();
-            dependencies = new DependencyGraph();
-            changed = false;
-            path = "";
+            allCells=new Dictionary<string,Cell>();
+            dependencies=new DependencyGraph();
+            changed=false;
+            path="";
         }
 
 
@@ -119,13 +134,13 @@ namespace SS
         /// <param name="isValid">Function that returns bool based on validity of variable name</param>
         /// <param name="normalize">Function that returns a "normalized" version of a variable name</param>
         /// <param name="version">String representation of the current version of this spreadsheet</param>
-        public Spreadsheet(string filePath, Func<string, bool> isValid, Func<string, string> normalize, string version)
-            : base(isValid, normalize, version)
+        public Spreadsheet(string filePath,Func<string,bool> isValid,Func<string,string> normalize,string version)
+            : base(isValid,normalize,version)
         {
-            allCells = new Dictionary<string, Cell>();
-            dependencies = new DependencyGraph();
-            changed = false;
-            path = filePath;
+            allCells=new Dictionary<string,Cell>();
+            dependencies=new DependencyGraph();
+            changed=false;
+            path=filePath;
         }
 
         /// <summary>
@@ -135,10 +150,10 @@ namespace SS
         /// <returns>Contents of a cell, whether the contents be of type String, Double, or Formula</returns>
         public override object GetCellContents(string name)
         {
-            name = Normalize(name); //Normalize name according to user's normalizer
+            name=Normalize(name); //Normalize name according to user's normalizer
             CheckIfNullOrInvalidVariableName(name);
 
-            if (!allCells.ContainsKey(name)) //Empty cell implies 'empty string' contents
+            if(!allCells.ContainsKey(name)) //Empty cell implies 'empty string' contents
                 return "";
 
             return allCells[name].GetContents();
@@ -147,7 +162,7 @@ namespace SS
         public ISet<string> getTheDependents(string name)
         {
             HashSet<string> retSet = new HashSet<string>() { name };
-            foreach (string s in dependencies.GetDependents(name))
+            foreach(string s in dependencies.GetDependents(name))
                 retSet.Add(s);
 
             return retSet;
@@ -160,7 +175,7 @@ namespace SS
         /// <returns>IENumerable object numerating all "changed" (initialized) cells</returns>
         public override IEnumerable<string> GetNamesOfAllNonemptyCells()
         {
-            foreach (String name in allCells.Keys)
+            foreach(String name in allCells.Keys)
             {
                 yield return name;
             }
@@ -173,8 +188,10 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="number">Double Value of Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        protected override ISet<string> SetCellContents(string name, double number)
-        { return SetCellHelper(name, number); }
+        protected override ISet<string> SetCellContents(string name,double number)
+        {
+            return SetCellHelper(name,number);
+        }
 
         /// <summary>
         /// Sets the contents of a cell, given that cell's name, to that cell's value in the
@@ -183,12 +200,12 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="text">String Value for Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        protected override ISet<string> SetCellContents(string name, string text)
+        protected override ISet<string> SetCellContents(string name,string text)
         {
-            if (text == null)
+            if(text==null)
                 throw new ArgumentNullException();
 
-            return SetCellHelper(name, text);
+            return SetCellHelper(name,text);
         }
 
         /// <summary>
@@ -198,26 +215,26 @@ namespace SS
         /// <param name="name">Cell's name</param>
         /// <param name="formula">Formula Value for Cell</param>
         /// <returns>HashSet containing cell's name and the names of all dependent cells to that cell</returns>
-        protected override ISet<string> SetCellContents(string name, Formula formula)
+        protected override ISet<string> SetCellContents(string name,Formula formula)
         {
-            if (formula == null)
+            if(formula==null)
                 throw new ArgumentNullException();
 
-            foreach (string s in formula.GetVariables())
+            foreach(string s in formula.GetVariables())
             {
-                if (dependencies.GetDependees(s).Contains(name))
+                if(dependencies.GetDependees(s).Contains(name))
                 {
                     throw new CircularException();
                 }
-                foreach (string str in dependencies.GetDependents(name))
+                foreach(string str in dependencies.GetDependents(name))
                 {
-                    dependencies.AddDependency(s, str);
+                    dependencies.AddDependency(s,str);
                 }
 
-                dependencies.AddDependency(s, name);
+                dependencies.AddDependency(s,name);
             }
 
-            return SetCellHelper(name, formula);
+            return SetCellHelper(name,formula);
         }
 
         /// <summary>
@@ -228,15 +245,15 @@ namespace SS
         /// <returns>An Enumeration of the direct dependents of cell's formula</returns>
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
-            if (name == null)
+            if(name==null)
                 throw new ArgumentNullException();
 
-            name = Normalize(name); //Normalize name of cell according to user
+            name=Normalize(name); //Normalize name of cell according to user
             CheckIfNullOrInvalidVariableName(name); //Check validity of cell name
 
-            if (GetCellContents(name).GetType() == typeof(Formula))
+            if(GetCellContents(name).GetType()==typeof(Formula))
             {
-                foreach (string s in ((Formula)GetCellContents(name)).GetVariables())
+                foreach(string s in ((Formula)GetCellContents(name)).GetVariables())
                 {
                     yield return s;
                 }
@@ -253,27 +270,27 @@ namespace SS
         {
             try
             {
-                using (XmlReader read = XmlReader.Create(path + filename))
+                using(XmlReader read = XmlReader.Create(path+filename))
                 {
-                    while (read.Read())
+                    while(read.Read())
                     {
-                        if (read.IsStartElement())
+                        if(read.IsStartElement())
                         {
-                            switch (read.Name)
+                            switch(read.Name)
                             {
                                 case "Spreadsheet":
-                                    read.Read();
-                                    return read.Value.Substring(10);
+                                read.Read();
+                                return read.Value.Substring(10);
                             }
                         }
                     }
                 }
             }
-            catch (System.IO.FileNotFoundException)
+            catch(System.IO.FileNotFoundException)
             {
                 throw new SpreadsheetReadWriteException("File could not be found");
             }
-            catch (Exception)
+            catch(Exception)
             {
                 throw new SpreadsheetReadWriteException("There were problems reading the file");
             }
@@ -290,15 +307,15 @@ namespace SS
             try
             {
                 XmlWriterSettings xmlSettings = new XmlWriterSettings();   //Indentation to help with readability
-                xmlSettings.OmitXmlDeclaration = true;
+                xmlSettings.OmitXmlDeclaration=true;
 
-                using (XmlWriter write = XmlWriter.Create(path + filename, xmlSettings))
+                using(XmlWriter write = XmlWriter.Create(path+filename,xmlSettings))
                 {
                     write.WriteStartDocument();
                     write.WriteStartElement("spreadsheet");
-                    write.WriteElementString("Spreadsheet", "version = " + Version);
+                    write.WriteElementString("Spreadsheet","version = "+Version);
 
-                    foreach (string s in allCells.Keys)
+                    foreach(string s in allCells.Keys)
                     {
                         allCells[s].WriteXML(write);
                     }
@@ -308,40 +325,40 @@ namespace SS
                     write.WriteEndDocument();
                 }
             }
-            catch (Exception)
+            catch(Exception)
             {
                 throw new SpreadsheetReadWriteException("There were problems writing the XML file");
             }
 
             //File has been saved, and therefore no warning message for lost data will be shown when
             //spreadsheet is closed if changed = false
-            changed = false;
+            changed=false;
         }
 
         public override object GetCellValue(string name)
         {
-            name = Normalize(name); //Normalize name according to user specifications
+            name=Normalize(name); //Normalize name according to user specifications
             CheckIfNullOrInvalidVariableName(name); //Check validity of name
 
-            if (GetCellContents(name) == null || GetCellContents(name) == "")
+            if(GetCellContents(name)==null||GetCellContents(name)=="")
                 return "";
 
-            if (GetCellContents(name).GetType().Equals(typeof(Formula)))
+            if(GetCellContents(name).GetType().Equals(typeof(Formula)))
             {
                 try
                 {
                     Formula f = (Formula)GetCellContents(name);
-                    foreach (string s in GetDirectDependents(name))
+                    foreach(string s in GetDirectDependents(name))
                     {
-                        if (GetCellValue(s).Equals("") || GetCellValue(s).Equals(null))
+                        if(GetCellValue(s).Equals("")||GetCellValue(s).Equals(null))
                         {
-                            SetCellContents(s, "");
+                            SetCellContents(s,"");
                             return "";
                         }
                     }
                     return (Double)f.Evaluate(s => (Double)GetCellValue(s));
                 }
-                catch (InvalidCastException e)
+                catch(InvalidCastException e)
                 {
                     return new FormulaError("Invalid formula");
                 }
@@ -363,25 +380,25 @@ namespace SS
         /// <param name="name">Name of given cell</param>
         /// <param name="content">Cell's new contents</param>
         /// <returns></returns>
-        public override ISet<string> SetContentsOfCell(string name, string content)
+        public override ISet<string> SetContentsOfCell(string name,string content)
         {
-            changed = true; //Spreadsheet has now officially been changed
+            changed=true; //Spreadsheet has now officially been changed
             double newDouble;   //Initialized double in case content is of type double
 
-            name = Normalize(name); //Normalize name according to user's normalize delegate or default Function
+            name=Normalize(name); //Normalize name according to user's normalize delegate or default Function
             CheckIfNullOrInvalidVariableName(name);
 
-            if (content == "")  //Corner case - if we try to check its characters, exception will be thrown
-                return SetCellContents(name, content);
+            if(content=="")  //Corner case - if we try to check its characters, exception will be thrown
+                return SetCellContents(name,content);
 
-            if (content.ToCharArray()[0] == '=')                    //Content is Formula
-                return SetCellContents(name, new Formula(content.Substring(1), Normalize, IsValid));
+            if(content.ToCharArray()[0]=='=')                    //Content is Formula
+                return SetCellContents(name,new Formula(content.Substring(1),Normalize,IsValid));
 
-            else if (Double.TryParse(content, out newDouble))       //Content is Double
-                return SetCellContents(name, newDouble);
+            else if(Double.TryParse(content,out newDouble))       //Content is Double
+                return SetCellContents(name,newDouble);
 
             else                                                    //Content is String
-                return SetCellContents(name, content);
+                return SetCellContents(name,content);
         }
 
         /// <summary>
@@ -391,26 +408,26 @@ namespace SS
         /// <param name="name">Name of the cell to be added or changed</param>
         /// <param name="contents"></param>
         /// <returns></returns>
-        private ISet<string> SetCellHelper(string name, object contents)
+        private ISet<string> SetCellHelper(string name,object contents)
         {
             CheckIfNullOrInvalidVariableName(name);
 
-            if (allCells.ContainsKey(name))
+            if(allCells.ContainsKey(name))
                 allCells[name].SetContents(contents);
 
             else
             {
-                if (contents.Equals("")) //Has no variables, thus no dependents
+                if(contents.Equals("")) //Has no variables, thus no dependents
                     return new HashSet<string>() { name };
 
                 Cell newCell = new Cell(name);
                 newCell.SetContents(contents);
-                allCells.Add(name, newCell);
+                allCells.Add(name,newCell);
             }
 
             HashSet<string> retSet = new HashSet<string>();
             retSet.Add(name);   //The Cell's own name should be in the Set
-            foreach (String s in dependencies.GetDependents(name)) //Add each dependent of Cell
+            foreach(String s in dependencies.GetDependents(name)) //Add each dependent of Cell
             {
                 retSet.Add(s);
             }
@@ -425,14 +442,14 @@ namespace SS
         /// <param name="name">Cell name</param>
         private void CheckIfNullOrInvalidVariableName(string name)
         {
-            if (name == null) //name is null
+            if(name==null) //name is null
                 throw new InvalidNameException();
 
             //Regex for finding valid variable names
-            if (!Regex.IsMatch(name, @"^[A-Za-z]+[\d]+$"))
+            if(!Regex.IsMatch(name,@"^[A-Za-z]+[\d]+$"))
                 throw new InvalidNameException();
 
-            if (!IsValid(name)) //name is invalid according to user
+            if(!IsValid(name)) //name is invalid according to user
                 throw new InvalidNameException();
         }
 
@@ -442,17 +459,17 @@ namespace SS
         /// <param name="CellsToRecalculate">List of cells to reevaluate</param>
         protected void Reevaluate(IEnumerable<string> CellsToRecalculate)
         {
-            changed = true;
+            changed=true;
             //for each cell name specified
-            foreach (string key in CellsToRecalculate)
+            foreach(string key in CellsToRecalculate)
             {
                 //get cell and contents for this cell name
-                if (!allCells.ContainsKey(key))
+                if(!allCells.ContainsKey(key))
                     continue;
                 Cell currentCell = allCells[key];
                 object currentContent = currentCell.GetContents();
 
-                if (currentContent == null)
+                if(currentContent==null)
                     continue;
 
                 double resultingDouble;
@@ -460,27 +477,25 @@ namespace SS
                 try
                 {
                     //change values accordingly
-                    if (currentContent is Formula currentFormula)
+                    if(currentContent is Formula currentFormula)
                     {
-                        foreach (string s in GetDirectDependents(key))
+                        foreach(string s in GetDirectDependents(key))
                         {
-                            if (GetCellValue(s).Equals("") || GetCellValue(s).Equals(null))
+                            if(GetCellValue(s).Equals("")||GetCellValue(s).Equals(null))
                                 return;
                         }
-                        if (Regex.IsMatch(currentFormula.ToString(), @"[A-Za-z]{2,}"))
-                            currentCell.Value = currentFormula.ToString();
-                        else
-                            currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
+                        currentCell.Value=(Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
                     }
-                    else if (Double.TryParse(currentContent.ToString(), out resultingDouble))
+                    else if(Double.TryParse(currentContent.ToString(),out resultingDouble))
                     {
-                        currentCell.Value = resultingDouble;
+                        currentCell.Value=resultingDouble;
                     }
                     else
                     {
-                        currentCell.Value = currentContent;
+                        currentCell.Value=currentContent;
                     }
-                } catch (InvalidCastException e)
+                }
+                catch(InvalidCastException e)
                 {
                     continue;
                 }
@@ -499,9 +514,9 @@ namespace SS
 
             Reevaluate(cellsToRecalculate);
 
-            foreach (string s in cellsToRecalculate)
+            foreach(string s in cellsToRecalculate)
             {
-                if (s != "")
+                if(s!="")
                     yield return s;
             }
         }
@@ -509,18 +524,18 @@ namespace SS
         /// <summary>
         /// A helper for the GetCellsToRecalculate method.
         /// </summary>
-        private void VisitDependees(String start, String name, ISet<String> visited, LinkedList<String> changed)
+        private void VisitDependees(String start,String name,ISet<String> visited,LinkedList<String> changed)
         {
             visited.Add(name);
-            foreach (String n in dependencies.GetDependees(name))
+            foreach(String n in dependencies.GetDependees(name))
             {
-                if (n.Equals(start))
+                if(n.Equals(start))
                 {
                     throw new CircularException();
                 }
-                else if (!visited.Contains(n))
+                else if(!visited.Contains(n))
                 {
-                    VisitDependees(start, n, visited, changed);
+                    VisitDependees(start,n,visited,changed);
                 }
             }
             changed.AddFirst(name);
@@ -530,11 +545,11 @@ namespace SS
         {
             LinkedList<String> changed = new LinkedList<String>();
             HashSet<String> visited = new HashSet<String>();
-            foreach (String name in names)
+            foreach(String name in names)
             {
-                if (!visited.Contains(name))
+                if(!visited.Contains(name))
                 {
-                    VisitDependees(name, name, visited, changed);
+                    VisitDependees(name,name,visited,changed);
                 }
             }
             return changed;
