@@ -341,7 +341,7 @@ namespace SS
                     }
                     return (Double)f.Evaluate(s => (Double)GetCellValue(s));
                 }
-                catch (Exception e)
+                catch (InvalidCastException e)
                 {
                     return new FormulaError("Invalid formula");
                 }
@@ -477,7 +477,7 @@ namespace SS
                     {
                         currentCell.Value = currentContent;
                     }
-                } catch (Exception)
+                } catch (InvalidCastException e)
                 {
                     continue;
                 }

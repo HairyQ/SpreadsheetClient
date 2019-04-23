@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Controller;
 using Resources;
 using System.Collections;
+using System.Windows.Input;
 using System.ComponentModel;
 
 namespace SpreadsheetGUI
@@ -320,6 +321,105 @@ namespace SpreadsheetGUI
                     col++;
                     break;
                 //pass key event onto regular form handling
+                /*
+                case Keys.A:
+                case Keys.B:
+                case Keys.C:
+                case Keys.D:
+                case Keys.E:
+                case Keys.F:
+                case Keys.G:
+                case Keys.H:
+                case Keys.I:
+                case Keys.J:
+                case Keys.K:
+                case Keys.L:
+                case Keys.M:
+                case Keys.N:
+                case Keys.O:
+                case Keys.P:
+                case Keys.Q:
+                case Keys.R:
+                case Keys.S:
+                case Keys.T:
+                case Keys.U:
+                case Keys.V:
+                case Keys.X:
+                case Keys.Y:
+                case Keys.Z:
+                    buildValueString(keyData.ToString(), row, col);
+                    break;
+                case Keys.D0:
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                case Keys.D9:
+                    buildValueString(keyData.ToString()[1] + "", row, col);
+                    spreadsheetPanel1.SetValue(col, row, ValueString);
+                    break;
+                case Keys.Oem1:
+                    ValueString = ValueString.Substring(0, ValueString.Length - 1);
+                    break;
+                case Keys.Oem2:
+                    buildValueString(".", row, col);
+                    break;
+                case Keys.OemBackslash:
+                    buildValueString("/", row, col);
+                    break;
+                case Keys.Oemcomma:
+                    buildValueString(",", row, col);
+                    break;
+                case Keys.OemMinus:
+                    buildValueString("-", row, col);
+                    break;
+                case Keys.OemCloseBrackets:
+                    buildValueString("}", row, col);
+                    break;
+                case Keys.OemOpenBrackets:
+                    buildValueString("{", row, col);
+                    break;
+                case Keys.OemPeriod:
+                    buildValueString(".", row, col);
+                    break;
+                case Keys.Oemplus:
+                    buildValueString("+", row, col);
+                    break;
+                case Keys.OemQuotes:
+                    buildValueString("\"", row, col);
+                    break;
+                case Keys.Oemtilde:
+                    buildValueString("~", row, col);
+                    break;
+                case Keys.Space:
+                    buildValueString(" ", row, col);
+                    break;
+                case Keys.Subtract:
+                    buildValueString("-", row, col);
+                    break;
+                case Keys.Divide:
+                    buildValueString("/", row, col);
+                    break;
+                case Keys.Multiply:
+                    buildValueString("*", row, col);
+                    break;
+                case Keys.NumPad0:
+                case Keys.NumPad1:
+                case Keys.NumPad2:
+                case Keys.NumPad3:
+                case Keys.NumPad4:
+                case Keys.NumPad5:
+                case Keys.NumPad6:
+                case Keys.NumPad7:
+                case Keys.NumPad8:
+                case Keys.NumPad9:
+                    buildValueString(keyData.ToString()[6] + "", row, col);
+                    break;
+                    */
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }
