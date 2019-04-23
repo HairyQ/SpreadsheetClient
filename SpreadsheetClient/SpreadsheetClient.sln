@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "ClassLibrary2\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetGUI", "SpreadsheetGUI\SpreadsheetGUI.csproj", "{672DF303-C673-470A-80E1-85F635C98C02}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{4C5371F9-87AC-4CFA-AB92-A0DE10456A2D}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup3", "Setup3\Setup3.vdproj", "{80C3E23C-DA13-4C90-85E1-965C10C49145}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,8 +35,9 @@ Global
 		{672DF303-C673-470A-80E1-85F635C98C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{672DF303-C673-470A-80E1-85F635C98C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{672DF303-C673-470A-80E1-85F635C98C02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C5371F9-87AC-4CFA-AB92-A0DE10456A2D}.Debug|Any CPU.ActiveCfg = Debug
-		{4C5371F9-87AC-4CFA-AB92-A0DE10456A2D}.Release|Any CPU.ActiveCfg = Release
+		{80C3E23C-DA13-4C90-85E1-965C10C49145}.Debug|Any CPU.ActiveCfg = Debug
+		{80C3E23C-DA13-4C90-85E1-965C10C49145}.Debug|Any CPU.Build.0 = Debug
+		{80C3E23C-DA13-4C90-85E1-965C10C49145}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

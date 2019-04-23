@@ -23,11 +23,13 @@ namespace Controller
         public delegate void SpreadsheetListHandler();
         public delegate void CircularDependencyError();
         public delegate void LoginError();
+        public delegate void EvaluateHandler();
 
         private event SpreadsheetEditHandler displayEdit;
         private event SpreadsheetListHandler displayLists;
         private event CircularDependencyError displayError;
         private event LoginError loginError;
+        private event EvaluateHandler evaluateAllCells;
 
         /// <summary>
         /// Constructor for ClientController should take a StaticState as a parameter, so that all of the 
@@ -57,6 +59,11 @@ namespace Controller
         public void RegisterLoginErrorHandler(LoginError l)
         {
             loginError += l;
+        }
+
+        public void RegisterEvaluateHandler(EvaluateHandler e)
+        {
+            evaluateAllCells += e;
         }
 
         /// <summary>
@@ -125,12 +132,14 @@ namespace Controller
             Network.GetData(ss);
 
             displayLists.Invoke();
+            evaluateAllCells.Invoke();
         }
 
         public void ReceiveServerMessages(SocketState ss)
         {
-
             string totalData = ss.SB.ToString();
+            Console.WriteLine("Message: " + totalData);
+
             string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
             //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
@@ -172,7 +181,7 @@ namespace Controller
                     if (isEdit != null)
                     {
                         FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
-
+                        
                         foreach (string s in edit.spreadsheet.Keys)
                         {
                             state.Col = s[0] - 65;

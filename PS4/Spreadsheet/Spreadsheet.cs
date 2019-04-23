@@ -467,7 +467,10 @@ namespace SS
                             if (GetCellValue(s).Equals("") || GetCellValue(s).Equals(null))
                                 return;
                         }
-                        currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
+                        if (Regex.IsMatch(currentFormula.ToString(), @"[A-Za-z]{2,}"))
+                            currentCell.Value = currentFormula.ToString();
+                        else
+                            currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
                     }
                     else if (Double.TryParse(currentContent.ToString(), out resultingDouble))
                     {

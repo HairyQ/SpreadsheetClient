@@ -260,7 +260,10 @@ namespace SpreadsheetGUI
                         Int32.TryParse(s.Substring(1, s.Length - 1), out row);
                         col = s[0] - 65;
                         spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
-                        cellValueField.Text = sheet.GetCellValue(s) + "";
+
+                        string valueString = sheet.GetCellValue(s) + "";
+                        valueString.Replace('"', '\"');
+                        //cellValueField.Text = sheet.GetCellValue(s) + "";
                         UpdateGUIFields(s);
                     }
                 }
@@ -503,6 +506,23 @@ namespace SpreadsheetGUI
             {
                 Environment.Exit(1);
             }
+        }
+
+        private void EvaluateAllCells()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    for (int j = 0; j < 100; j++)
+                    {
+                        string name = "";
+                        name += (char)(i + 65);
+                        name += j + "";
+                        spreadsheetPanel1.SetValue(i, j - 1, sheet.GetCellValue(name).ToString());
+                    }
+                }
+            });
         }
     }
 }
