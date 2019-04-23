@@ -129,20 +129,24 @@ namespace Controller
 
         public void ReceiveServerMessages(SocketState ss)
         {
+
             string totalData = ss.SB.ToString();
             string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
             //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
-            foreach (string p in parts)
+            foreach(string p in parts)
             {
                 // Ignore empty strings added by the regex splitter
-                if (p.Length == 0)
+                if(p.Length==0)
                     continue;
                 // The regex splitter will include the last string even if it doesn't end with a '\n',
                 // So we need to ignore it if this happens. 
-                if (p[p.Length - 1] != '}' || p[0] != '{')
+                if(p[p.Length-1]!='}'||p[0]!='{')
+                { 
+                    ss.SB.Remove(0,p.Length);
                     break;
+                }
 
                 totalMessages.Add(p);
                 ss.SB.Remove(0, p.Length);
