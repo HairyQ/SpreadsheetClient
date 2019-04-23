@@ -138,8 +138,6 @@ namespace Controller
             //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
-            
-
             foreach (string p in parts)
             {
                 // Ignore empty strings added by the regex splitter

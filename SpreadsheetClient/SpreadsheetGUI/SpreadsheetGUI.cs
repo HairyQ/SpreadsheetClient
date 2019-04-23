@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Controller;
 using Resources;
 using System.Collections;
+using System.ComponentModel;
 
 namespace SpreadsheetGUI
 {
@@ -220,10 +221,10 @@ namespace SpreadsheetGUI
             {
                 Console.WriteLine("Reached Method Invoker");
 
-            string name = state.CellName;
-            string value = "";
-            try
-            {
+                string name = state.CellName;
+                string value = "";
+                try
+                {
                     //store contents in backing sheet
                     if (state.Contents.Length > 0 && state.Contents[0] == '=')
                         sheet.SetContentsOfCell(name, state.Contents.ToUpper());
@@ -235,23 +236,23 @@ namespace SpreadsheetGUI
                     if (sheet.GetCellContents(name) is String && !sheet.GetCellContents(name).Equals(""))
                         valueObj = sheet.GetCellValue(name);
 
-                //handle formula errors
-                if (valueObj.GetType().Equals(typeof(FormulaError)))
-                {
-                    FormulaError fe = (FormulaError)valueObj;
-                    value = fe.Reason;
+                    //handle formula errors
+                    if (valueObj.GetType().Equals(typeof(FormulaError)))
+                    {
+                        FormulaError fe = (FormulaError)valueObj;
+                        value = fe.Reason;
+                    }
+                    //store value of cell
+                    else
+                        value = valueObj.ToString();
                 }
-                //store value of cell
-                else
-                    value = valueObj.ToString();
-            }
-            catch (FormulaFormatException ffe)
-            {
-                value = ffe.Message;
-            }
+                catch (FormulaFormatException ffe)
+                {
+                    value = ffe.Message;
+                }
 
                 cellValueField.Text = value;
-            spreadsheetPanel1.SetValue(state.Col, state.Row, value);
+                spreadsheetPanel1.SetValue(state.Col, state.Row, value);
 
                 try
                 {
@@ -263,12 +264,13 @@ namespace SpreadsheetGUI
                         spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
                         UpdateGUIFields(s);
                     }
-                } catch (Exception e)
+                }
+                catch (InvalidCastException e)
                 {
                     MessageBox.Show("You can't do that");
                 }
 
-            contentsChanged = false;
+                contentsChanged = false;
             });
         }
 

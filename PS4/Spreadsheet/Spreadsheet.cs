@@ -314,11 +314,22 @@ namespace SS
             name = Normalize(name); //Normalize name according to user specifications
             CheckIfNullOrInvalidVariableName(name); //Check validity of name
 
+            if (GetCellContents(name) == null || GetCellContents(name) == "")
+                return "";
+
             if (GetCellContents(name).GetType().Equals(typeof(Formula)))
             {
                 try
                 {
                     Formula f = (Formula)GetCellContents(name);
+                    foreach (string s in GetDirectDependents(name))
+                    {
+                        if (GetCellValue(s).Equals("") || GetCellValue(s).Equals(null))
+                        {
+                            SetCellContents(s, "");
+                            return "";
+                        }
+                    }
                     return (Double)f.Evaluate(s => (Double)GetCellValue(s));
                 }
                 catch (Exception e)
@@ -431,20 +442,35 @@ namespace SS
                     continue;
                 Cell currentCell = allCells[key];
                 object currentContent = currentCell.GetContents();
+
+                if (currentContent == null)
+                    continue;
+
                 double resultingDouble;
 
-                //change values accordingly
-                if (currentContent is Formula currentFormula)
+                try
                 {
-                    currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
-                }
-                else if (Double.TryParse(currentContent.ToString(), out resultingDouble))
+                    //change values accordingly
+                    if (currentContent is Formula currentFormula)
+                    {
+                        foreach (string s in GetDirectDependents(key))
+                        {
+                            if (GetCellValue(s).Equals("") || GetCellValue(s).Equals(null))
+                                return;
+                        }
+                        currentCell.Value = (Double)currentFormula.Evaluate(s => (Double)GetCellValue(s));
+                    }
+                    else if (Double.TryParse(currentContent.ToString(), out resultingDouble))
+                    {
+                        currentCell.Value = resultingDouble;
+                    }
+                    else
+                    {
+                        currentCell.Value = currentContent;
+                    }
+                } catch (Exception)
                 {
-                    currentCell.Value = resultingDouble;
-                }
-                else
-                {
-                    currentCell.Value = currentContent;
+                    continue;
                 }
             }
         }
@@ -461,10 +487,11 @@ namespace SS
 
             Reevaluate(cellsToRecalculate);
 
-            ArrayList newList = new ArrayList();
-
             foreach (string s in cellsToRecalculate)
-                yield return s;
+            {
+                if (s != "")
+                    yield return s;
+            }
         }
     }
 }
