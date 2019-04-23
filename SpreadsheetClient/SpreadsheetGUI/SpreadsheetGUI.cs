@@ -268,8 +268,21 @@ namespace SpreadsheetGUI
                     MessageBox.Show("You can't do that");
                 }
 
+                updateCells(name);
+
                 contentsChanged = false;
             });
+        }
+
+        private void updateCells(string name)
+        {
+            foreach (string s in sheet.getTheDependents(name))
+            {
+                int col = name[0] - 65;
+                int row;
+                Int32.TryParse(name.Substring(1, name.Length - 1), out row);
+                spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(name).ToString());
+            }
         }
 
         protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, Keys keyData)

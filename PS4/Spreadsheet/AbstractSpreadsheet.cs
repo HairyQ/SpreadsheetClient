@@ -349,7 +349,6 @@ namespace SS
             return changed;
         }
 
-
         /// <summary>
         /// A convenience method for invoking the other version of GetCellsToRecalculate
         /// with a singleton set of names.  See the other version for details.

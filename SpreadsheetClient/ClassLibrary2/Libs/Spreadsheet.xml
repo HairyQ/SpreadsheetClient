@@ -457,5 +457,16 @@
             <param name="name"></param>
             <returns></returns>
         </member>
+        <member name="M:SS.Spreadsheet.VisitDependees(System.String,System.String,System.Collections.Generic.ISet{System.String},System.Collections.Generic.LinkedList{System.String})">
+            <summary>
+            A helper for the GetCellsToRecalculate method.
+            </summary>
+        </member>
+        <member name="M:SS.Spreadsheet.GetCellsToRecalculate2(System.String)">
+            <summary>
+            A convenience method for invoking the other version of GetCellsToRecalculate
+            with a singleton set of names.  See the other version for details.
+            </summary>
+        </member>
     </members>
 </doc>

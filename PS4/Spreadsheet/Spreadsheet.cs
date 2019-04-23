@@ -144,6 +144,15 @@ namespace SS
             return allCells[name].GetContents();
         }
 
+        public ISet<string> getTheDependents(string name)
+        {
+            HashSet<string> retSet = new HashSet<string>() { name };
+            foreach (string s in dependencies.GetDependents(name))
+                retSet.Add(s);
+
+            return retSet;
+        }
+
         /// <summary>
         /// Numerates through allCells, the collection of Cells that have thus far been initialized, 
         /// or "changed" in the context of a spreadsheet
@@ -483,7 +492,7 @@ namespace SS
         /// <returns></returns>
         public IEnumerable<string> CheckValues(string name)
         {
-            IEnumerable<string> cellsToRecalculate = GetCellsToRecalculate(new HashSet<string>() { name });
+            IEnumerable<string> cellsToRecalculate = GetCellsToRecalculate2(name);
 
             Reevaluate(cellsToRecalculate);
 
@@ -492,6 +501,50 @@ namespace SS
                 if (s != "")
                     yield return s;
             }
+        }
+
+        /// <summary>
+        /// A helper for the GetCellsToRecalculate method.
+        /// </summary>
+        private void VisitDependees(String start, String name, ISet<String> visited, LinkedList<String> changed)
+        {
+            visited.Add(name);
+            foreach (String n in dependencies.GetDependees(name))
+            {
+                if (n.Equals(start))
+                {
+                    throw new CircularException();
+                }
+                else if (!visited.Contains(n))
+                {
+                    VisitDependees(start, n, visited, changed);
+                }
+            }
+            changed.AddFirst(name);
+        }
+
+        protected IEnumerable<String> GetCellsToRecalculate2(ISet<String> names)
+        {
+            LinkedList<String> changed = new LinkedList<String>();
+            HashSet<String> visited = new HashSet<String>();
+            foreach (String name in names)
+            {
+                if (!visited.Contains(name))
+                {
+                    VisitDependees(name, name, visited, changed);
+                }
+            }
+            return changed;
+        }
+
+
+        /// <summary>
+        /// A convenience method for invoking the other version of GetCellsToRecalculate
+        /// with a singleton set of names.  See the other version for details.
+        /// </summary>
+        protected IEnumerable<String> GetCellsToRecalculate2(String name)
+        {
+            return GetCellsToRecalculate2(new HashSet<String>() { name });
         }
     }
 }
