@@ -104,9 +104,7 @@ namespace Controller
             lock (state)
             {
                 String message = JsonConvert.SerializeObject(newMessage) + "\n\n";
-                Console.WriteLine("Message sent: " + message);
                 Network.Send(theServer, message);
-                Console.WriteLine(message);
             }
         }
 
@@ -117,7 +115,6 @@ namespace Controller
         public void ReceiveSpreadsheets(SocketState ss)
         {
             string startupData = ss.SB.ToString();
-            Console.WriteLine("Message received: " + startupData.ToString());
 
             SpreadsheetListMessage sentMessage = JsonConvert.DeserializeObject<SpreadsheetListMessage>(startupData);
             state.Spreadsheets = sentMessage.spreadsheets;
@@ -133,7 +130,6 @@ namespace Controller
         public void ReceiveServerMessages(SocketState ss)
         {
             string totalData = ss.SB.ToString();
-            Console.Write(totalData);
             string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
             //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
@@ -165,7 +161,6 @@ namespace Controller
                 try
                 {
                     JObject obj = JObject.Parse(message);
-                    Console.WriteLine("Message" + message);
 
                     JToken isEdit = obj["spreadsheet"];
                     JToken isError = obj["code"];
@@ -173,7 +168,6 @@ namespace Controller
                     if (isEdit != null)
                     {
                         FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
-                        Console.WriteLine(edit.ToString() + "This is full send message");
 
                         foreach (string s in edit.spreadsheet.Keys)
                         {
@@ -193,7 +187,6 @@ namespace Controller
                     }
                     else if (isError != null)
                     {
-                        Console.WriteLine("Error message ");
                         ErrorMessage newError = JsonConvert.DeserializeObject<ErrorMessage>(message);
 
                         if (newError.code == 2)

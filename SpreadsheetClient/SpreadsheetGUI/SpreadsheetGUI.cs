@@ -171,7 +171,6 @@ namespace SpreadsheetGUI
                     MessageBox.Show(ffe.Message, "Formula Format Error");
                     string s = ffe.Message;
                 }
-                System.Console.WriteLine("Formula reached");
                 string pattern = @"[A-Za-z]{1}[\d]{1,2}";
                 
                 ArrayList dependencies = new ArrayList();
@@ -219,8 +218,6 @@ namespace SpreadsheetGUI
         {
             this.Invoke((MethodInvoker)delegate
             {
-                Console.WriteLine("Reached Method Invoker");
-
                 string name = state.CellName;
                 string value = "";
                 try
@@ -262,6 +259,7 @@ namespace SpreadsheetGUI
                         Int32.TryParse(s.Substring(1, s.Length - 1), out row);
                         col = s[0] - 65;
                         spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
+                        cellValueField.Text = sheet.GetCellValue(s) + "";
                         UpdateGUIFields(s);
                     }
                 }
