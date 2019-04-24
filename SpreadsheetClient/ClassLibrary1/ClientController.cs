@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resources;
@@ -23,13 +24,11 @@ namespace Controller
         public delegate void SpreadsheetListHandler();
         public delegate void CircularDependencyError();
         public delegate void LoginError();
-        public delegate void EvaluateHandler();
 
         private event SpreadsheetEditHandler displayEdit;
         private event SpreadsheetListHandler displayLists;
         private event CircularDependencyError displayError;
         private event LoginError loginError;
-        private event EvaluateHandler evaluateAllCells;
 
         /// <summary>
         /// Constructor for ClientController should take a StaticState as a parameter, so that all of the 
@@ -59,11 +58,6 @@ namespace Controller
         public void RegisterLoginErrorHandler(LoginError l)
         {
             loginError += l;
-        }
-
-        public void RegisterEvaluateHandler(EvaluateHandler e)
-        {
-            evaluateAllCells += e;
         }
 
         /// <summary>
@@ -132,28 +126,26 @@ namespace Controller
             Network.GetData(ss);
 
             displayLists.Invoke();
-            evaluateAllCells.Invoke();
         }
 
         public void ReceiveServerMessages(SocketState ss)
         {
-            string totalData = ss.SB.ToString();
-            Console.WriteLine("Message: " + totalData);
 
+            string totalData = ss.SB.ToString();
             string[] parts = totalData.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
             //string[] parts = Regex.Split(totalData, @"(?<=[\n][\n])");
             ArrayList totalMessages = new ArrayList();
 
-            foreach(string p in parts)
+            foreach (string p in parts)
             {
                 // Ignore empty strings added by the regex splitter
-                if(p.Length==0)
+                if (p.Length == 0)
                     continue;
                 // The regex splitter will include the last string even if it doesn't end with a '\n',
                 // So we need to ignore it if this happens. 
-                if(p[p.Length-1]!='}'||p[0]!='{')
-                { 
-                    ss.SB.Remove(0,p.Length);
+                if (p[p.Length - 1] != '}' || p[0] != '{')
+                {
+                    ss.SB.Remove(0, p.Length);
                     break;
                 }
 
@@ -165,6 +157,7 @@ namespace Controller
             DeserializeJsonAndUpdateWindow(totalMessages);
 
             Network.GetData(ss);
+
         }
 
         public void DeserializeJsonAndUpdateWindow(ArrayList messages)
@@ -181,7 +174,7 @@ namespace Controller
                     if (isEdit != null)
                     {
                         FullSendMessage edit = JsonConvert.DeserializeObject<FullSendMessage>(message);
-                        
+
                         foreach (string s in edit.spreadsheet.Keys)
                         {
                             state.Col = s[0] - 65;

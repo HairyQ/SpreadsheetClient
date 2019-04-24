@@ -32,74 +32,78 @@ namespace SpreadsheetGUI
 
         Form F;
 
-        public Form1(ClientController Controller,StaticState ss,Form f)
+
+        public Form1(ClientController Controller, StaticState ss, Form f)
         {
             InitializeComponent();
 
 
-            controller=Controller;
-            cellboxX=0;
-            cellboxY=0;
-            state=ss;
-            sss=spreadsheetPanel1;
-            currentCol=cellboxY;
-            currentRow=cellboxX;
+            controller = Controller;
+            cellboxX = 0;
+            cellboxY = 0;
+            state = ss;
+            sss = spreadsheetPanel1;
+            currentCol = cellboxY;
+            currentRow = cellboxX;
 
             controller.RegisterSpreadsheetEditHandler(ChangeCellContents);
             controller.RegisterErrorHandler(circularErrorDisplay);
             controller.RegisterLoginErrorHandler(loginErrorDisplay);
 
             //Register displaySelection as listener to selectionChanged
-            spreadsheetPanel1.SelectionChanged+=displaySelection;
+            spreadsheetPanel1.SelectionChanged += displaySelection;
 
             //Select cell A1
-            spreadsheetPanel1.SetSelection(0,0);
+            spreadsheetPanel1.SetSelection(0, 0);
 
             //Move cursor to ContentsField
             cellContentsField.Focus();
 
             //create backing structure
-            sheet=new SS.Spreadsheet(s => Regex.IsMatch(s,"^[A-Z]{1}[1-9]{1}[0-9]?$"),s => s.ToUpper(),"ps6");
+            sheet = new SS.Spreadsheet(s => Regex.IsMatch(s, "^[A-Z]{1}[1-9]{1}[0-9]?$"), s => s.ToUpper(), "ps6");
 
             //IsChanged is false initially
-            isChanged=false;
+            isChanged = false;
 
-            FormClosing+=new FormClosingEventHandler(Options_OnClosing);
+            FormClosing += new FormClosingEventHandler(Options_OnClosing);
 
-            this.ClientSizeChanged+=new EventHandler(changed_size);
+            this.ClientSizeChanged += new EventHandler(changed_size);
 
-            this.cellContentsField.TextChanged+=new EventHandler(contentstextbox_changed);
-            F=f;
+            this.cellContentsField.TextChanged += new EventHandler(contentstextbox_changed);
+            F = f;
 
 
         }
 
-        private void changed_size(object sender,EventArgs e)
+
+
+
+        private void changed_size(object sender, EventArgs e)
         {
 
-            sss.SetSelection(0,0);
-            cellTextBox.Location=new System.Drawing.Point(42,79);
-            cellboxY=0;
-            cellboxX=0;
-            if(sheet.GetCellContents("A1")==null)
+            sss.SetSelection(0, 0);
+            cellTextBox.Location = new System.Drawing.Point(42, 79);
+            cellboxY = 0;
+            cellboxX = 0;
+            if (sheet.GetCellContents("A1") == null)
             {
-                cellTextBox.Text="";
-                cellContentsField.Text="";
-                cellValueField.Text="";
+                cellTextBox.Text = "";
+                cellContentsField.Text = "";
+                cellValueField.Text = "";
 
             }
             else
             {
-                cellContentsField.Text=sheet.GetCellContents("A1").ToString();
-                cellValueField.Text=sheet.GetCellValue("A1").ToString();
-                cellTextBox.Text=sheet.GetCellValue("A1").ToString();
+                cellContentsField.Text = sheet.GetCellContents("A1").ToString();
+                cellValueField.Text = sheet.GetCellValue("A1").ToString();
+                cellTextBox.Text = sheet.GetCellValue("A1").ToString();
             }
-            cellNameField.Text="A1";
+            cellNameField.Text = "A1";
         }
 
-        private void contentstextbox_changed(object sender,EventArgs e)
+        private void contentstextbox_changed(object sender, EventArgs e)
         {
-            cellTextBox.Text=cellContentsField.Text;
+            cellTextBox.Text = cellContentsField.Text;
         }
         /// <summary>
         /// Every time the selection changes, this method is called with the
@@ -109,65 +113,65 @@ namespace SpreadsheetGUI
         /// <param name="ss"></param>
         private void displaySelection(SpreadsheetPanel ss)
         {
-            sss=ss;
+            sss = ss;
 
             //get current position
             cellContentsField.Focus();
 
-            ss.GetSelection(out int col,out int row);
+            ss.GetSelection(out int col, out int row);
 
-            string name = GetCellName(col,row);
+            string name = GetCellName(col, row);
 
-            currentCol=col;
-            currentRow=row;
-            shiftTextBox(col,row);
+            currentCol = col;
+            currentRow = row;
+            shiftTextBox(col, row);
 
             UpdateGUIFields(name);
         }
 
-        private void shiftTextBox(int col,int row)
+        private void shiftTextBox(int col, int row)
         {
 
             int newCellX = 0;
             int newCellY = 0;
-            int moveX = cellboxX-col;
-            int moveY = cellboxY-row;
+            int moveX = cellboxX - col;
+            int moveY = cellboxY - row;
             //go right for the x value
-            if(moveX<0)
+            if (moveX < 0)
             {
-                moveX=moveX*-1;
-                newCellX=(int)((double)cellTextBox.Width*moveX+(double)cellTextBox.Width/2);
+                moveX = moveX * -1;
+                newCellX = (int)((double)cellTextBox.Width * moveX + (double)cellTextBox.Width / 2);
             }
-            else if(moveX>0) // go left
+            else if (moveX > 0) // go left
             {
-                newCellX=(int)((double)cellTextBox.Width*moveX+(double)cellTextBox.Width/2); ;
+                newCellX = (int)((double)cellTextBox.Width * moveX + (double)cellTextBox.Width / 2); ;
 
 
             }
             //go right for the x value
-            if(moveY<0)
+            if (moveY < 0)
             {
-                moveY=moveY*-1;
-                newCellY=(int)((double)cellTextBox.Height*moveY+(double)cellTextBox.Height/2);
+                moveY = moveY * -1;
+                newCellY = (int)((double)cellTextBox.Height * moveY + (double)cellTextBox.Height / 2);
             }
-            else if(moveY>0) // go left
+            else if (moveY > 0) // go left
             {
-                newCellY=(int)((double)cellTextBox.Height*moveY+(double)cellTextBox.Height/2); ;
+                newCellY = (int)((double)cellTextBox.Height * moveY + (double)cellTextBox.Height / 2); ;
 
             }
 
-            if(row==0)
+            if (row == 0)
             {
-                newCellY=newCellY+10;
+                newCellY = newCellY + 10;
             }
-            if(col==0)
+            if (col == 0)
             {
-                newCellX=newCellX+40;
+                newCellX = newCellX + 40;
             }
-            cellTextBox.Location=new System.Drawing.Point(newCellX,newCellY+70);
-            if(sheet.GetCellValue(GetCellName(col,row))!=null)
+            cellTextBox.Location = new System.Drawing.Point(newCellX, newCellY + 70);
+            if (sheet.GetCellValue(GetCellName(col, row)) != null)
             {
-                cellTextBox.Text=sheet.GetCellValue(GetCellName(col,row)).ToString();
+                cellTextBox.Text = sheet.GetCellValue(GetCellName(col, row)).ToString();
             }
 
         }
@@ -182,19 +186,19 @@ namespace SpreadsheetGUI
             //move cursor to contents field
             cellContentsField.Focus();
 
-            cellNameField.Text=name;
+            cellNameField.Text = name;
 
             //set CellContentsField from spreadsheet
-            if(sheet.GetCellContents(name) is Formula)
-                cellContentsField.Text="="+sheet.GetCellContents(name).ToString();
+            if (sheet.GetCellContents(name) is Formula)
+                cellContentsField.Text = "=" + sheet.GetCellContents(name).ToString();
             else
-                cellContentsField.Text=sheet.GetCellContents(name).ToString();
+                cellContentsField.Text = sheet.GetCellContents(name).ToString();
 
-            cellValueField.Text=sheet.GetCellValue(name)+"";
+            cellValueField.Text = sheet.GetCellValue(name) + "";
 
             //highlight current contents
-            cellContentsField.SelectionStart=0;
-            cellContentsField.SelectionLength=cellContentsField.Text.Length;
+            cellContentsField.SelectionStart = 0;
+            cellContentsField.SelectionLength = cellContentsField.Text.Length;
         }
 
         /// <summary>
@@ -204,38 +208,38 @@ namespace SpreadsheetGUI
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        private string GetCellName(int col,int row)
+        private string GetCellName(int col, int row)
         {
             string name = "";
 
             //convert column index to ASCII char
             //65 offset so 0=A and 26=Z
-            char c = (char)(col+65);
+            char c = (char)(col + 65);
 
             //Name is char from column followed by int from row
-            name+=c;
-            name+=row+1;
+            name += c;
+            name += row + 1;
 
             return name;
         }
 
-        private void setButton_Click(object sender,EventArgs e)
+        private void setButton_Click(object sender, EventArgs e)
         {
-            if(contentsChanged==false)
+            if (contentsChanged == false)
                 return;
 
             //get current cell
-            spreadsheetPanel1.GetSelection(out int col,out int row);
+            spreadsheetPanel1.GetSelection(out int col, out int row);
 
             //extract contents
             string contents = cellContentsField.Text;
-            cellTextBox.Text=cellContentsField.Text;
-            SendEdit(col,row,contents);
+            cellTextBox.Text = cellContentsField.Text;
+            SendEdit(col, row, contents);
         }
 
         private bool isValid(string s)
         {
-            if(Regex.IsMatch(s,@"^[A-Za-z]{1}[\d]{1,2}$"))
+            if (Regex.IsMatch(s, @"^[A-Za-z]{1}[\d]{1,2}$"))
                 return true;
             return false;
         }
@@ -248,57 +252,58 @@ namespace SpreadsheetGUI
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <param name="contents"></param>
-        private void SendEdit(int col,int row,string contents)
+        private void SendEdit(int col, int row, string contents)
         {
-            string name = GetCellName(col,row);
+            string name = GetCellName(col, row);
 
-            isChanged=sheet.Changed;
+            isChanged = sheet.Changed;
 
             EditMessage newEdit = new EditMessage();
-            newEdit.cell=name;
-            if(contents.Length>0&&contents[0]=='=')
+            newEdit.cell = name;
+            if (contents.Length > 0 && contents[0] == '=')
             {
                 try
                 {
-                    Formula newFormula = new Formula(contents.Substring(1,contents.Length-1),s => s.ToUpper(),isValid);
+                    Formula newFormula = new Formula(contents.Substring(1, contents.Length - 1), s => s.ToUpper(), isValid);
                 }
-                catch(FormulaFormatException ffe)
+                catch (FormulaFormatException ffe)
                 {
-                    MessageBox.Show(ffe.Message,"Formula Format Error");
+                    MessageBox.Show(ffe.Message, "Formula Format Error");
                     string s = ffe.Message;
                 }
                 string pattern = @"[A-Za-z]{1}[\d]{1,2}";
 
                 ArrayList dependencies = new ArrayList();
 
-                foreach(Match m in Regex.Matches(contents,pattern))
+                foreach (Match m in Regex.Matches(contents, pattern))
                 {
                     dependencies.Add(m.ToString());
                 }
 
-                newEdit.dependencies=dependencies;
+                newEdit.dependencies = dependencies;
             }
             else
             {
                 double cellDouble;
-                if(Double.TryParse(contents,out cellDouble))
+                if (Double.TryParse(contents, out cellDouble))
                 {
                     EditMessageDoubleType actualMessage = new EditMessageDoubleType();
-                    actualMessage.value=cellDouble;
-                    actualMessage.dependencies=new ArrayList();
-                    actualMessage.cell=name;
+                    actualMessage.value = cellDouble;
+                    actualMessage.dependencies = new ArrayList();
+                    actualMessage.cell = name;
                     controller.SendMessage(actualMessage);
                     return;
                 }
 
-                newEdit.dependencies=new ArrayList();
+                newEdit.dependencies = new ArrayList();
             }
-            newEdit.value=contents;
+            newEdit.value = contents;
 
-            if(contentsChanged)
+            if (contentsChanged)
                 controller.SendMessage(newEdit);
 
-            contentsChanged=false;
+            cellTextBox.Text = cellContentsField.Text;
+            contentsChanged = false;
         }
 
         /// <summary>
@@ -314,19 +319,19 @@ namespace SpreadsheetGUI
         {
             this.Invoke((MethodInvoker)delegate
             {
-                if(cellTextBox.Location.X==42&&cellTextBox.Location.Y==79)
+                if (cellTextBox.Location.X == 42 && cellTextBox.Location.Y == 79)
                 {
-                    if(sheet.GetCellValue("A1").ToString()!=null)
+                    if (sheet.GetCellValue("A1").ToString() != null)
                     {
-                        cellContentsField.Text=sheet.GetCellContents("A1").ToString();
-                        cellValueField.Text=sheet.GetCellValue("A1").ToString();
-                        cellTextBox.Text=sheet.GetCellValue("A1").ToString();
+                        cellContentsField.Text = sheet.GetCellContents("A1").ToString();
+                        cellValueField.Text = sheet.GetCellValue("A1").ToString();
+                        cellTextBox.Text = sheet.GetCellValue("A1").ToString();
                     }
                     else
                     {
-                        cellContentsField.Text="";
-                        cellValueField.Text="";
-                        cellTextBox.Text="";
+                        cellContentsField.Text = "";
+                        cellValueField.Text = "";
+                        cellTextBox.Text = "";
                     }
                 }
 
@@ -336,136 +341,141 @@ namespace SpreadsheetGUI
                 try
                 {
                     //store contents in backing sheet
-                    if(state.Contents.Length>0&&state.Contents[0]=='=')
-                        sheet.SetContentsOfCell(name,state.Contents.ToUpper());
+                    if (state.Contents.Length > 0 && state.Contents[0] == '=')
+                        sheet.SetContentsOfCell(name, state.Contents.ToUpper());
                     else
-                        sheet.SetContentsOfCell(name,state.Contents);
+                        sheet.SetContentsOfCell(name, state.Contents);
 
                     object valueObj = "";
                     //get value of cell from backing sheet
-                    if(sheet.GetCellContents(name) is String&&!sheet.GetCellContents(name).Equals(""))
-                        valueObj=sheet.GetCellValue(name);
+                    if (sheet.GetCellContents(name) is String && !sheet.GetCellContents(name).Equals(""))
+                        valueObj = sheet.GetCellValue(name);
 
                     //handle formula errors
-                    if(valueObj.GetType().Equals(typeof(FormulaError)))
+                    if (valueObj.GetType().Equals(typeof(FormulaError)))
                     {
                         FormulaError fe = (FormulaError)valueObj;
-                        value=fe.Reason;
+                        value = fe.Reason;
                     }
                     //store value of cell
                     else
-                        value=valueObj.ToString();
+                        value = valueObj.ToString();
                 }
-                catch(FormulaFormatException ffe)
+                catch (FormulaFormatException ffe)
                 {
-                    value=ffe.Message;
+                    value = ffe.Message;
                 }
 
-                cellValueField.Text=value;
-                spreadsheetPanel1.SetValue(state.Col,state.Row,value);
+                cellValueField.Text = value;
+                spreadsheetPanel1.SetValue(state.Col, state.Row, value);
 
                 try
                 {
-                    foreach(string s in sheet.CheckValues(name))
+                    foreach (string s in sheet.CheckValues(name))
                     {
                         int row, col;
-                        Int32.TryParse(s.Substring(1,s.Length-1),out row);
-                        col=s[0]-65;
-                        spreadsheetPanel1.SetValue(col,row-1,sheet.GetCellValue(s).ToString());
-                        cellValueField.Text=sheet.GetCellValue(s)+"";
+                        Int32.TryParse(s.Substring(1, s.Length - 1), out row);
+                        col = s[0] - 65;
+                        spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
+                        cellValueField.Text = sheet.GetCellValue(s) + "";
                         UpdateGUIFields(s);
                     }
                 }
-                catch(InvalidCastException e)
+                catch (InvalidCastException e)
                 {
                     MessageBox.Show("You can't do that");
                 }
 
                 updateCells(name);
 
-                cellTextBox.Text="";
-                contentsChanged=false;
+                cellTextBox.Text = "";
+                contentsChanged = false;
             });
         }
 
         private void updateCells(string name)
         {
-            foreach(string s in sheet.getTheDependents(name))
+            foreach (string s in sheet.getTheDependents(name))
             {
-                int col = name[0]-65;
+                int col = name[0] - 65;
                 int row;
-                Int32.TryParse(s.Substring(1,name.Length-1),out row);
-                spreadsheetPanel1.SetValue(col,row-1,sheet.GetCellValue(s).ToString());
+                Int32.TryParse(s.Substring(1, name.Length - 1), out row);
+                spreadsheetPanel1.SetValue(col, row - 1, sheet.GetCellValue(s).ToString());
             }
         }
 
-        protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg,Keys keyData)
+        protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, Keys keyData)
         {
-            spreadsheetPanel1.GetSelection(out int col,out int row);
+            spreadsheetPanel1.GetSelection(out int col, out int row);
             string name, contents;
 
             //keypress handling logic
-            switch(keyData)
+            switch (keyData)
             {
                 case Keys.Up:
-                if(row==0)
-                {
+                    if (row == 0)
+                    {
+                        break;
+                    }
+                    contents = cellContentsField.Text;
+
+                    row--;
+                    shiftTextBox(col, row);
+
+
                     break;
-                }
-                contents=cellContentsField.Text;
-                if(contentsChanged==true)
-                    SendEdit(col,row,contents);
-                row--;
-                shiftTextBox(col,row);
-
-
-                break;
                 case Keys.Enter:
+
+                    contents = cellContentsField.Text;
+
+                    SendEdit(col, row, contents);
+
+                    break;
                 case Keys.Down:
-                if(row>99)
-                {
-                    row=99;
+                    if (row > 99)
+                    {
+                        row = 99;
+                        break;
+                    }
+                    contents = cellContentsField.Text;
+                    //if (contentsChanged == true && contents != "")
+                    //    SendEdit(col, row, contents);
+                    row++;
+
+                    shiftTextBox(col, row);
+
+
                     break;
-                }
-                contents=cellContentsField.Text;
-                if(contentsChanged==true)
-                    SendEdit(col,row,contents);
-                row++;
-                cellTextBox.Text=cellContentsField.Text;
-                shiftTextBox(col,row);
-
-
-                break;
                 case Keys.Left:
-                if(col==0)
-                {
+                    if (col == 0)
+                    {
+                        break;
+                    }
+                    contents = cellContentsField.Text;
+                    //if (contentsChanged == true && contents != "")
+                    //    SendEdit(col, row, contents);
+                    col--;
+
+
+                    shiftTextBox(col, row);
+
+
                     break;
-                }
-                contents=cellContentsField.Text;
-                if(contentsChanged==true)
-                    SendEdit(col,row,contents);
-                col--;
-                cellTextBox.Text=cellContentsField.Text;
-
-                shiftTextBox(col,row);
-
-
-                break;
                 case Keys.Tab:
                 case Keys.Right:
-                if(col>=25)
-                {
+                    if (col >= 25)
+                    {
+                        break;
+                    }
+                    contents = cellContentsField.Text;
+                    //if (contentsChanged == true)
+                    //    SendEdit(col, row, contents);
+                    col++;
+
+
+                    shiftTextBox(col, row);
+
                     break;
-                }
-                contents=cellContentsField.Text;
-                if(contentsChanged==true)
-                    SendEdit(col,row,contents);
-                col++;
-                cellTextBox.Text=cellContentsField.Text;
-
-                shiftTextBox(col,row);
-
-                break;
                 //pass key event onto regular form handling
                 /*
                 case Keys.A:
@@ -567,13 +577,13 @@ namespace SpreadsheetGUI
                     break;
                     */
                 default:
-                return base.ProcessCmdKey(ref msg,keyData);
+                    return base.ProcessCmdKey(ref msg, keyData);
             }
 
             //update selection
-            if(spreadsheetPanel1.SetSelection(col,row))
+            if (spreadsheetPanel1.SetSelection(col, row))
             {
-                name=GetCellName(col,row);
+                name = GetCellName(col, row);
                 UpdateGUIFields(name);
             }
 
@@ -587,7 +597,7 @@ namespace SpreadsheetGUI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void closeToolStripMenuItem_Click(object sender,EventArgs e)
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -597,20 +607,20 @@ namespace SpreadsheetGUI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void spreadsheetPanel1_Load(object sender,EventArgs e)
+        private void spreadsheetPanel1_Load(object sender, EventArgs e)
         {
         }
 
-        private void cellContentsField_TextChanged(object sender,EventArgs e)
+        private void cellContentsField_TextChanged(object sender, EventArgs e)
         {
-            contentsChanged=true;
+            contentsChanged = true;
         }
 
         private void circularErrorDisplay()
         {
             this.Invoke((MethodInvoker)delegate
             {
-                MessageBox.Show("Circular Dependency detected at cell "+state.CellName+" change not accepted");
+                MessageBox.Show("Circular Dependency detected at cell " + state.CellName + " change not accepted");
             });
         }
 
@@ -622,26 +632,26 @@ namespace SpreadsheetGUI
             });
         }
 
-        private void button1_Click(object sender,EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             UndoMessage newUndo = new UndoMessage();
 
             controller.SendMessage(newUndo);
         }
 
-        private void button2_Click(object sender,EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             int col, row;
-            spreadsheetPanel1.GetSelection(out col,out row);
+            spreadsheetPanel1.GetSelection(out col, out row);
             RevertMessage newRevert = new RevertMessage();
-            newRevert.cell=GetCellName(col,row);
+            newRevert.cell = GetCellName(col, row);
 
             controller.SendMessage(newRevert);
         }
 
-        private void Options_OnClosing(object sender,FormClosingEventArgs e)
+        private void Options_OnClosing(object sender, FormClosingEventArgs e)
         {
-            if(Application.MessageLoop)
+            if (Application.MessageLoop)
             {
                 Application.Exit();
             }
@@ -652,4 +662,3 @@ namespace SpreadsheetGUI
         }
     }
 }
-
